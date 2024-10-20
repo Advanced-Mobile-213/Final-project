@@ -2,18 +2,18 @@ import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
+import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class Login extends StatelessWidget {
+  const Login({super.key});
 
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return  Scaffold(
         backgroundColor: AppColors.primaryBackground,
         body: Center(
           child: Padding(
@@ -22,11 +22,7 @@ class LoginScreen extends StatelessWidget {
               builder: (context, constraints) {
                 // Check if it's a large screen
                 bool isWindows =  Platform.isWindows;
-                double screenWidth = MediaQuery.of(context).size.width;
-                double containerWidth = isWindows
-                    ? 400 // Fixed width on Windows
-                    : screenWidth * 0.8; // 60% of screen width on mobile
-
+                double containerWidth = isWindows ? 400 : double.infinity;
                 return Center(
                   child: Container(
                     width: containerWidth, // Limit width on large screens
@@ -85,21 +81,18 @@ class LoginScreen extends StatelessWidget {
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: Text('SIGN IN', style: TextStyle( color: Colors.black),),
-                          ),
+                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushReplacementNamed(context, "/forgot_password"); })
                         ),
                         SizedBox(height: 10),
 
                         // Forgotten password
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/enter_email"); },
                           child: Text('Forgotten password?', style: TextStyle(color: Colors.white),),
                         ),
 
                         // or sign in with
-                        Text('or sign in with'),
+                        Text('or sign in with', style: TextStyle(color: AppColors.tertiaryText),),
                         SizedBox(height: 10),
 
                         // Social Media Icons
@@ -146,7 +139,6 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
