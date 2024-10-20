@@ -13,4 +13,5 @@ class AppColors {
   static const Color secondaryText = Color(0xFF3C3D37); // Grayish background
   static const Color tertiaryText = Color(0xFF697565); // Muted greenish background
   static const Color quaternaryText = Color(0xFFECDFCC); // Light beige background
+  static const Color greyText = Color(0xFF989898); // Light beige background
 }
