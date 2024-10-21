@@ -126,8 +126,8 @@ class Login extends StatelessWidget {
                           children: [
                             Text("Don't have an account?", style: TextStyle(color: Colors.white),),
                             TextButton(
-                              onPressed: () {},
-                              child: Text('SIGN UP', style: TextStyle(color: AppColors.tertiaryText),),
+                              onPressed: () { Navigator.pushReplacementNamed(context, "/register"); },
+                              child: Text('REGISTER', style: TextStyle(color: AppColors.tertiaryText),),
                             ),
                           ],
                         ),
