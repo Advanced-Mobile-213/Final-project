@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
@@ -41,43 +42,8 @@ class Login extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),// Email Label
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Email',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        // Email Input
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'example@email.com',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        // Password Label
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Password',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        // Password Input
-                        TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: 'password',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-
-
-                        SizedBox(height: 20),
-
+                        TextInput(label: "Email", hintText: "Enter email",),
+                        TextInput(label: "Password", hintText: "Enter password",),
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
