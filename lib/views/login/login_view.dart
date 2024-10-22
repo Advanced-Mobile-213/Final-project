@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class LoginView extends StatelessWidget {
+  const LoginView({super.key});
 
 
   @override
@@ -42,18 +42,18 @@ class Login extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),// Email Label
-                        TextInput(label: "Email", hintText: "Enter email",),
-                        TextInput(label: "Password", hintText: "Enter password",),
+                        TextInput(label: "Email", hintText: "Enter email", onChanged: (value) {},),
+                        TextInput(label: "Password", hintText: "Enter password", onChanged: (value) {},),
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushReplacementNamed(context, "/forgot_password"); })
+                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/ai_bot"); })
                         ),
                         SizedBox(height: 10),
 
                         // Forgotten password
                         TextButton(
-                          onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/enter_email"); },
+                          onPressed: () { Navigator.pushNamed(context, "/forgot_password/enter_email"); },
                           child: Text('Forgotten password?', style: TextStyle(color: Colors.white),),
                         ),
 
@@ -92,7 +92,7 @@ class Login extends StatelessWidget {
                           children: [
                             Text("Don't have an account?", style: TextStyle(color: Colors.white),),
                             TextButton(
-                              onPressed: () { Navigator.pushReplacementNamed(context, "/register"); },
+                              onPressed: () { Navigator.pushNamed(context, "/register"); },
                               child: Text('REGISTER', style: TextStyle(color: AppColors.tertiaryText),),
                             ),
                           ],

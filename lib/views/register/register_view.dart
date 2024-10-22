@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
 
-class Register extends StatelessWidget {
-  const Register({super.key});
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key});
 
 
   @override
@@ -43,9 +43,9 @@ class Register extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
 
-                      TextInput(label: "Name", hintText: "Enter your name"),
-                      TextInput(label: "Email", hintText: "Enter your email"),
-                      TextInput(label: "Password", hintText: "Enter your password"),
+                      TextInput(label: "Name", hintText: "Enter your name", onChanged: (value) {},),
+                      TextInput(label: "Email", hintText: "Enter your email", onChanged: (value) {},),
+                      TextInput(label: "Password", hintText: "Enter your password", onChanged: (value) {},),
                       // Sign in Button
                       SizedBox(
                           width: double.infinity, // Button fills the width
@@ -107,7 +107,7 @@ class Register extends StatelessWidget {
                         children: [
                           Text("Have an account?", style: TextStyle(color: Colors.white),),
                           TextButton(
-                            onPressed: () { Navigator.pushReplacementNamed(context, "/login"); },
+                            onPressed: () { Navigator.pushNamed(context, "/login"); },
                             child: Text('LOGIN', style: TextStyle(color: AppColors.tertiaryText),),
                           ),
                         ],

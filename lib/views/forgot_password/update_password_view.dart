@@ -1,15 +1,18 @@
 import 'dart:io';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 
-class EnterEmail extends StatelessWidget {
-  const EnterEmail({super.key});
+class UpdatePasswordView extends StatelessWidget {
+  const UpdatePasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Simulate user email
     bool isWindows = Platform.isWindows;
-    double containerWidth = isWindows ? 400 : double.infinity;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double containerWidth = isWindows ? 400 : screenWidth * 1;
 
     return Scaffold(
       appBar: AppBar(
@@ -17,13 +20,15 @@ class EnterEmail extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/login'); // Navigate back to the previous screen
+            Navigator.pushNamed(context,
+                '/forgot_password/verify_code'); // Navigate back to the previous screen
           },
         ),
         elevation: 0, // Optional: remove shadow
       ),
       backgroundColor: AppColors.primaryBackground,
-      body: Center( // Center the entire content horizontally
+      body: Center(
+        // Center the entire content horizontally
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
@@ -33,27 +38,25 @@ class EnterEmail extends StatelessWidget {
               children: [
                 // Forgot Password Title
                 Text(
-                  'Forgot Password',
+                  'Set A New Password',
                   style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 // Instruction Text
                 Text(
-                  'Please enter your email to reset the password',
+                  'Create a new password. Ensure it differs from previous ones for security',
                   style: TextStyle(color: AppColors.greyText, fontSize: 15),
                 ),
                 SizedBox(height: 20),
-                // Email Input
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
+
+                TextInput(label: 'New password', hintText: 'Enter your new password', onChanged: (value) {},),
+                TextInput(label: 'Confirm password', hintText: 'Confirm your password', onChanged: (value) {}),
 
                 // Reset Password Button
-                WideButton(text: "Reset Password", onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/verify_code");})
+                WideButton(
+                    text: "Update Password",
+                    onPressed: () {}
+                )
               ],
             ),
           ),
