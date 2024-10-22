@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
@@ -44,13 +45,7 @@ class EnterEmailView extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 // Email Input
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter your email',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
+                TextInput(label: "Email", hintText: 'Enter your email', onChanged: (value){}),
 
                 // Reset Password Button
                 WideButton(text: "Reset Password", onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/verify_code");})

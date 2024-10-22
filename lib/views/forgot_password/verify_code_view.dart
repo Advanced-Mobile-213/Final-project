@@ -3,6 +3,8 @@ import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 
+import '../../widgets/text_input.dart';
+
 class VerifyCodeView extends StatelessWidget {
   const VerifyCodeView({super.key});
 
@@ -64,14 +66,9 @@ class VerifyCodeView extends StatelessWidget {
                 SizedBox(height: 20),
                 // Email Label
 
-                // Email Input
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Enter you code (only 5 digits)',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
+                // Code Input
+                TextInput(label: "Code", hintText: 'Enter you code (only 5 digits)', onChanged: (value){}),
+
 
                 // Reset Password Button
                 WideButton(
