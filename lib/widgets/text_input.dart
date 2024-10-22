@@ -5,6 +5,7 @@ class TextInput extends StatelessWidget {
   final String label;
   final String hintText;
   final bool obscureText;
+  final Function(String) onChanged;
   final TextEditingController? controller;
 
   const TextInput({
@@ -12,6 +13,7 @@ class TextInput extends StatelessWidget {
     required this.label,
     required this.hintText,
     this.obscureText = false,
+    required this.onChanged,
     this.controller,
   }) : super(key: key);
   @override
@@ -28,6 +30,7 @@ class TextInput extends StatelessWidget {
         ),
         SizedBox(height: 8),
         TextField(
+          onChanged: onChanged,
           controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(

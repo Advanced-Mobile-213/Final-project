@@ -3,8 +3,8 @@ import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 
-class VerifyCode extends StatelessWidget {
-  const VerifyCode({super.key});
+class VerifyCodeView extends StatelessWidget {
+  const VerifyCodeView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class VerifyCode extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushReplacementNamed(context,
+            Navigator.pushNamed(context,
                 '/forgot_password/enter_email'); // Navigate back to the previous screen
           },
         ),
@@ -77,7 +77,7 @@ class VerifyCode extends StatelessWidget {
                 WideButton(
                     text: "Verify Code",
                     onPressed: () {
-                      Navigator.pushReplacementNamed(
+                      Navigator.pushNamed(
                           context, "/forgot_password/update_password");
                     })
               ],
