@@ -14,12 +14,13 @@ class ChatbotRadiusCard extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed, // This will trigger the onPressed function when tapped
       child: Card(
-        color: AppColors.secondaryBackground.withOpacity(0.8),
+        color: AppColors.cardBackground,
         shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white.withOpacity(0.1)),
           borderRadius: BorderRadius.circular(15),
         ),
         margin: const EdgeInsets.only(bottom: 16, top: 8),
-        elevation: 5,
+        elevation: 4,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -33,8 +34,8 @@ class ChatbotRadiusCard extends StatelessWidget {
               Text(
                 botName,
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
               ),

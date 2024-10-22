@@ -5,17 +5,18 @@ class SearchInput extends StatelessWidget {
   final Function(String) onChanged; // Callback when the text changes
 
   const SearchInput({
-    Key? key,
+    super.key,
     this.hintText = 'Search', // Default hint text
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      style: TextStyle(color: Colors.white),
       onChanged: onChanged, // Call the callback when text changes
       decoration: InputDecoration(
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
         hintText: hintText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15), // Add border radius here
