@@ -84,29 +84,45 @@ class _MainViewState extends State<MainView> {
               ],
             ),
             drawer: Drawer(
+              backgroundColor: AppColors.primaryBackground,
               child: ListView(
-                padding: const EdgeInsets.all(0),
+                padding: const EdgeInsets.only(top: 20),
                 children: [
-                  const DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
+                  Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      tileColor: AppColors.secondaryBackground,
+                      style: ListTileStyle.drawer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textColor: AppColors.quaternaryText,
+                      iconColor: AppColors.quaternaryText,
+                      leading: const Icon(Icons.local_fire_department),
+                      title: const Text('Tokens'),
+                      trailing: Text('30/50'),
+                      onTap: () {
+                        //Navigator.pop(context);
+                      },
                     ),
-                    child: Text('AI Assistant'),
                   ),
-                  ListTile(
-                    title: const Text('Tokens'),
-                    trailing: Text('30/50'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                  Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      tileColor: AppColors.secondaryBackground,
+                      style: ListTileStyle.drawer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textColor: AppColors.quaternaryText,
+                      iconColor: AppColors.quaternaryText,
+                      leading: const Icon(Icons.email),
+                      title: const Text('Email Reply'),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                  ListTile(
-                    title: const Text('Email Reply'),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-
                 ],
               ),
             ),
