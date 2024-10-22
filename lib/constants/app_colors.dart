@@ -14,4 +14,11 @@ class AppColors {
   static const Color tertiaryText = Color(0xFF697565); // Muted greenish background
   static const Color quaternaryText = Color(0xFFECDFCC); // Light beige background
   static const Color greyText = Color(0xFF989898); // Light beige background
+
+  // Dialog
+  static const Color dialogBackground = Color(0xFF141400); // Dark background
+
+  // Card
+  static const Color cardBackground = Color(0xFF141400); // Dark background
+
 }

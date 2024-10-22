@@ -69,7 +69,7 @@ class LoginView extends StatelessWidget {
                               icon: SizedBox(
                                 width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GOOGLE_BASE64_IMAGE_STRING)),
+                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),
@@ -78,7 +78,7 @@ class LoginView extends StatelessWidget {
                               icon: SizedBox(
                                 width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FACEBOOK_BASE64_IMAGE_STRING)),
+                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),

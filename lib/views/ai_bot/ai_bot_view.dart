@@ -14,8 +14,9 @@ class AIBotView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('AI Bots'),
-        backgroundColor: AppColors.tertiaryBackground.withOpacity(0.8),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('Settings', style: TextStyle(color: Colors.white),),
+        backgroundColor: AppColors.primaryBackground,
       ),
       body: Center(
         child: Padding(

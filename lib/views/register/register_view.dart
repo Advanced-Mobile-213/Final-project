@@ -54,7 +54,7 @@ class RegisterView extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: AppColors.primaryBackground,
+                                  backgroundColor: AppColors.dialogBackground,
                                   title: Text('Account Created', style: TextStyle(color: Colors.white),),
                                   content: Text('Please check your email to activate your account.', style: TextStyle(color: Colors.white),),
                                   actions: [
@@ -84,7 +84,7 @@ class RegisterView extends StatelessWidget {
                             icon: SizedBox(
                               width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                               height: isWindows ? 50 : 40,
-                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GOOGLE_BASE64_IMAGE_STRING)),
+                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
                             ),
                             onPressed: () {},
                           ),
@@ -93,7 +93,7 @@ class RegisterView extends StatelessWidget {
                             icon: SizedBox(
                               width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                               height: isWindows ? 50 : 40,
-                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FACEBOOK_BASE64_IMAGE_STRING)),
+                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
                             ),
                             onPressed: () {},
                           ),
