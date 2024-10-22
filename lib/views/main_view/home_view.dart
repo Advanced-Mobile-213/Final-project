@@ -1,4 +1,4 @@
-import 'package:chatbot_agents/screens/profile/profile_view.dart';
+import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
