@@ -3,12 +3,13 @@ import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 
-class UpdatePassword extends StatelessWidget {
-  const UpdatePassword({super.key});
+class VerifyCodeView extends StatelessWidget {
+  const VerifyCodeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Simulate user email
+    String email = "example@gmail.com";
     bool isWindows = Platform.isWindows;
     double screenWidth = MediaQuery.of(context).size.width;
     double containerWidth = isWindows ? 400 : screenWidth * 1;
@@ -19,8 +20,8 @@ class UpdatePassword extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushReplacementNamed(context,
-                '/forgot_password/verify_code'); // Navigate back to the previous screen
+            Navigator.pushNamed(context,
+                '/forgot_password/enter_email'); // Navigate back to the previous screen
           },
         ),
         elevation: 0, // Optional: remove shadow
@@ -33,50 +34,40 @@ class UpdatePassword extends StatelessWidget {
           child: Container(
             width: containerWidth,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
+              crossAxisAlignment:
+                  CrossAxisAlignment.start, // Align content to the left
               children: [
                 // Forgot Password Title
                 Text(
-                  'Set A New Password',
+                  'Check Your Email',
                   style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 // Instruction Text
-                Text(
-                  'Create a new password. Ensure it differs from previous ones for security',
-                  style: TextStyle(color: AppColors.greyText, fontSize: 15),
-                ),
-                SizedBox(height: 20),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'New Password',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: AppColors.greyText), // Default style for all
+                    children: [
+                      TextSpan(text: 'We sent a reset link to '),
+                      TextSpan(
+                        text: email,
+                        style: TextStyle(color: AppColors.tertiaryText, fontWeight: FontWeight.bold), // Email color
+                      ),
+                      TextSpan(
+                          text:
+                              ', enter 5 digit code that mentioned in the email'),
+                    ],
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 20),
+                // Email Label
+
                 // Email Input
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Enter your new password',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
-                // Password Label
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Confirm Password',
-                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 8),
-                // Password Input
-                TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: 'Re-enter your password',
+                    hintText: 'Enter you code (only 5 digits)',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -84,9 +75,11 @@ class UpdatePassword extends StatelessWidget {
 
                 // Reset Password Button
                 WideButton(
-                    text: "Update Password",
-                    onPressed: () {}
-                )
+                    text: "Verify Code",
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context, "/forgot_password/update_password");
+                    })
               ],
             ),
           ),

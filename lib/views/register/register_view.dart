@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
 
-class Register extends StatelessWidget {
-  const Register({super.key});
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key});
 
 
   @override
@@ -40,60 +41,11 @@ class Register extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 20),// Email Label
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Name',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      // Email Input
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Enter your name',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Email',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      // Email Input
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Enter your email',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      // Password Label
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Password',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      // Password Input
-                      TextField(
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your password',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-
-
                       SizedBox(height: 20),
 
+                      TextInput(label: "Name", hintText: "Enter your name", onChanged: (value) {},),
+                      TextInput(label: "Email", hintText: "Enter your email", onChanged: (value) {},),
+                      TextInput(label: "Password", hintText: "Enter your password", onChanged: (value) {},),
                       // Sign in Button
                       SizedBox(
                           width: double.infinity, // Button fills the width
@@ -102,7 +54,7 @@ class Register extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: AppColors.primaryBackground,
+                                  backgroundColor: AppColors.dialogBackground,
                                   title: Text('Account Created', style: TextStyle(color: Colors.white),),
                                   content: Text('Please check your email to activate your account.', style: TextStyle(color: Colors.white),),
                                   actions: [
@@ -132,7 +84,7 @@ class Register extends StatelessWidget {
                             icon: SizedBox(
                               width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                               height: isWindows ? 50 : 40,
-                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GOOGLE_BASE64_IMAGE_STRING)),
+                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
                             ),
                             onPressed: () {},
                           ),
@@ -141,7 +93,7 @@ class Register extends StatelessWidget {
                             icon: SizedBox(
                               width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                               height: isWindows ? 50 : 40,
-                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FACEBOOK_BASE64_IMAGE_STRING)),
+                              child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
                             ),
                             onPressed: () {},
                           ),
@@ -155,7 +107,7 @@ class Register extends StatelessWidget {
                         children: [
                           Text("Have an account?", style: TextStyle(color: Colors.white),),
                           TextButton(
-                            onPressed: () { Navigator.pushReplacementNamed(context, "/login"); },
+                            onPressed: () { Navigator.pushNamed(context, "/login"); },
                             child: Text('LOGIN', style: TextStyle(color: AppColors.tertiaryText),),
                           ),
                         ],

@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class LoginView extends StatelessWidget {
+  const LoginView({super.key});
 
 
   @override
@@ -41,53 +42,18 @@ class Login extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),// Email Label
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Email',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        // Email Input
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'example@email.com',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        // Password Label
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Password',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        // Password Input
-                        TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            hintText: 'password',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-
-
-                        SizedBox(height: 20),
-
+                        TextInput(label: "Email", hintText: "Enter email", onChanged: (value) {},),
+                        TextInput(label: "Password", hintText: "Enter password", onChanged: (value) {},),
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushReplacementNamed(context, "/forgot_password"); })
+                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/ai_bot"); })
                         ),
                         SizedBox(height: 10),
 
                         // Forgotten password
                         TextButton(
-                          onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/enter_email"); },
+                          onPressed: () { Navigator.pushNamed(context, "/forgot_password/enter_email"); },
                           child: Text('Forgotten password?', style: TextStyle(color: Colors.white),),
                         ),
 
@@ -103,7 +69,7 @@ class Login extends StatelessWidget {
                               icon: SizedBox(
                                 width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GOOGLE_BASE64_IMAGE_STRING)),
+                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),
@@ -112,7 +78,7 @@ class Login extends StatelessWidget {
                               icon: SizedBox(
                                 width: isWindows ? 50 : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FACEBOOK_BASE64_IMAGE_STRING)),
+                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),
@@ -126,7 +92,7 @@ class Login extends StatelessWidget {
                           children: [
                             Text("Don't have an account?", style: TextStyle(color: Colors.white),),
                             TextButton(
-                              onPressed: () { Navigator.pushReplacementNamed(context, "/register"); },
+                              onPressed: () { Navigator.pushNamed(context, "/register"); },
                               child: Text('REGISTER', style: TextStyle(color: AppColors.tertiaryText),),
                             ),
                           ],
