@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TextInput extends StatelessWidget {
-  final String label;
+  final String? label;
   final String hintText;
   final bool obscureText;
   final Function(String) onChanged;
@@ -10,7 +10,7 @@ class TextInput extends StatelessWidget {
 
   const TextInput({
     super.key,
-    required this.label,
+    this.label,
     required this.hintText,
     this.obscureText = false,
     required this.onChanged,
@@ -27,9 +27,20 @@ class TextInput extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           decoration: InputDecoration(
-            label: Text(label, style: TextStyle(fontSize: 16, color: Colors.white),),
+            label: label != null ? Text(label!, style: TextStyle(fontSize: 16, color: Colors.white),) : null,
             hintText: hintText,
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15), // Add border radius here
+              borderSide: BorderSide(color: Colors.grey), // Customize border color if needed
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15), // Add border radius for enabled state
+              borderSide: BorderSide(color: Colors.grey), // Customize border color if needed
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15), // Add border radius for focused state
+              borderSide: BorderSide(color: Colors.white), // Change color when focused
+            ),
           ),
         ),
         SizedBox(height: 20),
