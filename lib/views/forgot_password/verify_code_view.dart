@@ -68,6 +68,7 @@ class VerifyCodeView extends StatelessWidget {
 
                 // Code Input
                 TextInput(label: "Code", hintText: 'Enter you code (only 5 digits)', onChanged: (value){}),
+                SizedBox(height: 20),
 
 
                 // Reset Password Button

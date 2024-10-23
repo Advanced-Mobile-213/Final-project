@@ -13,11 +13,6 @@ class AIBotView extends StatelessWidget {
     List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2", "My Agent"];
 
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text('Settings', style: TextStyle(color: Colors.white),),
-        backgroundColor: AppColors.primaryBackground,
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -68,20 +63,6 @@ class AIBotView extends StatelessWidget {
         ),
       ),
       backgroundColor: AppColors.primaryBackground,
-      // Footer (Optional)
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            /* For testing */
-            onTap: () { Navigator.pushReplacementNamed(context, "/login");} ,
-            child: Text(
-              'Footer Content Here',
-              textAlign: TextAlign.center,
-            ),
-          )
-        ),
-      ),
     );
   }
 }

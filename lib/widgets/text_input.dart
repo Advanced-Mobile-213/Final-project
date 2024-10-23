@@ -43,7 +43,6 @@ class TextInput extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: 20),
       ],
     );
   }
