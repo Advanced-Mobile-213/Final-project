@@ -49,7 +49,16 @@ class LoginView extends StatelessWidget {
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/main"); })
+                          child: WideButton(
+                            text: 'SIGN IN',
+                            onPressed: (){
+                              Navigator.pushNamed(
+                                context,
+                                "/main_view",
+                                arguments: {'selectedTab': AppTab.chat}
+                              );
+                            },
+                          ),
                         ),
                         SizedBox(height: 10),
 

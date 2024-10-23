@@ -7,7 +7,6 @@ import '../../constants/app_colors.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
-
   @override
   _MainViewState createState() => _MainViewState();
 }
@@ -42,8 +41,11 @@ class _MainViewState extends State<MainView> {
       ),
     ],
   );
+  
   @override
   Widget build(BuildContext context) {
+    Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
+    int selectedTab = arguments != null ? arguments!['selectedTab'] : 0;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
@@ -53,6 +55,7 @@ class _MainViewState extends State<MainView> {
         ),
         home: DefaultTabController(
           length: 5,
+          initialIndex: selectedTab,
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: AppColors.secondaryBackground,
