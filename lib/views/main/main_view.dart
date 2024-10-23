@@ -1,3 +1,5 @@
+import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
+import 'package:chatbot_agents/views/ai_bot/chat_history_view.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -131,11 +133,12 @@ class _MainViewState extends State<MainView> {
             ),
             body: TabBarView(
               children: [
-                ProfileView(),
-                ProfileView(),
-                ProfileView(),
+                ChatHistoryView(),
+                AIBotView(),
                 Icon(FontAwesomeIcons.penNib),
                 Icon(FontAwesomeIcons.solidUserCircle),
+                ProfileView(),
+
               ],
             ),
             bottomNavigationBar: PreferredSize(

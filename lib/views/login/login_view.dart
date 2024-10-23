@@ -7,6 +7,7 @@ import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
+import '../../constants/app_tab.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -54,7 +55,7 @@ class LoginView extends StatelessWidget {
                             onPressed: (){
                               Navigator.pushNamed(
                                 context,
-                                "/main_view",
+                                "/main",
                                 arguments: {'selectedTab': AppTab.chat}
                               );
                             },

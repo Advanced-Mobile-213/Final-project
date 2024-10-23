@@ -36,28 +36,15 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           },
         ),
         centerTitle: true,
-        // title: Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Icon(
-        //       Icons.android, // Chatbot icon
-        //       color: Colors.white,
-        //     ),
-        //     SizedBox(width: 8),
-        //     Text(
-        //       selectedBot, // Display selected bot name
-        //       style: TextStyle(color: Colors.white),
-        //     ),
-        //   ],
-        // ),
         backgroundColor: AppColors.primaryBackground,
         actions: [
           // Dropdown button to select bot
           DropdownButton<String>(
+            alignment: AlignmentDirectional.centerEnd,
             value: selectedBot,
-            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
             dropdownColor: AppColors.secondaryBackground,
-            underline: SizedBox(),
+            underline: const SizedBox(),
             onChanged: (String? newValue) {
               setState(() {
                 selectedBot = newValue!;

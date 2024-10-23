@@ -1,4 +1,5 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
 
@@ -70,15 +71,6 @@ class ChatHistoryView extends StatelessWidget {
         screenHeight * 0.05; // Adjust icon size based on screen height
 
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: AppColors.primaryBackground,
-        title: Text(
-          'Gemini',
-          style: TextStyle(
-              color: Colors.white, fontSize: 24), // Responsive text size
-        ),
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -160,7 +152,10 @@ class ChatThread extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/ai_bot/chats/thread');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChatThreadView()),
+        );
       },
       child: Card(
         color: Colors.transparent,
