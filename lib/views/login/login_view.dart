@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/constants/app_tab.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
@@ -53,7 +54,7 @@ class LoginView extends StatelessWidget {
                               Navigator.pushNamed(
                                 context, 
                                 "/main_view",
-                                arguments: {'selectedTab': 0}
+                                arguments: {'selectedTab': AppTab.chat}
                               ); 
                             },
                           ),
