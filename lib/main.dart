@@ -11,7 +11,7 @@ void main() {
     initialRoute: "/login",
     routes: {
       '/login' : (context) => LoginView(),
-      '/main_view' : (context) => MainView(),
+      '/main' : (context) => MainView(),
     },
 
   ));
