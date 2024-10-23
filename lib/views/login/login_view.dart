@@ -54,7 +54,7 @@ class LoginView extends StatelessWidget {
                             text: 'SIGN IN',
                             onPressed: (){
                               Navigator.pushNamed(
-                                context,
+                                context, 
                                 "/main",
                                 arguments: {'selectedTab': AppTab.chat}
                               );
