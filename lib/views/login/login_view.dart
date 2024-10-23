@@ -47,7 +47,16 @@ class LoginView extends StatelessWidget {
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/ai_bot"); })
+                          child: WideButton(
+                            text: 'SIGN IN', 
+                            onPressed: (){ 
+                              Navigator.pushNamed(
+                                context, 
+                                "/main_view",
+                                arguments: {'selectedTab': 0}
+                              ); 
+                            },
+                          ),
                         ),
                         SizedBox(height: 10),
 
