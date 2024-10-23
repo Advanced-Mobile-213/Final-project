@@ -43,11 +43,13 @@ class LoginView extends StatelessWidget {
                         ),
                         SizedBox(height: 20),// Email Label
                         TextInput(label: "Email", hintText: "Enter email", onChanged: (value) {},),
+                        SizedBox(height: 20),
                         TextInput(label: "Password", hintText: "Enter password", onChanged: (value) {},),
+                        SizedBox(height: 20),
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
-                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/ai_bot"); })
+                          child: WideButton(text: 'SIGN IN', onPressed: (){ Navigator.pushNamed(context, "/main"); })
                         ),
                         SizedBox(height: 10),
 

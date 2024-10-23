@@ -1,5 +1,5 @@
-import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 
 class ChatThreadView extends StatefulWidget {
@@ -17,6 +17,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     {'content': 'I can help with many things like answering questions and more.', 'isUserMessage': false},
   ];
 
+  // List of bots
+  final List<String> bots = ['ChatGPT 4.0', 'Gemini', 'Claude'];
+  String selectedBot = 'ChatGPT 4.0'; // Default bot
+
   @override
   Widget build(BuildContext context) {
     // Use MediaQuery to make the layout responsive
@@ -26,27 +30,47 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white,), // Back arrow icon
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
           onPressed: () {
             Navigator.pop(context); // Pops the current screen from the navigation stack
           },
         ),
         centerTitle: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.android, // Chatbot icon
-              color: Colors.white,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Gemini', // Chatbot name
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
+        // title: Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     Icon(
+        //       Icons.android, // Chatbot icon
+        //       color: Colors.white,
+        //     ),
+        //     SizedBox(width: 8),
+        //     Text(
+        //       selectedBot, // Display selected bot name
+        //       style: TextStyle(color: Colors.white),
+        //     ),
+        //   ],
+        // ),
         backgroundColor: AppColors.primaryBackground,
+        actions: [
+          // Dropdown button to select bot
+          DropdownButton<String>(
+            value: selectedBot,
+            icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+            dropdownColor: AppColors.secondaryBackground,
+            underline: SizedBox(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedBot = newValue!;
+              });
+            },
+            items: bots.map<DropdownMenuItem<String>>((String bot) {
+              return DropdownMenuItem<String>(
+                value: bot,
+                child: Text(bot, style: TextStyle(color: Colors.white)),
+              );
+            }).toList(),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -74,13 +98,19 @@ class _ChatThreadViewState extends State<ChatThreadView> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
-                  child: TextInput(hintText: "Enter message", onChanged: (value){})
+                  flex: 4,
+                  child: TextInput(
+                    hintText: "Enter message",
+                    controller: _controller,
+                    onChanged: (value) {},
+                  ),
                 ),
                 SizedBox(width: screenWidth * 0.02),
-                IconButton(
+                Expanded(child: IconButton(
                   icon: Icon(Icons.send, color: Colors.white),
                   onPressed: _sendMessage,
-                ),
+                ),)
+
               ],
             ),
           ),
@@ -148,12 +178,12 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         // Add user message
         messages.insert(0, {'content': _controller.text, 'isUserMessage': true});
 
-        // Simulate chatbot reply
+        // Simulate chatbot reply based on selected bot
         Future.delayed(Duration(milliseconds: 500), () {
           setState(() {
             messages.insert(0, {
-              'content': 'This is a chatbot reply to: ${_controller.text}',
-              'isUserMessage': false
+              'content': '[$selectedBot] This is a reply to: ${_controller.text}',
+              'isUserMessage': false,
             });
           });
         });

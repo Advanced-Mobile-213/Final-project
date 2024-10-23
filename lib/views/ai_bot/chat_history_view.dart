@@ -1,7 +1,6 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
-import '../../constants/app_icons.dart';
 
 class ChatHistoryView extends StatelessWidget {
   const ChatHistoryView({super.key});
@@ -108,12 +107,14 @@ class ChatHistoryView extends StatelessWidget {
                 child: ListView(
                   children: [
                     ChatThread(
+                      botNames: ["ChatGPT", "Gemini"],
                       title: 'Hello',
                       time: 'a few seconds ago',
                       lastMessage:
                           'You can call me Assistant. How can I help you?',
                     ),
                     ChatThread(
+                      botNames: ["Claude", "My Agent"],
                       title: 'AI Service',
                       time: '7 minutes ago',
                       lastMessage: 'Side offers All-in-One AI Service',
@@ -133,23 +134,6 @@ class ChatHistoryView extends StatelessWidget {
         child: const Icon(Icons.add),
         backgroundColor: AppColors.secondaryBackground,
       ),
-      // Footer (Optional)
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushReplacementNamed(context, "/login");
-            },
-            child: Text(
-              'Footer Content Here',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.white), // Ensure footer text is visible
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -158,78 +142,100 @@ class ChatThread extends StatelessWidget {
   final String title;
   final String time;
   final String lastMessage;
+  final List<String> botNames; // List to hold bot names
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const ChatThread({
-    super.key,
+    Key? key,
     required this.title,
     required this.time,
     required this.lastMessage,
-  });
+    required this.botNames, // Make this required
+    this.onEdit,
+    this.onDelete,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: (){ Navigator.pushNamed(context, '/ai_bot/chats/thread'); },
-        child: Card(
-          color: Colors.transparent,
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.white.withOpacity(0.1)),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        lastMessage,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        time,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
+      onTap: () {
+        Navigator.pushNamed(context, '/ai_bot/chats/thread');
+      },
+      child: Card(
+        color: Colors.transparent,
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      onPressed: () {
-                        // Handle edit action
-                      },
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        // Handle delete action
-                      },
+                    const SizedBox(height: 4),
+                    Text(
+                      lastMessage,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      time,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Display bot names
+                    Text(
+                      'Bots: ${botNames.join(', ')}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    onPressed: onEdit ?? () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Edit action not implemented')),
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: onDelete ?? () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Delete action not implemented')),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-        )
+        ),
+      ),
     );
   }
 }
+
