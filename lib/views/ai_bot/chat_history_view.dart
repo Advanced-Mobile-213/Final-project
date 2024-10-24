@@ -6,63 +6,6 @@ import 'package:flutter/material.dart';
 class ChatHistoryView extends StatelessWidget {
   const ChatHistoryView({super.key});
 
-  void _createNewThreadDialog(BuildContext context) {
-    final TextEditingController titleController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.dialogBackground,
-          title: const Text(
-            'New Chat Thread Title',
-            style: TextStyle(color: Colors.white, fontSize: 24),
-          ),
-          content: TextField(
-              style: TextStyle(color: Colors.white),
-              controller: titleController,
-              decoration: InputDecoration(
-                hintStyle: TextStyle(color: Colors.grey),
-                hintText: 'Enter chat thread title',
-                border: OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(10), // Add border radius here
-                  borderSide: BorderSide(
-                      color: Colors.grey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                      10), // Add border radius for focused state
-                  borderSide: BorderSide(
-                      color: Colors.white), // Change color when focused
-                ),
-              )),
-          actions: [
-            TextButton(
-              onPressed: () {
-                final String newThreadTitle = titleController.text;
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text(
-                'Create',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pop(); // Close the dialog without doing anything
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // Get the screen height
@@ -80,15 +23,32 @@ class ChatHistoryView extends StatelessWidget {
               // Title
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  'Chat History',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
+                  children: [
+                    Text(
+                      'Chat History',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(width: 5), // Space between title and number of threads
+                    Text(
+                      '(2)',  // Number of chat threads
+                      style: TextStyle(
+                        color: Colors.grey[400], // Lighter text for the count
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                )
               ),
+
+
 
               // Search Bar
               SearchInput(onChanged: (value) {}),
@@ -126,6 +86,64 @@ class ChatHistoryView extends StatelessWidget {
         child: const Icon(Icons.add),
         backgroundColor: AppColors.secondaryBackground,
       ),
+    );
+  }
+
+  void _createNewThreadDialog(BuildContext context) {
+    final TextEditingController titleController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.dialogBackground,
+          title: const Text(
+            'New Chat Thread Title',
+            style: TextStyle(color: Colors.white, fontSize: 24),
+          ),
+          content: TextField(
+              style: TextStyle(color: Colors.white),
+              controller: titleController,
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: Colors.grey),
+                hintText: 'Enter chat thread title',
+                border: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(10), // Add border radius here
+                  borderSide: BorderSide(
+                      color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                      10), // Add border radius for focused state
+                  borderSide: BorderSide(
+                      color: Colors.white), // Change color when focused
+                ),
+              )),
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(); // Close the dialog without doing anything
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                final String newThreadTitle = titleController.text;
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text(
+                'Create',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -210,18 +228,12 @@ class ChatThread extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.white),
-                    onPressed: onEdit ?? () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Edit action not implemented')),
-                      );
-                    },
+                    onPressed: () {_showEditDialog(context); }
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: onDelete ?? () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Delete action not implemented')),
-                      );
+                    onPressed:  () {
+                        _showDeleteConfirmationDialog(context);
                     },
                   ),
                 ],
@@ -232,5 +244,92 @@ class ChatThread extends StatelessWidget {
       ),
     );
   }
+
+  // Method to show the Edit Dialog
+  void _showEditDialog(BuildContext context) {
+    TextEditingController editController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.dialogBackground,
+          title: const Text('Edit title', style: TextStyle(color: Colors.white),),
+          content: TextField(
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintStyle: TextStyle(color: Colors.grey),
+                hintText: 'Enter new chat thread title',
+                border: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(10), // Add border radius here
+                  borderSide: BorderSide(
+                      color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                      10), // Add border radius for focused state
+                  borderSide: BorderSide(
+                      color: Colors.white), // Change color when focused
+                ),
+              )),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel', style: TextStyle(color: Colors.white),),
+            ),
+            TextButton(
+              onPressed: () {
+                String newValue = editController.text;
+                if (newValue.isNotEmpty) {
+                  // Handle edit action here
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('New title edited: $newValue')),
+                  );
+                }
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Save',style: TextStyle(color: Colors.white), ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Method to show the Delete Confirmation Dialog
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.dialogBackground,
+          title: const Text('Delete Item', style: TextStyle(color: Colors.white),),
+          content: const Text('Are you sure you want to delete this thread chat?', style: TextStyle(color: Colors.white),),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel' , style: TextStyle(color: Colors.white),),
+            ),
+            TextButton(
+              onPressed: () {
+                // Handle delete action here
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Item deleted')),
+                );
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Delete', style: TextStyle(color: Colors.white),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 
