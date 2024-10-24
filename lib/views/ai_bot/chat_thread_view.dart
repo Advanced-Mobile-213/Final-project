@@ -84,8 +84,11 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+
+
+                // Text input area
                 Expanded(
-                  flex: 4,
+                  flex: 5,
                   child: TextInput(
                     hintText: "Enter message",
                     controller: _controller,
@@ -93,14 +96,26 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.02),
-                Expanded(child: IconButton(
-                  icon: Icon(Icons.send, color: Colors.white),
-                  onPressed: _sendMessage,
-                ),)
 
+                // Send button
+                Expanded(
+                  flex: 2,
+                  child: Row(children: [
+                    // Add an IconButton for image selection
+                    IconButton(
+                      icon: Icon(Icons.image, color: Colors.white), // Image icon
+                      onPressed: (){}, // Function to pick image
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.send, color: Colors.white),
+                      onPressed: _sendMessage,
+                    ),
+               ],)
+
+                ),
               ],
             ),
-          ),
+          )
         ],
       ),
       backgroundColor: AppColors.primaryBackground,
