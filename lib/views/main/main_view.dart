@@ -131,8 +131,8 @@ class _MainViewState extends State<MainView> {
             ),
             body: TabBarView(
               children: [
-                ChatThreadView(),
-                PublicPromptView(),
+                ChatHistoryView(),
+                AIBotView(),
                 ProfileView(),
                 PromptView(),
                 ProfileView(),

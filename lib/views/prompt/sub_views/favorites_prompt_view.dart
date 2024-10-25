@@ -1,3 +1,7 @@
+import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
+import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
+import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
+import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
@@ -10,6 +14,41 @@ class FavoritesPromptView extends StatefulWidget {
 }
 
 class _FavoritesPromptViewState extends State<FavoritesPromptView> {
+  void _showAddPromptDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AddPromptPopUpDialog();
+        }
+    );
+  }
+
+  void _showConfirmDeletePromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return ConfirmDeletePromptPopUpDialog(index: index,);
+        }
+    );
+  }
+
+  void _showDetailPromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(index: index);
+        }
+    );
+  }
+
+  void _showUpdatePromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return UpdatePromptPopUpDialog(index: index);
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,6 +75,7 @@ class _FavoritesPromptViewState extends State<FavoritesPromptView> {
                 ),
               ),
               child: ListTile(
+                onTap: () => _showDetailPromptDialog(context, index),
                 title: Text(
                   'Prompt ${index + 1}',
                   style: const TextStyle(
@@ -62,6 +102,7 @@ class _FavoritesPromptViewState extends State<FavoritesPromptView> {
                     ),
                     IconButton(
                       onPressed: (){
+                        _showDetailPromptDialog(context, index);
                         //_showConfirmDeletePromptDialog(context, index);
                       },
                       icon: const Icon(

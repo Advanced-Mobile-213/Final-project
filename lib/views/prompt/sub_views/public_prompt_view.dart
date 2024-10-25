@@ -1,4 +1,6 @@
+import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
+import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
@@ -20,6 +22,24 @@ class _PublicPromptViewState extends State<PublicPromptView> {
         }
     );
   } 
+
+  void _showAddPromptDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AddPromptPopUpDialog();
+        }
+    );
+  }
+
+  void _showDetailPromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(index: index);
+        }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +68,7 @@ class _PublicPromptViewState extends State<PublicPromptView> {
                 ),
               ),
               child: ListTile(
+                onTap: () => _showDetailPromptDialog(context, index),
                 title: Text(
                   'Prompt ${index + 1}',
                   style: const TextStyle(
@@ -74,7 +95,7 @@ class _PublicPromptViewState extends State<PublicPromptView> {
                     ),
                     IconButton(
                       onPressed: (){
-                        
+                        _showDetailPromptDialog(context, index);
                       },
                       icon: const Icon(
                         Icons.info,
