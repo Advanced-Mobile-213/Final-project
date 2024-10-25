@@ -7,4 +7,14 @@
 - Link github (branch mock-ui): https://github.com/Advanced-Mobile-213/Final-project/tree/mock-ui
 - Link demo: 
 ## Cấu trúc Project
-|-- lib | |-- constants # Contains constants used throughout the app | |-- models # Data models bound to ViewModels | |-- viewmodels # ViewModels bound to Views | |-- views # Screens displayed on the device | |-- utils # Utility functions for various logic processes | |-- widgets # Reusable widgets for screens |-- main.dart # App entry point
+
+```
+lib/
+├── constants/    # Chứa những hằng số dùng xuyên suốt trong app
+├── models/       # Chứa các Model để bind vào các ViewModel
+├── viewmodels/   # Chứa các ViewModel để bind vào View
+├── views/        # Chứa các screens để hiển thị lên màn hình
+├── utils/        # Chứa các utils hỗ trợ cho các xử lý logic
+├── widgets/      # Chứa các widgets dùng chung cho các screens
+└── main.dart     # Entry point của app
+```
