@@ -1,4 +1,7 @@
+import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
+import 'package:chatbot_agents/views/prompt/prompt_view.dart';
+import 'package:chatbot_agents/views/prompt/sub_views/public_prompt_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -44,16 +47,9 @@ class _MainViewState extends State<MainView> {
   
   @override
   Widget build(BuildContext context) {
-    Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
+    Map? arguments = ModalRoute.of(context)?.settings.arguments as Map?;
     int selectedTab = arguments != null ? arguments!['selectedTab'] : 0;
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: DefaultTabController(
+    return DefaultTabController(
           length: 5,
           initialIndex: selectedTab,
           child: Scaffold(
@@ -122,7 +118,9 @@ class _MainViewState extends State<MainView> {
                       leading: const Icon(Icons.email),
                       title: const Text('Email Reply'),
                       onTap: () {
-                        Navigator.pop(context);
+                      
+                        //Navigator.pop(context);
+                        Navigator.pushNamed(context, '/email-reply');
                       },
                     ),
                   ),
@@ -131,11 +129,11 @@ class _MainViewState extends State<MainView> {
             ),
             body: TabBarView(
               children: [
+                ChatThreadView(),
+                PublicPromptView(),
                 ProfileView(),
+                PromptView(),
                 ProfileView(),
-                ProfileView(),
-                Icon(FontAwesomeIcons.penNib),
-                Icon(FontAwesomeIcons.solidUserCircle),
               ],
             ),
             bottomNavigationBar: PreferredSize(
@@ -146,7 +144,6 @@ class _MainViewState extends State<MainView> {
                 ),
             ),
           ),
-        ),
-    );
+        );
   }
 }
