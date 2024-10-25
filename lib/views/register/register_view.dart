@@ -44,8 +44,14 @@ class RegisterView extends StatelessWidget {
                       SizedBox(height: 20),
 
                       TextInput(label: "Name", hintText: "Enter your name", onChanged: (value) {},),
+                      SizedBox(height: 20),
+
                       TextInput(label: "Email", hintText: "Enter your email", onChanged: (value) {},),
+                      SizedBox(height: 20),
+
                       TextInput(label: "Password", hintText: "Enter your password", onChanged: (value) {},),
+                      SizedBox(height: 20),
+
                       // Sign in Button
                       SizedBox(
                           width: double.infinity, // Button fills the width

@@ -46,6 +46,7 @@ class EnterEmailView extends StatelessWidget {
                 SizedBox(height: 20),
                 // Email Input
                 TextInput(label: "Email", hintText: 'Enter your email', onChanged: (value){}),
+                SizedBox(height: 20),
 
                 // Reset Password Button
                 WideButton(text: "Reset Password", onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/verify_code");})
