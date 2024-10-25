@@ -1,4 +1,5 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/constants/app_icons.dart';
 import 'package:chatbot_agents/widgets/chatbot_radius_card.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ class AIBotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2", "My Agent"];
+    List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2"];
+    List<String> chatbotIcons = [AppIcons.GeminiImageBotUrl, AppIcons.ChatGPTImageUrl, AppIcons.BardImageUrl, AppIcons.ClaudeImageUrl, AppIcons.Claude2ImageUrl];
 
     return Scaffold(
       body: Center(
@@ -57,7 +59,7 @@ class AIBotView extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: List<Widget>.generate(5, (index) {
-                    return ChatbotRadiusCard(botName: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");},);
+                    return ChatbotRadiusCard(botName: chatbotNames[index], imageUrl: chatbotIcons[index] , onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");},);
                   }),
                 ),
               ),
