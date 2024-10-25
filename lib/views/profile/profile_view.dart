@@ -2,8 +2,14 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
+ 
   @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -145,9 +151,9 @@ class ProfileView extends StatelessWidget {
                               ),
                               trailing: TextButton(
                                 onPressed: () {
-                                  // Add your onPressed code here!
+                                  Navigator.pushNamed(context, '/subscription');
                                 },
-                                style: ButtonStyle(
+                                style:  ButtonStyle(
                                   backgroundColor: WidgetStateProperty.all(AppColors.tertiaryBackground),
                                 ),
                                 child: const Text('Upgrade',
@@ -188,78 +194,67 @@ class ProfileView extends StatelessWidget {
                                     fontWeight: FontWeight.bold
                                 )
                             ),
+                            
+                            
                             Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: AppColors.primaryBackground,
-                                  border: Border.all(
-                                    color: AppColors.primaryBackground,
-                                  ),
-                                ),
-                                child: Card(
-                                  child: ListTile(
-                                    tileColor: AppColors.primaryBackground,
-                                    leading: Icon(Icons.settings,
-                                        color: AppColors.quaternaryText
-                                    ),
-                                    title: const Text('Chat Settings',
-                                        style: const TextStyle(
-                                            color: AppColors.quaternaryText,
-                                            fontSize: 20,
-                                        )
-                                    ),
-                                    trailing: Icon(Icons.arrow_forward_ios,
-                                        color: AppColors.quaternaryText,
-                                    ),
-                                    onTap: () {
-                                      // Add your onPressed code here!
-                                    },
-                                  ),
-                                )
-                            ),
-                            Container(
-                                child: Card(
-                                  child: ListTile(
-                                    tileColor: AppColors.primaryBackground,
-                                    leading: Icon(Icons.dark_mode,
+                                child: ListTile(
+                                  tileColor: AppColors.primaryBackground,
+                                  leading: Icon(Icons.settings,
                                       color: AppColors.quaternaryText
-                                    ),
-                                    title: const Text('Color Scheme',
-                                        style: const TextStyle(
-                                            color: AppColors.quaternaryText,
-                                            fontSize: 20,
-                                        )
-                                    ),
-                                    trailing: Icon(Icons.arrow_forward_ios,
-                                        color: AppColors.quaternaryText
-                                    ),
-                                    onTap: () {
-                                      // Add your onPressed code here!
-                                    },
                                   ),
-                                )
+                                  title: const Text('Chat Settings',
+                                      style: const TextStyle(
+                                          color: AppColors.quaternaryText,
+                                          fontSize: 20,
+                                      )
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: AppColors.quaternaryText,
+                                  ),
+                                  onTap: () {
+                                    // Add your onPressed code here!
+                                  },
+                                ),
                             ),
                             Container(
-                                child: Card(
-                                  child: ListTile(
-                                    tileColor: AppColors.primaryBackground,
-                                    leading: Icon(FontAwesomeIcons.globe,
-                                        color: AppColors.quaternaryText
-                                    ),
-                                    title: const Text('Language',
-                                        style: const TextStyle(
-                                            color: AppColors.quaternaryText,
-                                            fontSize: 20,
-                                        )
-                                    ),
-                                    trailing: Icon(Icons.arrow_forward_ios,
-                                        color: AppColors.quaternaryText
-                                    ),
-                                    onTap: () {
-                                      // Add your onPressed code here!
-                                    },
+                                child: ListTile(
+                                  tileColor: AppColors.primaryBackground,
+                                  leading: Icon(Icons.dark_mode,
+                                    color: AppColors.quaternaryText
                                   ),
-                                )
+                                  title: const Text('Color Scheme',
+                                      style: const TextStyle(
+                                          color: AppColors.quaternaryText,
+                                          fontSize: 20,
+                                      )
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: AppColors.quaternaryText
+                                  ),
+                                  onTap: () {
+                                    // Add your onPressed code here!
+                                  },
+                                ),
+                            ),
+                            Container(
+                                child: ListTile(
+                                  tileColor: AppColors.primaryBackground,
+                                  leading: Icon(FontAwesomeIcons.globe,
+                                      color: AppColors.quaternaryText
+                                  ),
+                                  title: const Text('Language',
+                                      style: const TextStyle(
+                                          color: AppColors.quaternaryText,
+                                          fontSize: 20,
+                                      )
+                                  ),
+                                  trailing: Icon(Icons.arrow_forward_ios,
+                                      color: AppColors.quaternaryText
+                                  ),
+                                  onTap: () {
+                                    // Add your onPressed code here!
+                                  },
+                                ),
                             ),
                           ],
                         ),
@@ -274,4 +269,6 @@ class ProfileView extends StatelessWidget {
       )
     );
   }
+  
 }
+

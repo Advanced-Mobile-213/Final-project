@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,15 +14,22 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
     var width = MediaQuery.of(context).size.width;
     // TODO: implement build
     return AlertDialog(
+      backgroundColor: AppColors.secondaryBackground,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          const Text('Delete Prompt'),
+          const Text('Delete Prompt',
+            style: TextStyle(
+              color: AppColors.quaternaryText,
+            ),
+          ),
           IconButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: const Icon(Icons.close),
+            icon: const Icon(Icons.close,
+              color: AppColors.quaternaryText,
+            ),
           ),
         ],
       ),
@@ -35,7 +43,7 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
                   margin: const EdgeInsets.only(bottom: 5, top: 5),
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.yellow[100],
+                    color: AppColors.quaternaryText,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Row(
@@ -43,7 +51,7 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
                       Container(
                         margin: EdgeInsets.only(right: 10),
                         child: Icon(Icons.warning,
-                          color: Colors.red,
+                          color: AppColors.tertiaryText,
                           size: 50,
                         ),
                       ),
@@ -55,6 +63,7 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
+                              color: AppColors.tertiaryText,
                             ),
                           ),
                       ),
@@ -72,7 +81,11 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Yes'),
+          child: const Text('Yes',
+            style: TextStyle(
+              color: AppColors.tertiaryText,
+            ),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -81,8 +94,8 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
           },
           child: Text('No'),
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.blue, // Text color
+            foregroundColor: AppColors.quaternaryText,
+            backgroundColor: AppColors.tertiaryBackground, // 
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
             textStyle: TextStyle(fontSize: 16), // Text style
           ),
@@ -94,8 +107,8 @@ class ConfirmDeletePromptPopUpDialog extends StatelessWidget{
           },
           child: Text('Cancel'),
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.blue, // Text color
+            foregroundColor: AppColors.quaternaryText,
+            backgroundColor: AppColors.tertiaryBackground, // 
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
             textStyle: TextStyle(fontSize: 16), // Text style
           ),
