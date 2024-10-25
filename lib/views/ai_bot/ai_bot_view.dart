@@ -36,18 +36,33 @@ class AIBotView extends StatelessWidget {
               SearchInput(onChanged: (value) {}, hintText: "Search",),
               SizedBox(height: 16),
               // Categories
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
-                  SizedBox(width: 10),
-                  CategoryButton(label: 'Design', onPressed: (){}),
-                  SizedBox(width: 10),
-                  CategoryButton(label: 'Social', onPressed: (){}),
-                  SizedBox(width: 10),
-                  CategoryButton(label: 'Work', onPressed: (){}),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
+                    SizedBox(width: 10),
+                    CategoryButton(label: 'Design', onPressed: (){}),
+                    SizedBox(width: 10),
+                    CategoryButton(label: 'Social', onPressed: (){}),
+                    SizedBox(width: 10),
+                    CategoryButton(label: 'Work', onPressed: (){}),
+                  ],
+                ),
               ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
+              //     SizedBox(width: 10),
+              //     CategoryButton(label: 'Design', onPressed: (){}),
+              //     SizedBox(width: 10),
+              //     CategoryButton(label: 'Social', onPressed: (){}),
+              //     SizedBox(width: 10),
+              //     CategoryButton(label: 'Work', onPressed: (){}),
+              //   ],
+              // ),
               SizedBox(height: 16),
 
               // Radius Cards for Bots
