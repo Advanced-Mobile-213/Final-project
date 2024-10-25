@@ -5,7 +5,7 @@
 - 21120589: Trương Anh Tuấn
 ## Milestone-1: Xây dựng mock-ui cho toàn bộ các màn hình trong đô án cuối kì
 - Link github (branch mock-ui): https://github.com/Advanced-Mobile-213/Final-project/tree/mock-ui
-- Link demo: 
+- Link demo: https://www.youtube.com/watch?v=K1GLePm-LF8&ab_channel=TuanTruong
 ## Cấu trúc Project
 
 ```
