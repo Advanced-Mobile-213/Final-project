@@ -1,6 +1,6 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class CustomDropdownButton extends StatelessWidget {
   const CustomDropdownButton({

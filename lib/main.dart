@@ -18,7 +18,7 @@ void main() {
     routes: {
       '/login' : (context) => LoginView(),
       '/main' : (context) => MainView(),
-      '/subscription': (context) =>  SubscriptionView(),
+      '/subscription': (context) => const SubscriptionView(),
       '/email-reply': (context) => EmailReplyView(),
     },
 
