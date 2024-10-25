@@ -34,11 +34,26 @@ class _AiBotPublishViewState extends State<AiBotPublishView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const PublishCard(name: 'Slack', status: 'Configured'),
+                    PublishCard(
+                      name: 'Slack',
+                      status: 'Configured',
+                      buttonText: 'Configure',
+                      onTap: () {},
+                    ),
                     const Gap(32),
-                    const PublishCard(name: 'Telegram', status: 'Configured'),
+                    PublishCard(
+                      name: 'Telegram',
+                      status: 'Configured',
+                      buttonText: 'Configure',
+                      onTap: () {},
+                    ),
                     const Gap(32),
-                    const PublishCard(name: 'Messenger', status: 'Configured'),
+                    PublishCard(
+                      name: 'Messenger',
+                      status: 'Configured',
+                      buttonText: 'Configure',
+                      onTap: () {},
+                    ),
                     const Gap(32),
                     WideButton(
                       width: 150,
