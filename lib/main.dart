@@ -1,4 +1,3 @@
-import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/views/email_reply/email_reply_view.dart';
 import 'package:chatbot_agents/views/login/login_view.dart';
