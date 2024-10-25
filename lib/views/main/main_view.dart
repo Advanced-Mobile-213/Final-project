@@ -1,9 +1,6 @@
-import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
 import 'package:chatbot_agents/views/ai_bot/chat_history_view.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
-import 'package:chatbot_agents/views/prompt/prompt_view.dart';
-import 'package:chatbot_agents/views/prompt/sub_views/public_prompt_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -49,9 +46,16 @@ class _MainViewState extends State<MainView> {
   
   @override
   Widget build(BuildContext context) {
-    Map? arguments = ModalRoute.of(context)?.settings.arguments as Map?;
+    Map arguments = ModalRoute.of(context)?.settings.arguments as Map;
     int selectedTab = arguments != null ? arguments!['selectedTab'] : 0;
-    return DefaultTabController(
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: DefaultTabController(
           length: 5,
           initialIndex: selectedTab,
           child: Scaffold(
@@ -120,9 +124,7 @@ class _MainViewState extends State<MainView> {
                       leading: const Icon(Icons.email),
                       title: const Text('Email Reply'),
                       onTap: () {
-                      
-                        //Navigator.pop(context);
-                        Navigator.pushNamed(context, '/email-reply');
+                        Navigator.pop(context);
                       },
                     ),
                   ),
@@ -131,11 +133,12 @@ class _MainViewState extends State<MainView> {
             ),
             body: TabBarView(
               children: [
-                ChatThreadView(),
-                PublicPromptView(),
+                ChatHistoryView(),
+                AIBotView(),
+                Icon(FontAwesomeIcons.penNib),
+                Icon(FontAwesomeIcons.solidUserCircle),
                 ProfileView(),
-                PromptView(),
-                ProfileView(),
+
               ],
             ),
             bottomNavigationBar: PreferredSize(
@@ -146,6 +149,7 @@ class _MainViewState extends State<MainView> {
                 ),
             ),
           ),
-        );
+        ),
+    );
   }
 }

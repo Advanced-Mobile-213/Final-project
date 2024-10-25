@@ -1,33 +1,55 @@
+import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import '../../constants/app_colors.dart';
+class MyPromptView extends StatelessWidget {
+  MyPromptView({Key? key}) : super(key: key);
 
-class PromptView extends StatefulWidget {
-  const PromptView({Key? key}) : super(key: key);
+  void _showAddPromptDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(index: 1,);
+        }
+    );
+  }
 
-  @override
-  State<PromptView> createState() => _PromptViewState();
-}
+  void _showConfirmDeletePromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(index: 1,);
+        }
+    );
+  }
 
-class _PromptViewState extends State<PromptView> {
+  void _showDetailPromptDialog(BuildContext context, int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(index: index);
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBackground,
+        backgroundColor: Colors.black,
         title: Text('Prompt Library',
             style: const TextStyle(
-                color: AppColors.quaternaryText,
+                color: Colors.white
             )
         ),
         actions: [
           IconButton(
               onPressed: () {
-                //_showAddPromptDialog(context);
+                _showAddPromptDialog(context);
               },
               icon: Icon(
                 Icons.add_circle,
-                color: AppColors.quaternaryText,
+                color: Colors.white,
               )
           )
         ],
@@ -38,8 +60,8 @@ class _PromptViewState extends State<PromptView> {
           children: <Widget>[
             Container(
                 margin: const EdgeInsets.symmetric(
-                    horizontal: 5.0,
-                    vertical: 5.0
+                    horizontal: 10.0,
+                    vertical: 10.0
                 ),
                 alignment: Alignment.centerLeft,
                 child: SingleChildScrollView(
@@ -48,56 +70,147 @@ class _PromptViewState extends State<PromptView> {
                     children: [
                       Container(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 5.0,
-                            vertical: 5.0
+                            horizontal: 10.0,
+                            vertical: 10.0
                         ),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryBackground,
+                          color: Colors.black,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: const Text(
-                          'My Prompt',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                            fontSize: 20.0,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Prompt 1',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Text(
+                              'Description 1',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Container(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 5.0,
-                            vertical: 5.0
+                            horizontal: 10.0,
+                            vertical: 10.0
                         ),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryBackground,
+                          color: Colors.black,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: const Text(
-                          'Public Prompt',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                            fontSize: 20.0,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Prompt 2',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Text(
+                              'Description 2',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Container(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 5.0,
-                            vertical: 5.0
+                            horizontal: 10.0,
+                            vertical: 10.0
                         ),
                         padding: const EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryBackground,
+                          color: Colors.black,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        child: const Text(
-                          'Favorites Prompt',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                            fontSize: 20.0,
-                          ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Prompt 3',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Text(
+                              'Description 3',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                            vertical: 10.0
+                        ),
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Prompt 4',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Text(
+                              'Description 4',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                            vertical: 10.0
+                        ),
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Prompt 5',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Text(
+                              'Description 5',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -178,7 +291,7 @@ class _PromptViewState extends State<PromptView> {
                                     ),
                                     IconButton(
                                       onPressed: (){
-                                        //_showConfirmDeletePromptDialog(context, index);
+                                        _showConfirmDeletePromptDialog(context, index);
                                       },
                                       icon: Icon(
                                         Icons.delete,
@@ -194,7 +307,7 @@ class _PromptViewState extends State<PromptView> {
                                     ),
                                     IconButton(
                                       onPressed: (){
-                                        //_showDetailPromptDialog(context, index);
+                                        _showDetailPromptDialog(context, index);
                                       },
                                       icon: Icon(
                                         Icons.info,
@@ -218,4 +331,6 @@ class _PromptViewState extends State<PromptView> {
     );
 
   }
+
 }
+
