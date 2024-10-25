@@ -50,7 +50,11 @@ class UpdatePasswordView extends StatelessWidget {
                 SizedBox(height: 20),
 
                 TextInput(label: 'New password', hintText: 'Enter your new password', onChanged: (value) {},),
+                SizedBox(height: 20),
+
                 TextInput(label: 'Confirm password', hintText: 'Confirm your password', onChanged: (value) {}),
+                SizedBox(height: 20),
+
 
                 // Reset Password Button
                 WideButton(

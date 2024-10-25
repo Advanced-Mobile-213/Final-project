@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/constants/app_tab.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/app_icons.dart';
+import '../../constants/app_tab.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -44,18 +44,20 @@ class LoginView extends StatelessWidget {
                         ),
                         SizedBox(height: 20),// Email Label
                         TextInput(label: "Email", hintText: "Enter email", onChanged: (value) {},),
+                        SizedBox(height: 20),
                         TextInput(label: "Password", hintText: "Enter password", onChanged: (value) {},),
+                        SizedBox(height: 20),
                         // Sign in Button
                         SizedBox(
                           width: double.infinity, // Button fills the width
                           child: WideButton(
-                            text: 'SIGN IN', 
-                            onPressed: (){ 
+                            text: 'SIGN IN',
+                            onPressed: (){
                               Navigator.pushNamed(
                                 context, 
                                 "/main",
                                 arguments: {'selectedTab': AppTab.chat}
-                              ); 
+                              );
                             },
                           ),
                         ),

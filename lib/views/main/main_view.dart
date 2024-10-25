@@ -1,4 +1,6 @@
 import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
+import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
+import 'package:chatbot_agents/views/ai_bot/chat_history_view.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:chatbot_agents/views/prompt/prompt_view.dart';
 import 'package:chatbot_agents/views/prompt/sub_views/public_prompt_view.dart';
