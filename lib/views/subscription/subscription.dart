@@ -5,7 +5,7 @@ import '../../constants/app_colors.dart';
 
 class SubscriptionView extends StatefulWidget {
 
-  SubscriptionView({Key? key}) : super(key: key);
+  const SubscriptionView({Key? key}) : super(key: key);
   @override
   State<SubscriptionView> createState() => _SubscriptionViewState();
 }
@@ -26,6 +26,14 @@ class _SubscriptionViewState extends State<SubscriptionView>{
             style: TextStyle(
                 color: AppColors.quaternaryText
             )
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+            color: AppColors.quaternaryText,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SingleChildScrollView(
