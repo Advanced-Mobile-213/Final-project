@@ -70,6 +70,7 @@ class MyPromptView extends StatelessWidget {
               )
             ),
             child: ListTile(
+              onTap: () => _showDetailPromptDialog(context, index),
               title: Text(
                 'Prompt ${index + 1}',
                 style: const TextStyle(

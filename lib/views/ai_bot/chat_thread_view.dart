@@ -342,24 +342,12 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.02),
+
+                // Send button
                 IconButton(
                   icon: Icon(Icons.send, color: Colors.white),
                   onPressed: _sendMessage,
                 ),
-                // Send button
-               //  Expanded(
-               //    flex: 2,
-               //    child: Row(children: [
-               //      // Add an IconButton for image selection
-               //      IconButton(
-               //        icon: Icon(Icons.image, color: Colors.white), // Image icon
-               //        onPressed: (){}, // Function to pick image
-               //      ),
-               //
-               // ],
-               //    )
-               //
-               //  ),
               ],
             ),
           )

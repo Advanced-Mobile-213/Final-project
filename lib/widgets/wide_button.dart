@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 class WideButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final double? width;
 
   const WideButton({
     required this.text,
     required this.onPressed,
     super.key,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Button fills the width
+      width: width ?? double.infinity, // Button fills the width
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

@@ -3,6 +3,7 @@ import 'package:chatbot_agents/widgets/chatbot_radius_card.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
 
+import '../../constants/app_icons.dart';
 import '../../widgets/category_button.dart';
 
 class AIBotView extends StatelessWidget {
@@ -11,6 +12,7 @@ class AIBotView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2", "My Agent"];
+    List<String> chatbotIcons = [AppIcons.GeminiImageBotUrl, AppIcons.ChatGPTImageUrl, AppIcons.BardImageUrl, AppIcons.ClaudeImageUrl, AppIcons.Claude2ImageUrl];
 
     return Scaffold(
       body: Center(
@@ -51,25 +53,13 @@ class AIBotView extends StatelessWidget {
                   ],
                 ),
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
-              //     SizedBox(width: 10),
-              //     CategoryButton(label: 'Design', onPressed: (){}),
-              //     SizedBox(width: 10),
-              //     CategoryButton(label: 'Social', onPressed: (){}),
-              //     SizedBox(width: 10),
-              //     CategoryButton(label: 'Work', onPressed: (){}),
-              //   ],
-              // ),
               SizedBox(height: 16),
 
               // Radius Cards for Bots
               Expanded(
                 child: ListView(
                   children: List<Widget>.generate(5, (index) {
-                    return ChatbotRadiusCard(botName: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");},);
+                    return ChatbotRadiusCard(botName: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");}, imageUrl: chatbotIcons[index],);
                   }),
                 ),
               ),
