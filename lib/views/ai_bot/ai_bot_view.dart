@@ -1,5 +1,4 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/constants/app_icons.dart';
 import 'package:chatbot_agents/widgets/chatbot_radius_card.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,14 @@ class AIBotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<String> chatbotNames = [
+      "Gemini",
+      "ChatGPT",
+      "Bard",
+      "Claude",
+      "Claude-2",
+      "My Agent"
+    ];
     List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2"];
     List<String> chatbotIcons = [AppIcons.GeminiImageBotUrl, AppIcons.ChatGPTImageUrl, AppIcons.BardImageUrl, AppIcons.ClaudeImageUrl, AppIcons.Claude2ImageUrl];
 
@@ -24,18 +31,38 @@ class AIBotView extends StatelessWidget {
               // Title
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  'All Bots',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Row(
+                  children: [
+                    const Text(
+                      'All Bots',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    WideButton(
+                      width: 60,
+                      text: '+',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AiBotCreateView(),
+                          ),
+                        );
+                      },
+                    )
+                  ],
                 ),
               ),
 
               // Search Bar
-              SearchInput(onChanged: (value) {}, hintText: "Search",),
+              SearchInput(
+                onChanged: (value) {},
+                hintText: "Search",
+              ),
               SizedBox(height: 16),
               // Categories
               SingleChildScrollView(
@@ -60,6 +87,18 @@ class AIBotView extends StatelessWidget {
                 child: ListView(
                   children: List<Widget>.generate(5, (index) {
                     return ChatbotRadiusCard(botName: chatbotNames[index], imageUrl: chatbotIcons[index] , onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");},);
+                    return ChatbotRadiusCard(
+                      botName: chatbotNames[index],
+                      imageUrl: chatbotIcons[index],
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AiBotDetailView(),
+                          ),
+                        );
+                      },
+                    );
                   }),
                 ),
               ),
