@@ -3,21 +3,21 @@ import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
 
-class KnowledgeListView extends StatefulWidget {
-  const KnowledgeListView({super.key});
+class AiBotPublishView extends StatefulWidget {
+  const AiBotPublishView({super.key});
 
   @override
-  State<KnowledgeListView> createState() => _KnowledgeListViewState();
+  State<AiBotPublishView> createState() => _AiBotPublishViewState();
 }
 
-class _KnowledgeListViewState extends State<KnowledgeListView> {
+class _AiBotPublishViewState extends State<AiBotPublishView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
-          'Knowledge',
+          'Publish',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: AppColors.primaryBackground,
@@ -35,18 +35,31 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PublishCard(
-                      name: 'Company resources',
-                      status: '',
-                      buttonText: 'enable',
+                      name: 'Slack',
+                      status: 'Configured',
+                      buttonText: 'Configure',
                       onTap: () {},
                     ),
                     const Gap(32),
                     PublishCard(
-                      name: 'Self researching',
-                      status: '',
-                      buttonText: 'disable',
+                      name: 'Telegram',
+                      status: 'Configured',
+                      buttonText: 'Configure',
                       onTap: () {},
                     ),
+                    const Gap(32),
+                    PublishCard(
+                      name: 'Messenger',
+                      status: 'Configured',
+                      buttonText: 'Configure',
+                      onTap: () {},
+                    ),
+                    const Gap(32),
+                    WideButton(
+                      width: 150,
+                      text: 'Publish',
+                      onPressed: () {},
+                    )
                   ],
                 ),
               ),
