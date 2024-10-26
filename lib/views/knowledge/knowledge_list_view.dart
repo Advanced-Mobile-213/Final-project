@@ -15,45 +15,32 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
+        //iconTheme: const IconThemeData(color: AppColors.quaternaryText),
         title: const Text(
           'Knowledge',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: AppColors.quaternaryText,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
         ),
         backgroundColor: AppColors.primaryBackground,
       ),
       backgroundColor: AppColors.primaryBackground,
-      body: Padding(
+      body: Container(
+        color: AppColors.primaryBackground,
         padding: const EdgeInsets.all(16.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final availableWidth = constraints.maxWidth;
-            return SingleChildScrollView(
-              child: SizedBox(
-                width: availableWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    PublishCard(
-                      name: 'Company resources',
-                      status: '',
-                      buttonText: 'enable',
-                      onTap: () {},
-                    ),
-                    const Gap(32),
-                    PublishCard(
-                      name: 'Self researching',
-                      status: '',
-                      buttonText: 'disable',
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Search Bar
+            SearchInput(onChanged: (value) {}),
+            
+          ],
         ),
-      ),
+      )
     );
   }
 }
