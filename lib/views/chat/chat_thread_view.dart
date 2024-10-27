@@ -84,20 +84,20 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 final isUserMessage = message['isUserMessage'];
 
                 return isUserMessage
-                    ? _buildMeReply(message, screenWidth)
-                    : _buildChatbotReply(message, screenWidth);
+                    ? _buildMyMessage(message, screenWidth)
+                    : _buildChatbotMessage(message, screenWidth);
               },
             ),
           ),
 
           // Container(
           //   padding: EdgeInsets.symmetric(
-              
+
           //     horizontal: screenWidth * 0.04,
           //     vertical: screenHeight * 0.02,
           //   ),
           //   child:  (_showPromptSelection) ? PromptSelectionWidget(onPromptSelected: handlePromptSelection,) : null,
-          
+
           // ),
           Center(
             child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
@@ -133,34 +133,34 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           // Input field to send new message
           Padding(
             padding: EdgeInsets.symmetric(
-                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
+                vertical: screenHeight * 0.01, horizontal: screenWidth * 0.02),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                IconButton(
-                  onPressed: (){
-                    _showNonTextInputSelectionBottomSheet();
-                  }, 
-                  icon: Icon(
-                    Icons.add_box_outlined, 
-                    color: AppColors.quaternaryBackground
-                  ),
-                ),
+
                 Expanded(
                   child: TextInput(
                     controller: _controller,
-                    hintText: "Enter message", 
+                    hintText: "Enter message",
                     onChanged: (value){}
                   ),
                 ),
-                SizedBox(width: screenWidth * 0.02),
-
                 // Send button
                 IconButton(
                   icon: Icon(Icons.send, color: Colors.white),
                   onPressed: _sendMessage,
                 ),
+                IconButton(
+                  onPressed: (){
+                    _showNonTextInputSelectionBottomSheet();
+                  },
+                  icon: Icon(
+                      Icons.add_box_outlined,
+                      color: AppColors.quaternaryBackground
+                  ),
+                ),
+
+
               ],
             ),
           )
@@ -170,7 +170,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     );
   }
 
-  Widget _buildChatbotReply(Map<String, dynamic> message, double screenWidth) {
+  Widget _buildChatbotMessage(Map<String, dynamic> message, double screenWidth) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -200,7 +200,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     );
   }
 
-  Widget _buildMeReply(Map<String, dynamic> message, double screenWidth) {
+  Widget _buildMyMessage(Map<String, dynamic> message, double screenWidth) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -221,8 +221,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       ],
     );
   }
-   
-  
+
+
   Widget _buildPromptSelection() {
     return Container(
       padding: EdgeInsets.all(8.0),
@@ -469,7 +469,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         });
       });
 
-    
+
 
       // Clear the input field
       _controller.clear();
