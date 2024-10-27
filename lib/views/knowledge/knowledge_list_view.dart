@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/views/knowledge/widgets/create_new_knowledge_base_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
@@ -16,6 +17,7 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
     return Scaffold(
       appBar: AppBar(
         //iconTheme: const IconThemeData(color: AppColors.quaternaryText),
+        //iconTheme: const IconThemeData(color: AppColors.quaternaryText),
         title: const Text(
           'Knowledge',
           style: TextStyle(
@@ -31,16 +33,49 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
       body: Container(
         color: AppColors.primaryBackground,
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Search Bar
-            SearchInput(onChanged: (value) {}),
-            
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableWidth = constraints.maxWidth;
+            return SingleChildScrollView(
+              child: SizedBox(
+                width: availableWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    PublishCard(
+                      name: 'Company resources',
+                      status: '',
+                      buttonText: 'enable',
+                      onTap: () {},
+                    ),
+                    const Gap(32),
+                    PublishCard(
+                      name: 'Self researching',
+                      status: '',
+                      buttonText: 'disable',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
-      )
+      ),
     );
   }
+
+  void _showCreateNewKnowledgeBaseDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreateNewKnowledgeBaseDialog();
+      },
+    );
+  }
+
+  void _navigateToKnowledgeDetail() {
+    Navigator.pushNamed(context, '/knowledge-detail');
+  }
+
 }
