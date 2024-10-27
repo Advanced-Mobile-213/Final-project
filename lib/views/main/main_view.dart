@@ -1,6 +1,4 @@
-import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
-import 'package:chatbot_agents/views/ai_bot/chat_history_view.dart';
 import 'package:chatbot_agents/views/knowledge/knowledge.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:chatbot_agents/views/prompt/prompt_view.dart';
@@ -9,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../constants/app_colors.dart';
+import '../chat/chat_history_view.dart';
 import '../knowledge/knowledge_list_view.dart';
 
 class MainView extends StatefulWidget {
@@ -51,7 +50,7 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     Map? arguments = ModalRoute.of(context)?.settings.arguments as Map?;
-    int selectedTab = arguments != null ? arguments!['selectedTab'] : 0;
+    int selectedTab = arguments != null ? arguments['selectedTab'] : 0;
     return DefaultTabController(
           length: 5,
           initialIndex: selectedTab,
