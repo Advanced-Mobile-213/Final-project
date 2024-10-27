@@ -132,10 +132,9 @@ class _MainViewState extends State<MainView> {
             ),
             body: TabBarView(
               children: [
-                KnowledgeListView(),
                 ChatHistoryView(),
                 AIBotView(),
-                
+                KnowledgeListView(),
                 PromptView(),
                 ProfileView(),
               ],
