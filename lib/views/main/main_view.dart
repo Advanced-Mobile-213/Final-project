@@ -1,10 +1,8 @@
-import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
 import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
-import 'package:chatbot_agents/views/ai_bot/chat_history_view.dart';
+import 'package:chatbot_agents/views/chat//chat_history_view.dart';
 import 'package:chatbot_agents/views/knowledge/knowledge.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:chatbot_agents/views/prompt/prompt_view.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

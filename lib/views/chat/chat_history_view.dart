@@ -1,5 +1,5 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/views/ai_bot/chat_thread_view.dart';
+import 'package:chatbot_agents/views/chat/chat_thread_view.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
 

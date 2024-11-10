@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 
 class ChatbotRadiusCard extends StatelessWidget {
-  final String botName;
+  final String botNames;
   final String imageUrl;
   final VoidCallback onPressed;
   final VoidCallback? onEdit;
@@ -10,7 +10,7 @@ class ChatbotRadiusCard extends StatelessWidget {
 
   const ChatbotRadiusCard({
     Key? key,
-    required this.botName,
+    required this.botNames,
     required this.imageUrl,
     required this.onPressed,
     this.onEdit,
@@ -45,7 +45,7 @@ class ChatbotRadiusCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    botName,
+                    botNames,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
