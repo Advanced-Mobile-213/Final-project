@@ -59,7 +59,7 @@ class AIBotView extends StatelessWidget {
               Expanded(
                 child: ListView(
                   children: List<Widget>.generate(5, (index) {
-                    return ChatbotRadiusCard(botName: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");}, imageUrl: chatbotIcons[index],);
+                    return ChatbotRadiusCard(botNames: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");}, imageUrl: chatbotIcons[index],);
                   }),
                 ),
               ),

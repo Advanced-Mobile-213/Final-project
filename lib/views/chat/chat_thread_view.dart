@@ -3,7 +3,6 @@ import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
@@ -32,6 +31,142 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   bool _showNonTextInputSelection = false;
   List<XFile>? _mediaFileList;
   BuildContext? _bottomSheetContext;
+
+  @override
+  Widget build(BuildContext context) {
+    // Use MediaQuery to make the layout responsive
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
+          onPressed: () {
+            Navigator.pop(context); // Pops the current screen from the navigation stack
+          },
+        ),
+        centerTitle: true,
+        backgroundColor: AppColors.primaryBackground,
+        actions: [
+          // Dropdown button to select bot
+          DropdownButton<String>(
+            alignment: AlignmentDirectional.centerEnd,
+            value: selectedBot,
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+            dropdownColor: AppColors.secondaryBackground,
+            underline: const SizedBox(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedBot = newValue!;
+              });
+            },
+            items: bots.map<DropdownMenuItem<String>>((String bot) {
+              return DropdownMenuItem<String>(
+                value: bot,
+                child: Text(bot, style: TextStyle(color: Colors.white)),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Chat messages area
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final message = messages[index];
+                final isUserMessage = message['isUserMessage'];
+
+                return isUserMessage
+                    ? _buildMeReply(message, screenWidth)
+                    : _buildChatbotReply(message, screenWidth);
+              },
+            ),
+          ),
+
+          // Container(
+          //   padding: EdgeInsets.symmetric(
+
+          //     horizontal: screenWidth * 0.04,
+          //     vertical: screenHeight * 0.02,
+          //   ),
+          //   child:  (_showPromptSelection) ? PromptSelectionWidget(onPromptSelected: handlePromptSelection,) : null,
+
+          // ),
+          Center(
+            child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                ? FutureBuilder<void>(
+              future: retrieveLostData(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                    return const Text(
+                      'You have not yet picked an image.',
+                      textAlign: TextAlign.center,
+                    );
+                  case ConnectionState.done:
+                    return _previewImages();
+                  case ConnectionState.active:
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Pick image/video error: ${snapshot.error}}',
+                        textAlign: TextAlign.center,
+                      );
+                    } else {
+                      return const Text(
+                        'You have not yet picked an image.',
+                        textAlign: TextAlign.center,
+                      );
+                    }
+                }
+              },
+            )
+                : _previewImages(),
+          ),
+          // Input field to send new message
+          Padding(
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: (){
+                    _showNonTextInputSelectionBottomSheet();
+                  },
+                  icon: Icon(
+                      Icons.add_box_outlined,
+                      color: AppColors.quaternaryBackground
+                  ),
+                ),
+                Expanded(
+                  child: TextInput(
+                      controller: _controller,
+                      hintText: "Enter message",
+                      onChanged: (value){}
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.02),
+
+                // Send button
+                IconButton(
+                  icon: Icon(Icons.send, color: Colors.white),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+      backgroundColor: AppColors.primaryBackground,
+    );
+  }
 
   void _setImageFileListFromFile(XFile? value) {
     _mediaFileList = value == null ? null : <XFile>[value];
@@ -221,141 +356,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   // List of bots
   final List<String> bots = ['ChatGPT 4.0', 'Gemini', 'Claude'];
   String selectedBot = 'ChatGPT 4.0'; // Default bot
-  @override
-  Widget build(BuildContext context) {
-    // Use MediaQuery to make the layout responsive
-    var screenWidth = MediaQuery.of(context).size.width;
-    var screenHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
-          onPressed: () {
-            Navigator.pop(context); // Pops the current screen from the navigation stack
-          },
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.primaryBackground,
-        actions: [
-          // Dropdown button to select bot
-          DropdownButton<String>(
-            alignment: AlignmentDirectional.centerEnd,
-            value: selectedBot,
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-            dropdownColor: AppColors.secondaryBackground,
-            underline: const SizedBox(),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedBot = newValue!;
-              });
-            },
-            items: bots.map<DropdownMenuItem<String>>((String bot) {
-              return DropdownMenuItem<String>(
-                value: bot,
-                child: Text(bot, style: TextStyle(color: Colors.white)),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Chat messages area
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                final isUserMessage = message['isUserMessage'];
-
-                return isUserMessage
-                    ? _buildMeReply(message, screenWidth)
-                    : _buildChatbotReply(message, screenWidth);
-              },
-            ),
-          ),
-
-          // Container(
-          //   padding: EdgeInsets.symmetric(
-              
-          //     horizontal: screenWidth * 0.04,
-          //     vertical: screenHeight * 0.02,
-          //   ),
-          //   child:  (_showPromptSelection) ? PromptSelectionWidget(onPromptSelected: handlePromptSelection,) : null,
-          
-          // ),
-          Center(
-            child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-            ? FutureBuilder<void>(
-                future: retrieveLostData(),
-                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return const Text(
-                        'You have not yet picked an image.',
-                        textAlign: TextAlign.center,
-                      );
-                    case ConnectionState.done:
-                      return _previewImages();
-                    case ConnectionState.active:
-                      if (snapshot.hasError) {
-                        return Text(
-                          'Pick image/video error: ${snapshot.error}}',
-                          textAlign: TextAlign.center,
-                        );
-                      } else {
-                        return const Text(
-                          'You have not yet picked an image.',
-                          textAlign: TextAlign.center,
-                        );
-                      }
-                  }
-                },
-              )
-            : _previewImages(),
-          ),
-          // Input field to send new message
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: (){
-                    _showNonTextInputSelectionBottomSheet();
-                  }, 
-                  icon: Icon(
-                    Icons.add_box_outlined, 
-                    color: AppColors.quaternaryBackground
-                  ),
-                ),
-                Expanded(
-                  child: TextInput(
-                    controller: _controller,
-                    hintText: "Enter message", 
-                    onChanged: (value){}
-                  ),
-                ),
-                SizedBox(width: screenWidth * 0.02),
-
-                // Send button
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.white),
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-      backgroundColor: AppColors.primaryBackground,
-    );
-  }
 
   Widget _buildChatbotReply(Map<String, dynamic> message, double screenWidth) {
     return Row(
@@ -457,12 +457,12 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     if (_controller.text.isNotEmpty) {
       setState(() {
         // Add user message
-        messages.insert(0, {'content': _controller.text, 'isUserMessage': true});
+        messages.insert(messages.length, {'content': _controller.text, 'isUserMessage': true});
 
         // Simulate chatbot reply based on selected bot
-        Future.delayed(Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () {
           setState(() {
-            messages.insert(0, {
+            messages.insert(messages.length, {
               'content': '[$selectedBot] This is a reply to: ${_controller.text}',
               'isUserMessage': false,
             });
@@ -480,7 +480,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       // Handle media file upload
       // Add media file to messages
       setState(() {
-        messages.insert(0, {
+        messages.insert(messages.length, {
           'content': 'Media file uploaded',
           'isUserMessage': true
         });
