@@ -1,15 +1,15 @@
 import 'package:chatbot_agents/main.dart';
-import 'package:chatbot_agents/service/api/JarvisApiService.dart';
-import 'package:chatbot_agents/view_models/UserViewModel.dart';
+import 'package:chatbot_agents/service/api/jarvis_api_service.dart';
+import 'package:chatbot_agents/models/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
-  UserViewModel? _user;
+  User? _user;
 
   bool get isAuthenticated => _isAuthenticated;
-  UserViewModel? get user => _user;
+  User? get user => _user;
 
   // Function for registering
   Future<String?> register(
@@ -59,7 +59,7 @@ class AuthProvider with ChangeNotifier {
       final response = await getIt<JarvisApiService>()
           .authenticatedDio
           .get("api/v1/auth/me");
-      _user = UserViewModel.fromJson(response.data);
+      _user = User.fromJson(response.data);
     } catch (e) {
       // Handle error fetching user data if needed
     }

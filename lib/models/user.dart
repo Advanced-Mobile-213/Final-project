@@ -1,11 +1,11 @@
-class UserViewModel {
+class User {
   final String id;
   final String email;
   final String username;
   final List<String> roles;
   final Map<String, dynamic> geo;
 
-  UserViewModel({
+  User({
     required this.id,
     required this.email,
     required this.username,
@@ -14,8 +14,8 @@ class UserViewModel {
   });
 
   // Factory constructor to create an instance from JSON
-  factory UserViewModel.fromJson(Map<String, dynamic> json) {
-    return UserViewModel(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       id: json['id'] as String,
       email: json['email'] as String,
       username: json['username'] as String,
