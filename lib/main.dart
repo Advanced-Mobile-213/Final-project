@@ -1,7 +1,7 @@
 import 'package:chatbot_agents/config/api_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
-import 'package:chatbot_agents/service/api/JarvisApiService.dart';
+import 'package:chatbot_agents/service/api/jarvis_api_service.dart';
 import 'package:chatbot_agents/views/email_reply/email_reply_view.dart';
 import 'package:chatbot_agents/views/forgot_password/enter_email_view.dart';
 import 'package:chatbot_agents/views/login/login_view.dart';
