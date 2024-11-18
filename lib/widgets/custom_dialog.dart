@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
+import 'package:gap/gap.dart';
+
+const TextStyle _titleStyle = TextStyle(
+  color: Colors.white,
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+);
 
 const TextStyle _textButtonStyle = TextStyle(color: Colors.white);
 
@@ -15,43 +22,54 @@ class CustomDialog extends StatelessWidget {
   final List<Widget> children;
   final void Function() onConfirm;
 
-  const CustomDialog(
-      {required this.title,
-      required this.children,
-      required this.onConfirm,
-      super.key});
+  const CustomDialog({
+    required this.title,
+    required this.children,
+    required this.onConfirm,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return Dialog(
       backgroundColor: AppColors.secondaryBackground,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      title: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.white),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: children,
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel', style: _textButtonStyle),
+      child: Padding(
+        padding: EdgeInsets.all(spacing[2]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: _titleStyle,
+            ),
+            Gap(spacing[2]),
+            ...children,
+            Gap(spacing[2]),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel', style: _textButtonStyle),
+                ),
+                Gap(spacing[1]),
+                ElevatedButton(
+                  style: _confirmButtonStyle,
+                  onPressed: () {
+                    onConfirm();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Save', style: _textButtonStyle),
+                ),
+              ],
+            ),
+          ],
         ),
-        // Save Button
-        ElevatedButton(
-          style: _confirmButtonStyle,
-          onPressed: () {
-            onConfirm();
-            Navigator.of(context).pop();
-          },
-          child: const Text('Save', style: _textButtonStyle),
-        ),
-      ],
+      ),
     );
   }
 }
