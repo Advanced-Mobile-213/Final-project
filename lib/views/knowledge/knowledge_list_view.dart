@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/widgets/knowledge_list.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
@@ -11,49 +12,26 @@ class KnowledgeListView extends StatefulWidget {
 }
 
 class _KnowledgeListViewState extends State<KnowledgeListView> {
+  String searchTitle = '';
+
+  void onSearchInputChanged(String value) {
+    setState(() {
+      searchTitle = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Knowledge',
-          style: TextStyle(color: Colors.white),
+    return Screen(
+      title: 'Knowledge',
+      children: [
+        SearchInput(
+          onChanged: onSearchInputChanged,
+          hintText: 'Knowledge title',
         ),
-        backgroundColor: AppColors.primaryBackground,
-      ),
-      backgroundColor: AppColors.primaryBackground,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final availableWidth = constraints.maxWidth;
-            return SingleChildScrollView(
-              child: SizedBox(
-                width: availableWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    PublishCard(
-                      name: 'Company resources',
-                      status: '',
-                      buttonText: 'enable',
-                      onTap: () {},
-                    ),
-                    const Gap(32),
-                    PublishCard(
-                      name: 'Self researching',
-                      status: '',
-                      buttonText: 'disable',
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+        Gap(spacing[2]),
+        KnowledgeList(searchingTitle: searchTitle),
+      ],
     );
   }
 }
