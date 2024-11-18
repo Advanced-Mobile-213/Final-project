@@ -32,9 +32,7 @@ class KnowledgeListItem extends StatelessWidget {
   const KnowledgeListItem(
       {required this.knowledge, required this.onDeleted, super.key});
 
-  void onKnowledgeTap(BuildContext context, Knowledge knowledge) {
-    
-  }
+  void onKnowledgeTap(BuildContext context, Knowledge knowledge) {}
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +48,24 @@ class KnowledgeListItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(knowledge.knowledgeName, style: _titleTextStyle),
-                Text(knowledge.description, style: _descriptionTextStyle),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    knowledge.knowledgeName,
+                    style: _titleTextStyle,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    knowledge.description,
+                    style: _descriptionTextStyle,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                  ),
+                ],
+              ),
             ),
             TouchableOpacity(
               onTap: () => onDeleted(knowledge),

@@ -17,8 +17,8 @@ class FakeData {
     Knowledge(
       createdAt: DateTime(2022, 1, 30),
       userId: '1',
-      knowledgeName: 'Knowledge 1',
-      description: 'Description 1',
+      knowledgeName: 'Jarvis knowledge',
+      description: 'Despecto sufficio taceo spiritus est utpote verbum basium traho ager. Commemoro aro dolor utpote. Virtus voluptas spiritus benigne suadeo sed maiores amet. Attero urbs cubitum vacuus civitas patior ventosus. Decens cerno deripio cui verumtamen tui vulgaris volubilis aliquid. Deludo totam corrupti decimus cras balbus. Comedo amiculum damnatio sufficio aro defendo eum. Titulus vir deorsum autus.',
     ),
     Knowledge(
       createdAt: DateTime(2023, 1, 30),
