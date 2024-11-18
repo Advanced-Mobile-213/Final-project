@@ -8,12 +8,12 @@ const TextStyle _titleTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
-// The widget
 class Screen extends StatelessWidget {
   final String? title;
   final List<Widget> children;
   final Widget? titleButton;
   final AlignmentGeometry titleAlignment;
+  final bool scrollable;
 
   const Screen({
     super.key,
@@ -21,13 +21,19 @@ class Screen extends StatelessWidget {
     required this.children,
     this.titleButton,
     this.titleAlignment = Alignment.centerLeft,
+    this.scrollable = false,
   });
 
   Widget _buildTitle() {
     if (titleButton == null) {
       return Align(
         alignment: titleAlignment,
-        child: Text(title!, style: _titleTextStyle),
+        child: Text(title!,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            )),
       );
     }
     return Row(
@@ -35,12 +41,14 @@ class Screen extends StatelessWidget {
       children: [
         Align(
           alignment: titleAlignment,
-          child: Text(title!, style: _titleTextStyle),
+          child: Text(title!,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              )),
         ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: titleButton!,
-        )
+        titleButton!,
       ],
     );
   }
@@ -61,14 +69,28 @@ class Screen extends StatelessWidget {
                 ),
                 child: _buildTitle(),
               ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(spacing[2]),
-                child: Column(
-                  children: children,
+            if (scrollable)
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(spacing[2]),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: children,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(spacing[2]),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: children,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
