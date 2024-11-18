@@ -1,4 +1,3 @@
-import 'package:chatbot_agents/widgets/knowledge_list.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
@@ -20,10 +19,21 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
     });
   }
 
+  void onDialogOpen(BuildContext context) {
+    showAddKnowledgeDialog(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Screen(
       title: 'Knowledge',
+      titleButton: WideButton(
+        width: 100,
+        text: 'Add',
+        onPressed: () {
+          onDialogOpen(context);
+        },
+      ),
       children: [
         SearchInput(
           onChanged: onSearchInputChanged,
