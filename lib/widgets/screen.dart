@@ -1,75 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
-import 'package:gap/gap.dart';
 
+// Styles
 const TextStyle _titleTextStyle = TextStyle(
   color: Colors.white,
   fontSize: 28,
   fontWeight: FontWeight.bold,
 );
 
+// The widget
 class Screen extends StatelessWidget {
-  final List<Widget> children;
-  final double? gap;
   final String? title;
-  final Alignment? titleAlignment;
+  final List<Widget> children;
   final Widget? titleButton;
+  final AlignmentGeometry titleAlignment;
 
   const Screen({
     super.key,
-    required this.children,
-    this.gap,
     this.title,
-    this.titleAlignment,
+    required this.children,
     this.titleButton,
+    this.titleAlignment = Alignment.centerLeft,
   });
+
+  Widget _buildTitle() {
+    if (titleButton == null) {
+      return Align(
+        alignment: titleAlignment,
+        child: Text(title!, style: _titleTextStyle),
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Align(
+          alignment: titleAlignment,
+          child: Text(title!, style: _titleTextStyle),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: titleButton!,
+        )
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final widgetGap = gap ?? spacing[2];
-    final widgetTitleAlignment = titleAlignment ?? Alignment.centerLeft;
-
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(spacing[2]),
-          child: Column(
-            children: [
-              if (title != null && titleButton == null)
-                Align(
-                  alignment: widgetTitleAlignment,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: spacing[2]),
-                    child: Text(title!, style: _titleTextStyle),
-                  ),
-                ),
-              if (title != null && titleButton != null)
-                Padding(
-                  padding: EdgeInsets.only(bottom: spacing[2]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Align(
-                        alignment: widgetTitleAlignment,
-                        child: Text(title!, style: _titleTextStyle),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: titleButton!,
-                      )
-                    ],
-                  ),
-                ),
-              Gap(spacing[2]),
-              ...children.map(
-                (child) => Padding(
-                  padding: EdgeInsets.only(bottom: widgetGap),
-                  child: Align(alignment: Alignment.center, child: child),
+      body: SafeArea(
+        child: Column(
+          children: [
+            if (title != null)
+              Padding(
+                padding: EdgeInsets.all(spacing[2]),
+                child: _buildTitle(),
+              ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(spacing[2]),
+                child: Column(
+                  children: children,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
