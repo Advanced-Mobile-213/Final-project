@@ -14,6 +14,8 @@ class Screen extends StatelessWidget {
   final Widget? titleButton;
   final AlignmentGeometry titleAlignment;
   final bool scrollable;
+  final bool canGoBack;
+  final PreferredSizeWidget? appBar; // Add this line
 
   const Screen({
     super.key,
@@ -22,52 +24,71 @@ class Screen extends StatelessWidget {
     this.titleButton,
     this.titleAlignment = Alignment.centerLeft,
     this.scrollable = false,
+    this.canGoBack = false,
+    this.appBar, // Add this line
   });
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
+    Widget titleSection;
     if (titleButton == null) {
-      return Align(
-        alignment: titleAlignment,
-        child: Text(title!,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            )),
+      titleSection = Row(
+        children: [
+          if (canGoBack)
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          Expanded(
+            child: Align(
+              alignment: titleAlignment,
+              child: Text(title!, style: _titleTextStyle),
+            ),
+          ),
+        ],
+      );
+    } else {
+      titleSection = Row(
+        children: [
+          if (canGoBack)
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: titleAlignment,
+                  child: Text(title!, style: _titleTextStyle),
+                ),
+                titleButton!,
+              ],
+            ),
+          ),
+        ],
       );
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Align(
-          alignment: titleAlignment,
-          child: Text(title!,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              )),
-        ),
-        titleButton!,
-      ],
-    );
+
+    return titleSection;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
+      appBar: appBar, // Add this line
       body: SafeArea(
         child: Column(
           children: [
-            if (title != null)
+            if (title != null && appBar == null) // Modify this line
               Padding(
                 padding: EdgeInsets.only(
                   top: spacing[2],
                   right: spacing[2],
                   left: spacing[2],
                 ),
-                child: _buildTitle(),
+                child: _buildTitle(context),
               ),
             if (scrollable)
               Expanded(
