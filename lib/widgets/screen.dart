@@ -54,7 +54,11 @@ class Screen extends StatelessWidget {
           children: [
             if (title != null)
               Padding(
-                padding: EdgeInsets.all(spacing[2]),
+                padding: EdgeInsets.only(
+                  top: spacing[2],
+                  right: spacing[2],
+                  left: spacing[2],
+                ),
                 child: _buildTitle(),
               ),
             Expanded(
