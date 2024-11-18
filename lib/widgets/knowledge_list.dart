@@ -27,6 +27,15 @@ class _KnowledgeListState extends State<KnowledgeList> {
         .toList();
   }
 
+  void onDelete(Knowledge knowledge) {
+    setState(() {
+      knowledgeList.remove(knowledge);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Knowledge deleted successfully')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -34,7 +43,10 @@ class _KnowledgeListState extends State<KnowledgeList> {
         separatorBuilder: (context, index) => Gap(spacing[1]),
         itemCount: filteredKnowledgeList.length,
         itemBuilder: (context, index) {
-          return KnowledgeListItem(knowledge: filteredKnowledgeList[index]);
+          return KnowledgeListItem(
+            knowledge: filteredKnowledgeList[index],
+            onDeleted: onDelete,
+          );
         },
       ),
     );

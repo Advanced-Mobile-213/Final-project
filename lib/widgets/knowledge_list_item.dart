@@ -15,7 +15,7 @@ const TextStyle _descriptionTextStyle = TextStyle(
   color: Colors.white,
 );
 
-final BoxDecoration _cotainerDecoration = BoxDecoration(
+final BoxDecoration _containerDecoration = BoxDecoration(
   color: AppColors.tertiaryBackground.withOpacity(0.3),
   borderRadius: BorderRadius.circular(8.0),
   border: Border.all(
@@ -27,29 +27,40 @@ final BoxDecoration _cotainerDecoration = BoxDecoration(
 // The widget
 class KnowledgeListItem extends StatelessWidget {
   final Knowledge knowledge;
+  final void Function(Knowledge) onDeleted;
 
-  const KnowledgeListItem({required this.knowledge, super.key});
+  const KnowledgeListItem(
+      {required this.knowledge, required this.onDeleted, super.key});
 
-  void onKnowledgeTap(Knowledge knowledge) {
-    print('--> KnowledgeListView: ${knowledge}');
+  void onKnowledgeTap(BuildContext context, Knowledge knowledge) {
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return TouchableOpacity(
-      onTap: () => onKnowledgeTap(knowledge),
+      onTap: () => onKnowledgeTap(context, knowledge),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
           horizontal: spacing[2],
           vertical: spacing[1],
         ),
-        decoration: _cotainerDecoration,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        decoration: _containerDecoration,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(knowledge.knowledgeName, style: _titleTextStyle),
-            Text(knowledge.description, style: _descriptionTextStyle),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(knowledge.knowledgeName, style: _titleTextStyle),
+                Text(knowledge.description, style: _descriptionTextStyle),
+              ],
+            ),
+            TouchableOpacity(
+              onTap: () => onDeleted(knowledge),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
           ],
         ),
       ),
