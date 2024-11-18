@@ -4,8 +4,8 @@ class Knowledge {
   final String? createdBy;
   final String? updatedBy;
   final String userId;
-  final String knowledgeName;
-  final String description;
+  String knowledgeName;
+  String description;
 
   Knowledge({
     required this.createdAt,

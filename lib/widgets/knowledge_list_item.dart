@@ -3,6 +3,7 @@ import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/models/models.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
+import 'package:chatbot_agents/views/knowledge/knowledge_detail_view.dart';
 
 // Styles
 const TextStyle _titleTextStyle = TextStyle(
@@ -32,7 +33,13 @@ class KnowledgeListItem extends StatelessWidget {
   const KnowledgeListItem(
       {required this.knowledge, required this.onDeleted, super.key});
 
-  void onKnowledgeTap(BuildContext context, Knowledge knowledge) {}
+  void onKnowledgeTap(BuildContext context, Knowledge knowledge) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => KnowledgeDetailView(knowledge: knowledge),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
