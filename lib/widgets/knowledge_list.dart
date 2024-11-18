@@ -40,7 +40,7 @@ class _KnowledgeListState extends State<KnowledgeList> {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.separated(
-        separatorBuilder: (context, index) => Gap(spacing[1]),
+        separatorBuilder: (context, index) => Gap(spacing[2]),
         itemCount: filteredKnowledgeList.length,
         itemBuilder: (context, index) {
           return KnowledgeListItem(

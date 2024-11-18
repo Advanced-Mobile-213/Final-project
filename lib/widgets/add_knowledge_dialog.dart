@@ -54,6 +54,7 @@ class _AddKnowledgeDialogState extends State<AddKnowledgeDialog> {
           label: 'Description',
           hintText: 'Enter knowledge description',
           onChanged: (value) => _descriptionController.text = value,
+          lineNumbers: 5,
         )
       ],
     );
