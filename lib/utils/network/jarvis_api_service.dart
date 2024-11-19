@@ -12,6 +12,9 @@ class JarvisApiService {
   String? _accessToken;
   String? _refreshToken;
 
+  String get accessToken => _accessToken!;
+  String get refreshToken => _refreshToken!;
+
   JarvisApiService.init(String baseUrl) {
     // Initialize public Dio instance without Authorization
     publicDio = Dio(BaseOptions(baseUrl: baseUrl));
@@ -37,7 +40,8 @@ class JarvisApiService {
         onError: (error, handler) async {
           if (error.response?.statusCode == 401 && _refreshToken != null) {
             // Attempt to refresh the token if unauthorized (401) error occurs
-            final success = await _refreshAccessToken();
+            print('${error.response?.statusCode} error occurred IN INTERCEPTOR');
+            final success = await refreshAccessToken();
             if (success) {
               // Retry the original request with the new token
               final originalRequest = error.requestOptions;
@@ -73,14 +77,19 @@ class JarvisApiService {
   }
 
   // Private method to refresh the access token
-  Future<bool> _refreshAccessToken() async {
+  Future<bool> refreshAccessToken() async {
     if (_refreshToken  == null) {
       return false;
     }
     try {
       final response = await publicDio.get("api/v1/auth/refresh?refreshToken=${_refreshToken}");
-      _accessToken = response.data["accessToken"];
-      return true;
+      _accessToken = response.data['token']["accessToken"];
+
+      if (_accessToken != null) {
+        return true;
+      }
+
+      return false;
     } catch (e) {
       clearToken(); // Clear tokens if refresh fails
       return false;
