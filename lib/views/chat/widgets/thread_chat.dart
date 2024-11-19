@@ -67,7 +67,7 @@ class _ThreadChatState extends State<ThreadChat> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      widget.createdAt.toString(),
+                      DateTime.fromMillisecondsSinceEpoch(widget.createdAt * 1000).toString(),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey,

@@ -39,6 +39,6 @@ class MessageModel {
 
   @override
   String toString() {
-    return 'MessageModel{assistant: $assistant, role: $role, content: $content, files: $files, isError: $isError}';
+    return 'MessageModel{assistant: $assistant, role: $role, content: content, files: $files, isError: $isError}'; //$content
   }
 }

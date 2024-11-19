@@ -2,6 +2,7 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
+import 'package:chatbot_agents/views/chat/chat_thread_view.dart';
 import 'package:chatbot_agents/views/chat/widgets/thread_chat.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class ChatHistoryView extends StatefulWidget {
 
 class _ChatHistoryViewState extends State<ChatHistoryView> {
   late final ListConversationsViewModel listConversationsViewModel;
+  bool _isCreatingThread = false;
   
   @override
   void initState() {
@@ -31,88 +33,111 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
     final iconSize = screenHeight * 0.05; // Adjust icon size based on screen height
 
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        children: [
+          Column(
             children: [
-              // Title
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
-                  children: [
-                    const Text(
-                      'Chat History',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(width: 5), // Space between title and number of threads
-                    Consumer<ListConversationsViewModel>(
-                      builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
-                      return Text(
-                        '(${listConversationsViewModel.conversations?.items.length ?? 0})', // Number of chat threads
-                        style: TextStyle(
-                          color: Colors.grey[400], // Lighter text for the count
-                          fontSize: 16,
-                        ),
-                      );
-                    }),
-                    
-                  ],
-                ),
-              ),
-
-              // Search Bar
-              SearchInput(onChanged: (value) {}),
-              const SizedBox(height: 16),
-
-              // Chat Threads
               Expanded(
-                child: Container(
-                  //scrollDirection: Axis.vertical,
-                  child: Consumer<ListConversationsViewModel>(
-                    builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
-                      if (listConversationsViewModel.isLoading==true) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (listConversationsViewModel.isLoading==false 
-                      && (listConversationsViewModel.conversations == null 
-                      || (listConversationsViewModel.conversations?.items.isEmpty ?? true))) {
-                        return const Center(
-                          child: Text(
-                            'No chat threads found',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
+                            children: [
+                              const Text(
+                                'Chat History',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                              const SizedBox(width: 5), // Space between title and number of threads
+                              Consumer<ListConversationsViewModel>(
+                                builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
+                                return Text(
+                                  '(${listConversationsViewModel.conversations?.items.length ?? 0})', // Number of chat threads
+                                  style: TextStyle(
+                                    color: Colors.grey[400], // Lighter text for the count
+                                    fontSize: 16,
+                                  ),
+                                );
+                              }),
+                              
+                            ],
                           ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount: listConversationsViewModel.conversations?.items.length ?? 0,
-                        itemBuilder: (BuildContext context, int index) {
-                          final conversation = listConversationsViewModel.conversations?.items[index];
-                          return ThreadChat(
-                            conversationTitle: conversation?.title ?? '',
-                            createdAt: conversation?.createdAt ?? 0,
-                            conversationId: conversation?.id ?? '',
-                          );
-                        }
-                      );
-                  }),
+                        ),
+
+                        // Search Bar
+                        SearchInput(onChanged: (value) {}),
+                        const SizedBox(height: 16),
+
+                        // Chat Threads
+                        Expanded(
+                          child: Container(
+                            //scrollDirection: Axis.vertical,
+                            child: Consumer<ListConversationsViewModel>(
+                              builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
+                                if (listConversationsViewModel.isLoading==true) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (listConversationsViewModel.isLoading==false 
+                                && (listConversationsViewModel.conversations == null 
+                                || (listConversationsViewModel.conversations?.items.isEmpty ?? true))) {
+                                  return const Center(
+                                    child: Text(
+                                      'No chat threads found',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return ListView.builder(
+                                  itemCount: listConversationsViewModel.conversations?.items.length ?? 0,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final conversation = listConversationsViewModel.conversations?.items[index];
+                                    return ThreadChat(
+                                      conversationTitle: conversation?.title ?? '',
+                                      createdAt: conversation?.createdAt ?? 0,
+                                      conversationId: conversation?.id ?? '',
+                                    );
+                                  }
+                                );
+                            }),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+          if (_isCreatingThread)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: ModalBarrier(
+                dismissible: false, 
+                color: Colors.black
+              ),
+            ),
+
+          if (_isCreatingThread)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
       backgroundColor: AppColors.primaryBackground,
       // Floating Action Button to create new chat thread
@@ -177,13 +202,30 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
             ),
             TextButton(
               onPressed: () async {
+                
+                // setState(() {
+                //   _isCreatingThread = true;
+                // });
+
                 await listConversationsViewModel.createConversation(
                   assistantModel: EnumAssistantModel.DIFY,
                   assistantId: EnumAssisstantId.GPT_4O_MINI,
                   //assistantName: titleController.text, 
                   content: titleController.text,
                 );
+
                 Navigator.of(context).pop(); // Close the dialog
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:  (context) => ChatThreadView(
+                      conversationId: listConversationsViewModel
+                          .messageResponseDto!.conversationId,
+                    ),
+                  ),
+                );
+
               },
               child: const Text(
                 'Create',

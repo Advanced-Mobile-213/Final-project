@@ -5,12 +5,12 @@ import 'package:chatbot_agents/models/send_message/list_message_model.dart';
 import 'package:chatbot_agents/models/send_message/message_response_dto.dart';
 import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
-import 'package:chatbot_agents/utils/network/jarvis_api_service.dart';
+import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:dio/dio.dart';
 
 class ConversationService {
   
-  late final JarvisApiService _apiService =  GetItInstance.getIt<JarvisApiService>();
+  late final JarvisApiClient _apiService =  GetItInstance.getIt<JarvisApiClient>();
  //final JarvisApiService _apiService = JarvisApiService();
  Future<ListThreadChatModel?> getConversations(
     {required String assistantModel, 
@@ -51,7 +51,7 @@ class ConversationService {
           queryParameters: queryParams
         );
 
-      print(response);
+      //print(response);
 
       if (response.statusCode! <300 && response.statusCode! >= 200) {
         return ListThreadChatModel.fromJson(response.data);
@@ -174,6 +174,20 @@ class ConversationService {
         if (accessToken != null && refreshToken != null) {
           _apiService.setToken(accessToken, refreshToken);
         }
+
+        Map<String, dynamic> temp = {
+              'assistant': {
+                'model': assistantModel,
+                'id': assistantId,
+              },
+              'content': content,
+              if (files != null) 'files': files,
+              'metadata': {
+                'conversation': listMessageModel.toJson(),
+              },
+            };
+        
+        print('send data: $temp');
 
         final response = await _apiService
           .authenticatedDio

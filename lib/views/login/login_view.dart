@@ -23,7 +23,7 @@ class _LoginViewState extends State<LoginView> {
   // Create a GlobalKey for the form validation
   final _formKey = GlobalKey<FormState>();
 
-  final emailController = TextEditingController(text: 'hoangquoc2106@gmail.com');
+  final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');
   final passwordController = TextEditingController(text: 'Adv@ncedMobile213');
   bool isPasswordHidden = true; // Toggle visibility of password field
 

@@ -2,8 +2,9 @@ import 'package:chatbot_agents/config/api_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
+import 'package:chatbot_agents/service/conversation_service/token_service.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
-import 'package:chatbot_agents/utils/network/jarvis_api_service.dart';
+import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:chatbot_agents/service/conversation_service/conversation_service.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
@@ -21,9 +22,10 @@ import 'package:provider/provider.dart';
 
 // For dependency injection
 void setup() {
-  GetItInstance.getIt.registerSingleton<JarvisApiService>(JarvisApiService.init(ApiConfig.jarvisUrl));
+  GetItInstance.getIt.registerSingleton<JarvisApiClient>(JarvisApiClient.init(ApiConfig.jarvisUrl));
   //GetItInstance.getIt.registerSingleton<SharedPreferencesUtil>(SharedPreferencesUtil());
   GetItInstance.getIt.registerSingleton<ConversationService>(ConversationService());
+  GetItInstance.getIt.registerSingleton<TokenService>(TokenService());
 }
 
 void main() async {

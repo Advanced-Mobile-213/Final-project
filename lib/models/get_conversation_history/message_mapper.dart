@@ -26,4 +26,5 @@ class MessageMapper {
     
     return result;
   }
+
 }

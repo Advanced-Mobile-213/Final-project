@@ -24,6 +24,6 @@ class MessageResponseModel {
 
   @override
   String toString() {
-    return 'MessageResponseModel{answer: $answer, createdAt: $createdAt, files: $files, query: $query}';
+    return 'MessageResponseModel{answer: answer, createdAt: $createdAt, files: $files, query: $query}'; //$answer
   }
 }

@@ -1,10 +1,10 @@
 import 'package:chatbot_agents/models/get_conversation_history/message_response_model.dart';
 
 class ListMessageResponseModel {
-  final String cursor;
-  final bool hasMore;
-  final int limit;
-  final List<MessageResponseModel> items;
+  String cursor;
+  bool hasMore;
+  int limit;
+  List<MessageResponseModel> items;
 
   ListMessageResponseModel({
     required this.cursor,

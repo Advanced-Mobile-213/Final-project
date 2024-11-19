@@ -1,6 +1,6 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
-import 'package:chatbot_agents/utils/network/jarvis_api_service.dart';
+import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:chatbot_agents/models/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ class AuthProvider with ChangeNotifier {
   Future<String?> register(
       String email, String password, String username) async {
     try {
-      await GetItInstance.getIt<JarvisApiService>().publicDio.post(
+      await GetItInstance.getIt<JarvisApiClient>().publicDio.post(
         "api/v1/auth/sign-up",
         data: {"email": email, "password": password, "username": username},
       );
@@ -32,7 +32,7 @@ class AuthProvider with ChangeNotifier {
   // Function for logging in and fetching user data
   Future<String?> login(String email, String password) async {
     try {
-      final response = await GetItInstance.getIt<JarvisApiService>().publicDio.post(
+      final response = await GetItInstance.getIt<JarvisApiClient>().publicDio.post(
           "api/v1/auth/sign-in",
           data: {"email": email, "password": password});
 
@@ -41,7 +41,7 @@ class AuthProvider with ChangeNotifier {
           response.data["token"]["accessToken"]!.toString();
       final String refreshToken =
           response.data["token"]["refreshToken"]!.toString();
-      GetItInstance.getIt<JarvisApiService>().setToken(accessToken, refreshToken);
+      GetItInstance.getIt<JarvisApiClient>().setToken(accessToken, refreshToken);
 
       // Save tokens to shared preferences
       await SharedPreferencesUtil.saveTokens(accessToken, refreshToken);
@@ -61,7 +61,7 @@ class AuthProvider with ChangeNotifier {
   // Function to fetch the current user
   Future<void> _fetchUser() async {
     try {
-      final response = await GetItInstance.getIt<JarvisApiService>()
+      final response = await GetItInstance.getIt<JarvisApiClient>()
           .authenticatedDio
           .get("api/v1/auth/me");
       _user = User.fromJson(response.data);
@@ -73,7 +73,7 @@ class AuthProvider with ChangeNotifier {
   // Function to log out
   Future<void> logout() async {
     try {
-      final response = await GetItInstance.getIt<JarvisApiService>().authenticatedDio.get("/api/v1/auth/sign-out",);
+      final response = await GetItInstance.getIt<JarvisApiClient>().authenticatedDio.get("/api/v1/auth/sign-out",);
       return;
     } on DioException catch (e) {
       rethrow;

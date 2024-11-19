@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 
-class JarvisApiService {
-  static final JarvisApiService _instance = JarvisApiService._internal();
-  factory JarvisApiService() => _instance;
-  JarvisApiService._internal();
+class JarvisApiClient {
+  static final JarvisApiClient _instance = JarvisApiClient._internal();
+  factory JarvisApiClient() => _instance;
+  JarvisApiClient._internal();
 
   // Dio instances
   late Dio publicDio;          // For public APIs
@@ -15,7 +15,7 @@ class JarvisApiService {
   String get accessToken => _accessToken!;
   String get refreshToken => _refreshToken!;
 
-  JarvisApiService.init(String baseUrl) {
+  JarvisApiClient.init(String baseUrl) {
     // Initialize public Dio instance without Authorization
     publicDio = Dio(BaseOptions(baseUrl: baseUrl));
 

@@ -3,6 +3,7 @@ import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_mapper.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
+import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatThreadView extends StatefulWidget {
   final String conversationId;
@@ -39,8 +41,9 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   bool _showNonTextInputSelection = false;
   List<XFile>? _mediaFileList;
   BuildContext? _bottomSheetContext;
+  final ScrollController _scrollController = ScrollController();
   late final ConversationViewModel _conversationViewModel;
-
+  late final ListConversationsViewModel _listConversationsViewModel;
   // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
   String selectedBot = 'gpt-4o'; // Default bot
@@ -56,30 +59,74 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
           onPressed: () {
+            _conversationViewModel.clearContextOfConversation();
+            _listConversationsViewModel.getConversations(
+              assistantModel: EnumAssistantModel.DIFY,
+              assistantId: EnumAssisstantId.GPT_4O_MINI,
+            );
             Navigator.pop(context); // Pops the current screen from the navigation stack
           },
         ),
+        // title: IconButton(
+        //   onPressed: () async {
+        //     _fetchMoreConversationHistory();
+        //   }, 
+        //   icon: Icon(Icons.replay_outlined, color: Colors.white)
+        // ),
         centerTitle: true,
         backgroundColor: AppColors.primaryBackground,
         actions: [
           // Dropdown button to select bot
-          DropdownButton<String>(
-            alignment: AlignmentDirectional.centerEnd,
-            value: selectedBot,
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-            dropdownColor: AppColors.secondaryBackground,
-            underline: const SizedBox(),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedBot = newValue!;
-              });
-            },
-            items: bots.map<DropdownMenuItem<String>>((String bot) {
-              return DropdownMenuItem<String>(
-                value: bot,
-                child: Text(bot, style: TextStyle(color: Colors.white)),
-              );
-            }).toList(),
+          Container(
+            child: DropdownButton<String>(
+              alignment: AlignmentDirectional.centerEnd,
+              value: selectedBot,
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+              dropdownColor: AppColors.secondaryBackground,
+              underline: const SizedBox(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedBot = newValue!;
+                });
+              },
+              items: bots.map<DropdownMenuItem<String>>((String bot) {
+                return DropdownMenuItem<String>(
+                  value: bot,
+                  child: Text(bot, 
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.local_fire_department, 
+                  color: Colors.white,
+                  size: 15,
+                ),
+                // const Text('Tokens: ', 
+                //   style: TextStyle(color: Colors.white),
+                // ),
+                Text(
+                  _conversationViewModel.messageResponseDto?.remainingUsage != null 
+                  ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
+                  : _conversationViewModel.remainingToken != 0 
+                  ? _conversationViewModel.remainingToken.toString()
+                  : '0', 
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -104,8 +151,13 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                     );
                   }
 
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottomAnimated();
+                  });
+
                   return ListView.builder(
-                    padding: EdgeInsets.all(screenWidth * 0.04),
+                    controller: _scrollController,
+                    padding: EdgeInsets.all(5.0),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
@@ -310,11 +362,21 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     await _conversationViewModel.getConversationHistory(
                       conversationId: widget.conversationId, 
                       assistantModel: EnumAssistantModel.DIFY, 
-                      assistantId: EnumAssisstantId.GPT_4O_MINI);
+                      assistantId: EnumAssisstantId.GPT_4O_MINI,
+                      //limit: 2,
+                      );
                     
     if (_conversationViewModel.listHistoryMessages != null && _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
       messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
     }
+  }
+
+  void _fetchRemainingToken() async {
+    await _conversationViewModel.getRemainingToken();
+  }
+
+  void _setContextOfConversation()  {
+   // _conversationViewModel.setContextOfConversation();
   }
 
   @override
@@ -322,14 +384,38 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     super.initState();
     _controller.addListener(_onTextChanged);
     _conversationViewModel = context.read<ConversationViewModel>();
+    _listConversationsViewModel = context.read<ListConversationsViewModel>();
+    _fetchRemainingToken();
     _fetchConversationHistory();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToBottom();
+    // });
 
   }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void _scrollToBottomAnimated() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  
 
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -419,7 +505,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         Expanded(
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(screenWidth * 0.04),
+            padding: EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               color: Colors.grey[800],
               borderRadius: BorderRadius.circular(15),
@@ -427,9 +513,21 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             child: message.icon !=null ? Icon(message.icon, color: Colors.white)
             : MarkdownBody(
               data: message.content,
-              onTapLink: (text, href, title) => print('Link clicked: $href'),
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  print('Link clicked: $href');
+                  if (await canLaunchUrl(Uri.parse(href))) {
+                    await launchUrl(Uri.parse(href));
+                  } else {
+                    print('Could not launch $href');
+                  }
+                }
+              }, 
               styleSheet: MarkdownStyleSheet(
                 p: TextStyle(color: Colors.white), // Change text color here
+                h1: TextStyle(color: Colors.white), 
+                h3: TextStyle(color: Colors.white),
+                blockquote: TextStyle(color: Colors.white),
               ),
             ),          
           ),
@@ -443,18 +541,23 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         // User Message
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          padding: EdgeInsets.all(screenWidth * 0.04),
-          decoration: BoxDecoration(
-            color: Colors.blue[400],
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Text(
-            message.content,
-            style: TextStyle(color: Colors.white),
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.blue[400],
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Text(
+              textDirection: TextDirection.rtl,
+              message.content,
+              maxLines: null,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
+        
         SizedBox(width: screenWidth * 0.02),
       ],
     );
@@ -532,11 +635,19 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           )
         );
       });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottomAnimated();
+      });
+
       String searchText = _controller.text;
       _controller.clear();
+
+      print('widget.conversationId: ${widget.conversationId}');
+
       await _conversationViewModel.sendMessage(
           assistantModel: EnumAssistantModel.DIFY, 
-          assistantId: EnumAssisstantId.GPT_4O_MINI, 
+          assistantId: selectedBot, 
           content: searchText,
           conversationId: widget.conversationId,
           files: _mediaFileList?.map((file) => file.path).toList(),
@@ -558,6 +669,9 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         });
       }
 
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottomAnimated();
+      });
       // Clear the input field
       
     }
@@ -581,4 +695,22 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       });
     }
   }
+
+  void _fetchMoreConversationHistory() async {
+    await _conversationViewModel.getMoreConversationHistory(
+                      conversationId: widget.conversationId, 
+                      assistantModel: EnumAssistantModel.DIFY, 
+                      assistantId: EnumAssisstantId.GPT_4O_MINI,
+                      limit: 2, 
+                      cursor: _conversationViewModel.listHistoryMessages!.cursor,
+                    );
+                    
+    if (_conversationViewModel.moreMessage != null && _conversationViewModel.moreMessage!.items.isNotEmpty) {
+      List<MessageRendererModel> more_messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
+      messages.insertAll(0, more_messages);
+    }
+  }
 }
+
+
+//d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438
