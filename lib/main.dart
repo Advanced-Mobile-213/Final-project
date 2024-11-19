@@ -13,20 +13,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'provider/prompt_provider.dart';
 
 final getIt = GetIt.asNewInstance();
 
 // For dependency injection
 void setup() {
-  getIt.registerSingleton<JarvisApiService>(JarvisApiService.init(ApiConfig.jarvisUrl));
+  getIt.registerSingleton<JarvisApiService>(
+      JarvisApiService.init(ApiConfig.jarvisUrl));
 }
 
 void main() async {
   await dotenv.load();
   setup();
-  runApp(MultiProvider(
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => PromptProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -41,8 +52,11 @@ void main() async {
           '/register': (context) => const RegisterView(),
           '/forgot_password': (context) => const EnterEmailView(),
           '/main': (context) => const ProtectedRoute(child: MainView()),
-          '/subscription': (context) => const ProtectedRoute(child: SubscriptionView()),
+          '/subscription': (context) =>
+              const ProtectedRoute(child: SubscriptionView()),
           '/email-reply': (context) => ProtectedRoute(child: EmailReplyView()),
         },
-      )));
+      ),
+    );
+  }
 }
