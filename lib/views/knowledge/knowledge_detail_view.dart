@@ -65,17 +65,44 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView> {
     );
   }
 
+  void onAddUnit() {
+    showAddKnowledgeUnitDialog(context);
+  }
+
+  Widget get _unitsTab {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Gap(spacing[2]),
+        WideButton(text: 'Add unit', onPressed: onAddUnit),
+        Gap(spacing[4]),
+        KnowledgeUnitList(widget.knowledge.userId),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Screen(
         appBar: AppBar(
-          title: const Text('Knowledge Detail'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text(
+            'Knowledge Detail',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: AppColors.primaryBackground,
+          surfaceTintColor: Colors.white,
           bottom: const TabBar(
+            labelStyle: TextStyle(color: Colors.white),
+            indicatorColor: Colors.white,
             tabs: [
               Tab(text: 'Information'),
-              Tab(text: 'Unit'),
+              Tab(text: 'Units'),
             ],
           ),
         ),
@@ -84,7 +111,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView> {
             child: TabBarView(
               children: [
                 _detailTab,
-                _detailTab,
+                _unitsTab,
               ],
             ),
           ),

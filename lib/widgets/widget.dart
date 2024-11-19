@@ -9,3 +9,6 @@ export 'screen.dart';
 export 'custom_dialog.dart';
 export 'knowledge_list.dart';
 export 'add_knowledge_dialog.dart';
+export 'knowledge_unit_list_item.dart';
+export 'knowledge_unit_list.dart';
+export 'add_knowledge_unit_dialog.dart';
