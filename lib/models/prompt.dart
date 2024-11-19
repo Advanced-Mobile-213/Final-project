@@ -46,4 +46,6 @@ class Prompt {
       isFavorite: json['isFavorite'],
     );
   }
+
+  String get id => _id;
 }
