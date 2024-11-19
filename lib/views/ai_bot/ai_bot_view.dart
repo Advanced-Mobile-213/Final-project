@@ -1,76 +1,37 @@
-import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/widgets/chatbot_radius_card.dart';
-import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
+import 'package:chatbot_agents/widgets/widget.dart';
+import 'package:chatbot_agents/constants/constants.dart';
+import 'package:gap/gap.dart';
 
-import '../../constants/app_icons.dart';
-import '../../widgets/category_button.dart';
+class AiBotView extends StatefulWidget {
+  const AiBotView({super.key});
 
-class AIBotView extends StatelessWidget {
-  const AIBotView({super.key});
+  @override
+  State<AiBotView> createState() => _AiBotViewState();
+}
+
+class _AiBotViewState extends State<AiBotView> {
+  String searchingText = '';
+
+  void onTextChange(String text) {
+    setState(() {
+      searchingText = text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2", "My Agent"];
-    List<String> chatbotIcons = [AppIcons.GeminiImageBotUrl, AppIcons.ChatGPTImageUrl, AppIcons.BardImageUrl, AppIcons.ClaudeImageUrl, AppIcons.Claude2ImageUrl];
-
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Title
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  'All Bots',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              // Search Bar
-              SearchInput(onChanged: (value) {}, hintText: "Search",),
-              SizedBox(height: 16),
-              // Categories
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Design', onPressed: (){}),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Social', onPressed: (){}),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Work', onPressed: (){}),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-
-              // Radius Cards for Bots
-              Expanded(
-                child: ListView(
-                  children: List<Widget>.generate(5, (index) {
-                    return ChatbotRadiusCard(botNames: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");}, imageUrl: chatbotIcons[index],);
-                  }),
-                ),
-              ),
-            ],
-          ),
+    return Screen(
+        title: 'AI Bot',
+        titleButton: WideButton(
+          width: 100,
+          text: 'Add',
+          onPressed: () {},
         ),
-      ),
-      backgroundColor: AppColors.primaryBackground,
-    );
-    //tst
+        children: [
+          SearchInput(hintText: 'AI Bot Name', onChanged: onTextChange),
+          Gap(spacing[3]),
+          AiBotList(searchingText),
+        ]);
   }
 }
-
-
