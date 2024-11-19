@@ -2,12 +2,31 @@ import 'package:chatbot_agents/models/models.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 
 class FakeData {
-  static List<String> aiBots = [
-    'Gemini',
-    'ChatGPT',
-    'Bard',
-    'Claude',
-    'Claude-2'
+  static List<AiBot> aiBots = [
+    AiBot(
+      createdAt: DateTime(2022, 1, 30),
+      assistantName: 'Gemini',
+      openAiAssistantId: '1',
+      id: '1',
+    ),
+    AiBot(
+      createdAt: DateTime(2023, 1, 30),
+      assistantName: 'Bard',
+      openAiAssistantId: '2',
+      id: '2',
+    ),
+    AiBot(
+      createdAt: DateTime(2024, 1, 30),
+      assistantName: 'ChatGPT',
+      openAiAssistantId: '3',
+      id: '3',
+    ),
+    AiBot(
+      createdAt: DateTime(2021, 1, 30),
+      assistantName: 'Jarvis',
+      openAiAssistantId: '4',
+      id: '4',
+    ),
   ];
   static List<Prompt> prompts = [
     Prompt(
