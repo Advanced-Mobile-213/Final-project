@@ -12,3 +12,6 @@ export 'add_knowledge_dialog.dart';
 export 'knowledge_unit_list_item.dart';
 export 'knowledge_unit_list.dart';
 export 'add_knowledge_unit_dialog.dart';
+export 'knowledge_list_item.dart';
+export 'ai_bot_list_item.dart';
+export 'ai_bot_list.dart';

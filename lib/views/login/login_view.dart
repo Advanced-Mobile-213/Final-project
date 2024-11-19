@@ -6,7 +6,7 @@ import 'package:chatbot_agents/utils/validator_utils.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';  // Add provider for managing authentication
+import 'package:provider/provider.dart'; // Add provider for managing authentication
 
 import '../../constants/app_icons.dart';
 import '../../constants/app_tab.dart';
@@ -94,14 +94,16 @@ class _LoginViewState extends State<LoginView> {
                                 final email = emailController.text;
                                 final password = passwordController.text;
 
-                                final authProvider = context.read<AuthProvider>();
-                                final errorResponse = await authProvider.login(email, password);
+                                final authProvider =
+                                    context.read<AuthProvider>();
+                                final errorResponse =
+                                    await authProvider.login(email, password);
                                 if (!context.mounted) return;
                                 if (errorResponse != null) {
                                   _showErrorDialog(context, errorResponse);
                                 } else {
                                   // On success, navigate to the main screen
-                                  Navigator.pushNamed(
+                                  Navigator.pushReplacementNamed(
                                     context,
                                     "/main",
                                     arguments: {'selectedTab': AppTab.chat},
@@ -115,7 +117,8 @@ class _LoginViewState extends State<LoginView> {
                         // Forgotten password
                         TextButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, "/forgot_password/enter_email");
+                            Navigator.pushNamed(
+                                context, "/forgot_password/enter_email");
                           },
                           child: const Text(
                             'Forgotten password?',
@@ -124,7 +127,8 @@ class _LoginViewState extends State<LoginView> {
                         ),
 
                         // or sign in with
-                        const Text('or sign in with', style: TextStyle(color: AppColors.tertiaryText)),
+                        const Text('or sign in with',
+                            style: TextStyle(color: AppColors.tertiaryText)),
                         const SizedBox(height: 10),
 
                         // Social Media Icons
@@ -133,18 +137,26 @@ class _LoginViewState extends State<LoginView> {
                           children: [
                             IconButton(
                               icon: SizedBox(
-                                width: isWindows ? 50 : 40, // Adjust icon size for larger screens
+                                width: isWindows
+                                    ? 50
+                                    : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
+                                child: Image.memory(
+                                    AppUtils.bytesFromBase64String(
+                                        AppIcons.GoogleBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),
                             const SizedBox(width: 20),
                             IconButton(
                               icon: SizedBox(
-                                width: isWindows ? 50 : 40, // Adjust icon size for larger screens
+                                width: isWindows
+                                    ? 50
+                                    : 40, // Adjust icon size for larger screens
                                 height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
+                                child: Image.memory(
+                                    AppUtils.bytesFromBase64String(
+                                        AppIcons.FacebookBase64ImageString)),
                               ),
                               onPressed: () {},
                             ),
@@ -156,12 +168,15 @@ class _LoginViewState extends State<LoginView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("Don't have an account?", style: TextStyle(color: Colors.white)),
+                            const Text("Don't have an account?",
+                                style: TextStyle(color: Colors.white)),
                             TextButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, "/register");
                               },
-                              child: const Text('REGISTER', style: TextStyle(color: AppColors.tertiaryText)),
+                              child: const Text('REGISTER',
+                                  style:
+                                      TextStyle(color: AppColors.tertiaryText)),
                             ),
                           ],
                         ),
