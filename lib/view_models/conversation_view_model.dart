@@ -187,6 +187,10 @@ class ConversationViewModel extends ChangeNotifier {
     try {
       messageResponseDto = null;
       
+      if (conversationId!= null) {
+        messages?.id = conversationId;
+      }
+
       messageResponseDto = await _conversationService.sendMessage(
         assistantModel: assistantModel,
         assistantId: assistantId,
