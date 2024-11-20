@@ -1,17 +1,31 @@
+import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
+import 'package:chatbot_agents/constants/enum_assistant_model.dart';
+import 'package:chatbot_agents/models/get_conversation_history/message_mapper.dart';
+import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
+import 'package:chatbot_agents/view_models/conversation_view_model.dart';
+import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:io';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatThreadView extends StatefulWidget {
-  const ChatThreadView({super.key});
+  final String conversationId;
+  const ChatThreadView({
+    super.key,
+    required this.conversationId,
+  });
 
   @override
   _ChatThreadViewState createState() => _ChatThreadViewState();
@@ -22,15 +36,18 @@ typedef OnPickImageCallback = void Function(
 
 class _ChatThreadViewState extends State<ChatThreadView> {
   final TextEditingController _controller = TextEditingController();
-  List<Map<String, dynamic>> messages = [
-    {'content': 'Hello! How can I assist you today?', 'isUserMessage': false},
-    {'content': 'What can you do?', 'isUserMessage': true},
-    {'content': 'I can help with many things like answering questions and more.', 'isUserMessage': false},
-  ];
+  List<MessageRendererModel> messages = [];
   bool _showPromptSelection = false;
   bool _showNonTextInputSelection = false;
   List<XFile>? _mediaFileList;
   BuildContext? _bottomSheetContext;
+  final ScrollController _scrollController = ScrollController();
+  late final ConversationViewModel _conversationViewModel;
+  late final ListConversationsViewModel _listConversationsViewModel;
+  // List of bots
+  final List<String> bots = EnumAssisstantId.getAllAssistantIds();
+  String selectedBot = 'gpt-4o-mini'; // Default bot
+  final List<int> costToken = [1,3,1,5,5,1];
 
   @override
   Widget build(BuildContext context) {
@@ -41,32 +58,76 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
           onPressed: () {
+            _conversationViewModel.clearContextOfConversation();
+            _listConversationsViewModel.getConversations(
+              assistantModel: EnumAssistantModel.DIFY,
+              assistantId: EnumAssisstantId.GPT_4O_MINI,
+            );
             Navigator.pop(context); // Pops the current screen from the navigation stack
           },
         ),
+        // title: IconButton(
+        //   onPressed: () async {
+        //     _fetchMoreConversationHistory();
+        //   }, 
+        //   icon: Icon(Icons.replay_outlined, color: Colors.white)
+        // ),
         centerTitle: true,
         backgroundColor: AppColors.primaryBackground,
         actions: [
           // Dropdown button to select bot
-          DropdownButton<String>(
-            alignment: AlignmentDirectional.centerEnd,
-            value: selectedBot,
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-            dropdownColor: AppColors.secondaryBackground,
-            underline: const SizedBox(),
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedBot = newValue!;
-              });
-            },
-            items: bots.map<DropdownMenuItem<String>>((String bot) {
-              return DropdownMenuItem<String>(
-                value: bot,
-                child: Text(bot, style: TextStyle(color: Colors.white)),
-              );
-            }).toList(),
+          Container(
+            child: DropdownButton<String>(
+              alignment: AlignmentDirectional.centerEnd,
+              value: selectedBot,
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+              dropdownColor: AppColors.secondaryBackground,
+              underline: const SizedBox(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedBot = newValue!;
+                });
+              },
+              items: bots.map<DropdownMenuItem<String>>((String bot) {
+                return DropdownMenuItem<String>(
+                  value: bot,
+                  child: Text('$bot : ${costToken[bots.indexOf(bot)]} tokens', 
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.local_fire_department, 
+                  color: Colors.white,
+                  size: 15,
+                ),
+                // const Text('Tokens: ', 
+                //   style: TextStyle(color: Colors.white),
+                // ),
+                Text(
+                  _conversationViewModel.messageResponseDto?.remainingUsage != null 
+                  ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
+                  : _conversationViewModel.remainingToken != 0 
+                  ? _conversationViewModel.remainingToken.toString()
+                  : '0', 
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -74,18 +135,43 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         children: [
           // Chat messages area
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                final isUserMessage = message['isUserMessage'];
+            child: Container(
+              child: Consumer<ConversationViewModel>(
+                builder: (context, ConversationViewModel conversationViewModel, child) {
+                  if (conversationViewModel.isLoadingConversationHistory==true) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.quaternaryBackground,
+                      ),
+                    );
+                  } else if (conversationViewModel.isLoadingConversationHistory==false 
+                   && (conversationViewModel.listHistoryMessages == null
+                   || conversationViewModel.listHistoryMessages!.items.isEmpty)) {
+                    return Center(
+                      child: Text('No messages found'),
+                    );
+                  }
 
-                return isUserMessage
-                    ? _buildMeReply(message, screenWidth)
-                    : _buildChatbotReply(message, screenWidth);
-              },
-            ),
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollToBottomAnimated();
+                  });
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: EdgeInsets.all(5.0),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      final isUserMessage = message.isUserMessage;
+
+                      return isUserMessage
+                          ? _buildMeReply(message, screenWidth)
+                          : _buildChatbotReply(message, screenWidth);
+                    },
+                  );
+                },
+              ),
+            )
           ),
 
           // Container(
@@ -140,7 +226,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   onPressed: (){
                     _showNonTextInputSelectionBottomSheet();
                   },
-                  icon: Icon(
+                  icon: const Icon(
                       Icons.add_box_outlined,
                       color: AppColors.quaternaryBackground
                   ),
@@ -156,8 +242,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
                 // Send button
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.white),
-                  onPressed: _sendMessage,
+                  icon: const Icon(Icons.send, color: Colors.white),
+                  onPressed:  () async {
+                    _sendMessage();
+                  }
                 ),
               ],
             ),
@@ -251,7 +339,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     }
   }
 
-    Future<void> retrieveLostData() async {
+  Future<void> retrieveLostData() async {
     final LostDataResponse response = await _picker.retrieveLostData();
     if (response.isEmpty) {
       return;
@@ -271,16 +359,64 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     }
   }
 
+  void _fetchConversationHistory() async {
+    await _conversationViewModel.getConversationHistory(
+                      conversationId: widget.conversationId, 
+                      assistantModel: EnumAssistantModel.DIFY, 
+                      assistantId: EnumAssisstantId.GPT_4O_MINI,
+                      //limit: 2,
+                      );
+                    
+    if (_conversationViewModel.listHistoryMessages != null && _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
+      messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
+    }
+  }
+
+  void _fetchRemainingToken() async {
+    await _conversationViewModel.getRemainingToken();
+  }
+
+  void _setContextOfConversation()  {
+   // _conversationViewModel.setContextOfConversation();
+  }
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(_onTextChanged);
+    _conversationViewModel = context.read<ConversationViewModel>();
+    _listConversationsViewModel = context.read<ListConversationsViewModel>();
+    _fetchRemainingToken();
+    _fetchConversationHistory();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollToBottom();
+    // });
+
   }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  void _scrollToBottomAnimated() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  
 
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
     _controller.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -322,6 +458,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       }
     });
   }
+  
   void _showDetailPromptBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
         context: context,
@@ -342,6 +479,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       _bottomSheetContext = null;
     });
   }
+  
   void _showPromptSelectionBottomSheet() {
     showModalBottomSheet<void>(
       context: context,
@@ -353,11 +491,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     });
   }
   
-  // List of bots
-  final List<String> bots = ['ChatGPT 4.0', 'Gemini', 'Claude'];
-  String selectedBot = 'ChatGPT 4.0'; // Default bot
-
-  Widget _buildChatbotReply(Map<String, dynamic> message, double screenWidth) {
+  Widget _buildChatbotReply(MessageRendererModel message, double screenWidth) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -372,44 +506,64 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         Expanded(
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(screenWidth * 0.04),
+            padding: EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               color: Colors.grey[800],
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Text(
-              message['content'],
-              style: TextStyle(color: Colors.white),
-            ),
+            child: message.icon !=null ? Icon(message.icon, color: Colors.white)
+            : MarkdownBody(
+              data: message.content,
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  print('Link clicked: $href');
+                  if (await canLaunchUrl(Uri.parse(href))) {
+                    await launchUrl(Uri.parse(href));
+                  } else {
+                    print('Could not launch $href');
+                  }
+                }
+              }, 
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(color: Colors.white), // Change text color here
+                h1: TextStyle(color: Colors.white), 
+                h3: TextStyle(color: Colors.white),
+                blockquote: TextStyle(color: Colors.white),
+              ),
+            ),          
           ),
         ),
       ],
     );
   }
 
-  Widget _buildMeReply(Map<String, dynamic> message, double screenWidth) {
+  Widget _buildMeReply(MessageRendererModel message, double screenWidth) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         // User Message
-        Container(
-          margin: EdgeInsets.symmetric(vertical: 8),
-          padding: EdgeInsets.all(screenWidth * 0.04),
-          decoration: BoxDecoration(
-            color: Colors.blue[400],
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Text(
-            message['content'],
-            style: TextStyle(color: Colors.white),
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.blue[400],
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Text(
+              textDirection: TextDirection.rtl,
+              message.content,
+              maxLines: null,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
+        
         SizedBox(width: screenWidth * 0.02),
       ],
     );
   }
    
-  
   Widget _buildPromptSelection() {
     return Container(
       padding: EdgeInsets.all(8.0),
@@ -453,37 +607,87 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     );
   }
 
-  void _sendMessage() {
+  void _sendMessage() async {
     if (_controller.text.isNotEmpty) {
-      setState(() {
-        // Add user message
-        messages.insert(messages.length, {'content': _controller.text, 'isUserMessage': true});
+      setState(() {       
+        messages.insert(messages.length, 
+          MessageRendererModel(
+            content: _controller.text, 
+            isUserMessage: true
+          ),
+        );
 
         // Simulate chatbot reply based on selected bot
-        Future.delayed(const Duration(milliseconds: 500), () {
-          setState(() {
-            messages.insert(messages.length, {
-              'content': '[$selectedBot] This is a reply to: ${_controller.text}',
-              'isUserMessage': false,
-            });
-          });
-        });
+        // Future.delayed(const Duration(milliseconds: 500), () {
+        //   setState(() {
+        //     messages.insert(messages.length, {
+        //       'content': '[$selectedBot] This is a reply to: ${_controller.text}',
+        //       'isUserMessage': false,
+        //     });
+        //   });
+        // });
+
+        messages.insert(
+          messages.length, 
+          MessageRendererModel(
+            content: '', 
+            isUserMessage: false,
+            icon: FontAwesomeIcons.ellipsisH
+          )
+        );
       });
 
-    
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottomAnimated();
+      });
 
-      // Clear the input field
+      String searchText = _controller.text;
       _controller.clear();
+
+      print('widget.conversationId: ${widget.conversationId}');
+
+      await _conversationViewModel.sendMessage(
+          assistantModel: EnumAssistantModel.DIFY, 
+          assistantId: selectedBot, 
+          content: searchText,
+          conversationId: widget.conversationId,
+          files: _mediaFileList?.map((file) => file.path).toList(),
+      );
+
+      if (_conversationViewModel.messageResponseDto != null) {
+        setState(() {       
+          // messages.insert(messages.length, 
+          //   MessageRendererModel(
+          //     content: _conversationViewModel.messageResponseDto!.message,
+          //     isUserMessage: false
+          //   )
+          // );
+
+          messages[messages.length - 1] = MessageRendererModel(
+            content: _conversationViewModel.messageResponseDto!.message,
+            isUserMessage: false
+          );
+        });
+      }
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottomAnimated();
+      });
+      // Clear the input field
+      
     }
 
     if (_mediaFileList != null) {
       // Handle media file upload
       // Add media file to messages
       setState(() {
-        messages.insert(messages.length, {
-          'content': 'Media file uploaded',
-          'isUserMessage': true
-        });
+        messages.insert(
+          messages.length, 
+          MessageRendererModel(
+            content: 'Media file uploaded', 
+            isUserMessage: true
+          )
+        );
       });
 
       // Clear the media file list
@@ -492,4 +696,22 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       });
     }
   }
+
+  void _fetchMoreConversationHistory() async {
+    await _conversationViewModel.getMoreConversationHistory(
+                      conversationId: widget.conversationId, 
+                      assistantModel: EnumAssistantModel.DIFY, 
+                      assistantId: EnumAssisstantId.GPT_4O_MINI,
+                      limit: 2, 
+                      cursor: _conversationViewModel.listHistoryMessages!.cursor,
+                    );
+                    
+    if (_conversationViewModel.moreMessage != null && _conversationViewModel.moreMessage!.items.isNotEmpty) {
+      List<MessageRendererModel> more_messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
+      messages.insertAll(0, more_messages);
+    }
+  }
 }
+
+
+//d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438

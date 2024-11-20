@@ -1,4 +1,3 @@
-import 'package:chatbot_agents/main.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
