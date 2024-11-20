@@ -2,14 +2,14 @@ import 'package:chatbot_agents/constants/prompt_category.dart';
 
 class Prompt {
   final String _id;
-  final String createdAt;
-  final String updatedAt;
-  final PromptCategory category;
-  final String content;
-  final String? description;
-  final bool isPublic;
-  final String language;
-  final String title;
+  String createdAt;
+  String updatedAt;
+  PromptCategory category;
+  String content;
+  String? description;
+  bool isPublic;
+  String language;
+  String title;
   final String userId;
   final String userName;
   bool isFavorite;

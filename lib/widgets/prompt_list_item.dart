@@ -41,7 +41,9 @@ class _PromptListItemState extends State<PromptListItem> {
   @override
   Widget build(BuildContext context) {
     return TouchableOpacity(
-      onTap: () => widget.onTap(widget.prompt),
+      onTap: () {
+        widget.onTap(widget.prompt);
+      },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -83,10 +85,11 @@ class _PromptListItemState extends State<PromptListItem> {
                           : Colors.white),
                 ),
                 Gap(spacing[1]),
-                TouchableOpacity(
-                  onTap: () => widget.onDeleted(widget.prompt),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                ),
+                if (widget.prompt.isPublic == true)
+                  TouchableOpacity(
+                    onTap: () => widget.onDeleted(widget.prompt),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
               ],
             )),
           ],

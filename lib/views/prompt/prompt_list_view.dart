@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
+import 'prompt_detail_view.dart';
 
-class PromptView extends StatefulWidget {
-  const PromptView({super.key});
+class PromptListView extends StatefulWidget {
+  const PromptListView({super.key});
 
   @override
-  State<PromptView> createState() => _PromptViewState();
+  State<PromptListView> createState() => _PromptListViewState();
 }
 
-class _PromptViewState extends State<PromptView> {
+class _PromptListViewState extends State<PromptListView> {
   String searchText = '';
   PromptViewMode chosenViewMode = PromptViewMode.all;
   PromptCategory selectedCategory = PromptCategory.all;
@@ -87,13 +88,15 @@ class _PromptViewState extends State<PromptView> {
         Row(
           children: [
             Expanded(
+              flex: 2,
               child: PromptCategorySelector(
                 category: selectedCategory,
                 onChanged: onCategorySelected,
+                hasAllCategory: true,
               ),
             ),
             Expanded(
-                flex: 2,
+                flex: 3,
                 child:
                     SearchInput(hintText: 'Prompt name', onChanged: onSearch)),
           ],

@@ -37,31 +37,33 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView> {
   }
 
   Widget get _detailTab {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Gap(spacing[2]),
-        TextInput(
-          controller: titleController,
-          label: 'Title',
-          hintText: 'Enter title',
-          onChanged: (value) => setState(() {
-            titleController.text = value;
-          }),
-        ),
-        Gap(spacing[2]),
-        TextInput(
-          controller: descriptionController,
-          label: 'Description',
-          hintText: 'Enter description',
-          onChanged: (value) => setState(() {
-            descriptionController.text = value;
-          }),
-          lineNumbers: 10,
-        ),
-        Gap(spacing[6]),
-        WideButton(text: 'Save', onPressed: onSave),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Gap(spacing[2]),
+          TextInput(
+            controller: titleController,
+            label: 'Title',
+            hintText: 'Enter title',
+            onChanged: (value) => setState(() {
+              titleController.text = value;
+            }),
+          ),
+          Gap(spacing[2]),
+          TextInput(
+            controller: descriptionController,
+            label: 'Description',
+            hintText: 'Enter description',
+            onChanged: (value) => setState(() {
+              descriptionController.text = value;
+            }),
+            lineNumbers: 10,
+          ),
+          Gap(spacing[6]),
+          WideButton(text: 'Save', onPressed: onSave),
+        ],
+      ),
     );
   }
 

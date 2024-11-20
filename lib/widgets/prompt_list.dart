@@ -3,6 +3,7 @@ import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/models/models.dart';
 import 'prompt_list_item.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/views/prompt/prompt_detail_view.dart';
 
 final List<Prompt> promptList = FakeData.prompts;
 
@@ -60,7 +61,10 @@ class _PromptListState extends State<PromptList> {
   @override
   Widget build(BuildContext context) {
     void onPromptTap(Prompt prompt) {
-      print('--> Prompt tapped');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PromptDetailView(prompt)),
+      );
     }
 
     void onPromptDeleted(Prompt prompt) {
