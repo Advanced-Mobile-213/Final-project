@@ -15,3 +15,7 @@ export 'add_knowledge_unit_dialog.dart';
 export 'knowledge_list_item.dart';
 export 'ai_bot_list_item.dart';
 export 'ai_bot_list.dart';
+export 'prompt_list.dart';
+export 'prompt_list_item.dart';
+export 'add_prompt_dialog.dart';
+export 'prompt_category_selector.dart';

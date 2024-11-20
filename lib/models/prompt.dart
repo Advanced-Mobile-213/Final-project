@@ -12,7 +12,7 @@ class Prompt {
   final String title;
   final String userId;
   final String userName;
-  final bool isFavorite;
+  bool isFavorite;
 
   Prompt({
     required String id,
