@@ -2,8 +2,9 @@ import 'package:chatbot_agents/config/api_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
+import 'package:chatbot_agents/service/auth_service.dart';
 import 'package:chatbot_agents/service/token_service/token_service.dart';
-import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
+import 'package:chatbot_agents/service/user_service.dart';
 import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:chatbot_agents/service/conversation_service/conversation_service.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
@@ -26,6 +27,8 @@ void setup() {
   //GetItInstance.getIt.registerSingleton<SharedPreferencesUtil>(SharedPreferencesUtil());
   GetItInstance.getIt.registerSingleton<ConversationService>(ConversationService());
   GetItInstance.getIt.registerSingleton<TokenService>(TokenService());
+  GetItInstance.getIt.registerSingleton<AuthService>(AuthService());
+  GetItInstance.getIt.registerSingleton<UserService>(UserService());
 }
 
 void main() async {
@@ -58,7 +61,7 @@ void main() async {
           '/login': (context) => const LoginView(),
           '/register': (context) => const RegisterView(),
           '/forgot_password': (context) => const EnterEmailView(),
-          '/main': (context) => const ProtectedRoute(child: MainView()),
+          '/main': (context) => ProtectedRoute(child: MainView()),
           '/subscription': (context) => const ProtectedRoute(child: SubscriptionView()),
           '/email-reply': (context) => ProtectedRoute(child: EmailReplyView()),
         },
