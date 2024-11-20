@@ -1,5 +1,5 @@
 import 'package:chatbot_agents/models/data_source.dart';
-import 'package:chatbot_agents/constants/knowledge_unit_type.dart';
+import 'enums.dart';
 
 
 final List<DataSource> dataSources = [

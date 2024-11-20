@@ -1,4 +1,4 @@
-import 'package:chatbot_agents/constants/knowledge_unit_type.dart';
+import 'package:chatbot_agents/constants/constants.dart';
 
 class DataSource {
   final String name;
