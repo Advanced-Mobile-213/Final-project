@@ -1,15 +1,15 @@
-class AssistantDto {
+class AssistantRequest {
   final String id;
   final String model;
   final String name;
-  AssistantDto({
+  AssistantRequest({
     required this.id,
     required this.model,
     required this.name,
   });
 
-  factory AssistantDto.fromJson(Map<String, dynamic> json) {
-    return AssistantDto(
+  factory AssistantRequest.fromJson(Map<String, dynamic> json) {
+    return AssistantRequest(
       id: json['id'],
       model: json['model'],
       name: json['name'],

@@ -1,16 +1,16 @@
-class MessageResponseDto {
+class MessageResponse {
   final String conversationId;
   final String message;
   final int remainingUsage;
 
-  MessageResponseDto({
+  MessageResponse({
     required this.conversationId, 
     required this.message,
     required this.remainingUsage,
   });
 
-  factory MessageResponseDto.fromJson(Map<String, dynamic> json) {
-    return MessageResponseDto(
+  factory MessageResponse.fromJson(Map<String, dynamic> json) {
+    return MessageResponse(
       conversationId: json['conversationId'],
       message: json['message'],
       remainingUsage: json['remainingUsage'],
