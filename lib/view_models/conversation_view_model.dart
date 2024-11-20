@@ -1,11 +1,11 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
-import 'package:chatbot_agents/models/get_conversation_history/list_message_response_model.dart';
+import 'package:chatbot_agents/models/get_conversation_history/list_couple_message_model.dart';
 import 'package:chatbot_agents/models/send_message/list_message_model.dart';
 import 'package:chatbot_agents/models/send_message/message_model.dart';
-import 'package:chatbot_agents/models/send_message/message_response_dto.dart';
-import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
-import 'package:chatbot_agents/service/conversation_service/conversation_service.dart';
-import 'package:chatbot_agents/service/token_service/token_service.dart';
+import 'package:chatbot_agents/dto/send_message/message_response.dart';
+import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
+import 'package:chatbot_agents/service/conversation_service.dart';
+import 'package:chatbot_agents/service/token_service.dart';
 import 'package:flutter/material.dart';
 
 class ConversationViewModel extends ChangeNotifier {
@@ -14,13 +14,13 @@ class ConversationViewModel extends ChangeNotifier {
 
   ListMessageModel? messages = ListMessageModel(messages: [], id: '');
 
-  ListMessageResponseModel? listHistoryMessages;
+  ListCoupleMessageModel? listHistoryMessages;
   bool isLoadingConversationHistory = false;
 
-  ListMessageResponseModel? moreMessage;
+  ListCoupleMessageModel? moreMessage;
   bool isLoadingMoreConversationHistory = false;
 
-  MessageResponseDto? messageResponseDto;
+  MessageResponse? messageResponseDto;
 
   int remainingToken = 0;
 
@@ -53,7 +53,7 @@ class ConversationViewModel extends ChangeNotifier {
         listHistoryMessages!.items.forEach((element) {
           messages!.messages.add(
             MessageModel(
-              assistant: AssistantDto(
+              assistant: AssistantRequest(
                 id: assistantId, 
                 model: assistantModel, 
                 name: ''), 
@@ -64,7 +64,7 @@ class ConversationViewModel extends ChangeNotifier {
 
           messages!.messages.add(
             MessageModel(
-              assistant: AssistantDto(
+              assistant: AssistantRequest(
                 id: assistantId, 
                 model: assistantModel, 
                 name: ''), 
@@ -123,7 +123,7 @@ class ConversationViewModel extends ChangeNotifier {
         moreMessage!.items.forEach((element) {
           messages!.messages.insert(0,
             MessageModel(
-              assistant: AssistantDto(
+              assistant: AssistantRequest(
                 id: assistantId, 
                 model: assistantModel, 
                 name: ''), 
@@ -134,7 +134,7 @@ class ConversationViewModel extends ChangeNotifier {
 
           messages!.messages.insert(0,
             MessageModel(
-              assistant: AssistantDto(
+              assistant: AssistantRequest(
                 id: assistantId, 
                 model: assistantModel, 
                 name: ''), 
@@ -187,6 +187,10 @@ class ConversationViewModel extends ChangeNotifier {
     try {
       messageResponseDto = null;
       
+      if (conversationId!= null) {
+        messages?.id = conversationId;
+      }
+
       messageResponseDto = await _conversationService.sendMessage(
         assistantModel: assistantModel,
         assistantId: assistantId,
@@ -199,7 +203,7 @@ class ConversationViewModel extends ChangeNotifier {
       if (messageResponseDto != null) {
         messages!.messages.add(
           MessageModel(
-            assistant: AssistantDto(
+            assistant: AssistantRequest(
               id: assistantId, 
               model: assistantModel, 
               name: ''), 
@@ -210,7 +214,7 @@ class ConversationViewModel extends ChangeNotifier {
 
         messages!.messages.add(
           MessageModel(
-            assistant: AssistantDto(
+            assistant: AssistantRequest(
               id: assistantId, 
               model: assistantModel, 
               name: ''), 
