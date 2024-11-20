@@ -1,18 +1,18 @@
-class MessageResponseModel {
+class CoupleMessageModel {
   final String? answer;
   final int? createdAt;
   final List<String>? files;
   final String? query;
 
-  MessageResponseModel({
+  CoupleMessageModel({
     required this.answer,
     required this.createdAt,
     required this.files,
     required this.query,
   });
 
-  factory MessageResponseModel.fromJson(Map<String, dynamic> json) {
-    return MessageResponseModel(
+  factory CoupleMessageModel.fromJson(Map<String, dynamic> json) {
+    return CoupleMessageModel(
       answer: json['answer'],
       createdAt: json['createdAt'],
       files: json['files'] != null 

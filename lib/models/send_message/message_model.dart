@@ -1,7 +1,7 @@
-import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
+import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
 
 class MessageModel {
-   final AssistantDto assistant;
+   final AssistantRequest assistant;
   final String role;
   final String content;
   final List<String>? files;
@@ -17,7 +17,7 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      assistant: AssistantDto.fromJson(json['assistant']),
+      assistant: AssistantRequest.fromJson(json['assistant']),
       role: json['role'],
       content: json['content'],
       files: json['files'] != null 

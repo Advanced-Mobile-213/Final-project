@@ -1,12 +1,12 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/models/get_conversations/list_thread_chat_model.dart';
-import 'package:chatbot_agents/models/send_message/message_response_dto.dart';
-import 'package:chatbot_agents/service/conversation_service/conversation_service.dart';
+import 'package:chatbot_agents/dto/send_message/message_response.dart';
+import 'package:chatbot_agents/service/conversation_service.dart';
 import 'package:flutter/material.dart';
 
 class ListConversationsViewModel extends ChangeNotifier {
   ListThreadChatModel? conversations;
-  MessageResponseDto? messageResponseDto;
+  MessageResponse? messageResponseDto;
   bool isLoading = false;
   final ConversationService _conversationService = GetItInstance.getIt<ConversationService>();
 

@@ -1,13 +1,13 @@
-import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
+import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
 
-class MessageMetadataDto {
-  final AssistantDto assistant;
+class MessageMetadataRequest {
+  final AssistantRequest assistant;
   final String role;
   final String content;
   final List<String> files;
   final bool? isError;
 
-  MessageMetadataDto({
+  MessageMetadataRequest({
     required this.assistant,
     required this.role,
     required this.content,
@@ -15,9 +15,9 @@ class MessageMetadataDto {
     this.isError,
   });
 
-  factory MessageMetadataDto.fromJson(Map<String, dynamic> json) {
-    return MessageMetadataDto(
-      assistant: AssistantDto.fromJson(json['assistant']),
+  factory MessageMetadataRequest.fromJson(Map<String, dynamic> json) {
+    return MessageMetadataRequest(
+      assistant: AssistantRequest.fromJson(json['assistant']),
       role: json['role'],
       content: json['content'],
       files: List<String>.from(json['files']),

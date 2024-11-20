@@ -1,6 +1,6 @@
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
-import 'package:chatbot_agents/models/get_conversation_history/message_mapper.dart';
+import 'package:chatbot_agents/mapper/message_mapper.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
