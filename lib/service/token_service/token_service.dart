@@ -13,7 +13,7 @@ class TokenService {
           '/api/v1/tokens/usage',
         );
 
-      //print(response);
+      print(response);
 
       if (response.statusCode! <300 && response.statusCode! >= 200) {
         return response.data['availableTokens'] ?? 0;

@@ -5,7 +5,7 @@ import 'package:chatbot_agents/models/send_message/message_model.dart';
 import 'package:chatbot_agents/models/send_message/message_response_dto.dart';
 import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
 import 'package:chatbot_agents/service/conversation_service/conversation_service.dart';
-import 'package:chatbot_agents/service/conversation_service/token_service.dart';
+import 'package:chatbot_agents/service/token_service/token_service.dart';
 import 'package:flutter/material.dart';
 
 class ConversationViewModel extends ChangeNotifier {
@@ -218,8 +218,12 @@ class ConversationViewModel extends ChangeNotifier {
             content: messageResponseDto!.message
           )
         );
+
+        remainingToken = messageResponseDto!.remainingUsage;
+
       }
 
+      
       //conversations = ListThreadChatModel.fromJson(response.data);
       notifyListeners();
     } catch (e) {

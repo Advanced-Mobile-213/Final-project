@@ -46,7 +46,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   late final ListConversationsViewModel _listConversationsViewModel;
   // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
-  String selectedBot = 'gpt-4o'; // Default bot
+  String selectedBot = 'gpt-4o-mini'; // Default bot
+  final List<int> costToken = [1,3,1,5,5,1];
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +93,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
               items: bots.map<DropdownMenuItem<String>>((String bot) {
                 return DropdownMenuItem<String>(
                   value: bot,
-                  child: Text(bot, 
+                  child: Text('$bot : ${costToken[bots.indexOf(bot)]} tokens', 
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
