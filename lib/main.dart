@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
+import 'package:chatbot_agents/service/prompt_service.dart';
 
 // For dependency injection
 void setup() {
@@ -33,6 +34,7 @@ void setup() {
   GetItInstance.getIt.registerSingleton<TokenService>(TokenService());
   GetItInstance.getIt.registerSingleton<AuthService>(AuthService());
   GetItInstance.getIt.registerSingleton<UserService>(UserService());
+  GetItInstance.getIt.registerSingleton<PromptService>(PromptService());
 }
 
 void main() async {

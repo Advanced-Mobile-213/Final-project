@@ -6,6 +6,8 @@ import 'package:gap/gap.dart';
 import 'package:chatbot_agents/views/prompt/prompt_detail_view.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
+import 'package:chatbot_agents/service/prompt_service.dart';
+import 'package:chatbot_agents/di/get_it_instance.dart';
 
 class PromptList extends StatefulWidget {
   final String? searchText;
@@ -19,10 +21,14 @@ class PromptList extends StatefulWidget {
 }
 
 class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
+  final PromptService _conversationService =
+      GetItInstance.getIt<PromptService>();
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _conversationService.getPrompts();
     _fetchPrompts();
   }
 

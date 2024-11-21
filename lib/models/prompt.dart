@@ -1,4 +1,5 @@
 import 'package:chatbot_agents/constants/prompt_category.dart';
+import 'package:chatbot_agents/constants/constants.dart';
 
 class Prompt {
   String? id; // remember to set id to final when the service is implemented
@@ -32,17 +33,17 @@ class Prompt {
   // constructor from json
   factory Prompt.fromJson(Map<String, dynamic> json) {
     return Prompt(
-      id: json['_id'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      category: json['category'],
-      content: json['content'],
-      description: json['description'],
+      id: json['_id'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
+      category: getCategory(json['category'] ?? ''),
+      content: json['content'] ?? '',
+      description: json['description'] ?? '',
       isPublic: json['isPublic'],
-      language: json['language'],
-      title: json['title'],
-      userId: json['userId'],
-      userName: json['userName'],
+      language: json['language'] ?? '',
+      title: json['title'] ?? '',
+      userId: json['userId'] ?? '',
+      userName: json['userName'] ?? '',
       isFavorite: json['isFavorite'],
     );
   }

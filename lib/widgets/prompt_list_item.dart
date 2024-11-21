@@ -55,6 +55,7 @@ class _PromptListItemState extends State<PromptListItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
+              flex: 4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -74,23 +75,24 @@ class _PromptListItemState extends State<PromptListItem> {
               ),
             ),
             Expanded(
+                flex: 1,
                 child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TouchableOpacity(
-                  onTap: () => widget.onFavorite(widget.prompt),
-                  child: Icon(Icons.star,
-                      color: widget.prompt.isFavorite
-                          ? Colors.yellow
-                          : Colors.white),
-                ),
-                Gap(spacing[1]),
-                TouchableOpacity(
-                  onTap: () => widget.onDeleted(widget.prompt),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                ),
-              ],
-            )),
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TouchableOpacity(
+                      onTap: () => widget.onFavorite(widget.prompt),
+                      child: Icon(Icons.star,
+                          color: widget.prompt.isFavorite
+                              ? Colors.yellow
+                              : Colors.white),
+                    ),
+                    Gap(spacing[1]),
+                    TouchableOpacity(
+                      onTap: () => widget.onDeleted(widget.prompt),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                  ],
+                )),
           ],
         ),
       ),

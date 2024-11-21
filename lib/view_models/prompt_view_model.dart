@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/models/models.dart';
 import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/service/prompt_service.dart';
 
 class PromptViewModel extends ChangeNotifier {
   // adding services here
+  final PromptService _promptService = PromptService();
 
   List<Prompt> prompts = [];
   bool isLoading = false;
@@ -19,15 +21,17 @@ class PromptViewModel extends ChangeNotifier {
     // Fetch prompts from the server
     try {
       isLoading = true;
-
-      // call the service here
-      // delay for 2 seconds to simulate network request
-      await Future.delayed(const Duration(seconds: 2));
-
+      final result = await _promptService.getPrompts(
+        query: query,
+        offset: offset,
+        limit: limit,
+        category: category,
+        isFavorite: isFavorite,
+        isPublic: isPublic,
+      );
       isLoading = false;
 
-      // set the prompts here
-      prompts = FakeData.prompts;
+      prompts = result?.items ?? [];
     } catch (e) {
       print('--> Error fetching prompts: $e');
       isLoading = false;
