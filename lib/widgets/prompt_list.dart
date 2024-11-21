@@ -119,11 +119,7 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     final Widget content;
     if (promptViewModel.isLoading) {
       content = const Expanded(
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-          ),
-        ),
+        child: Center(child: CircularProgressIndicator()),
       );
     } else {
       final filteredPromptList = getFilteredPromptList(promptViewModel.prompts);
