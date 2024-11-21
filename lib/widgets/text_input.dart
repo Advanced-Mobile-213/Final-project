@@ -7,7 +7,9 @@ class TextInput extends StatelessWidget {
   final Function(String)? onChanged;
   final TextEditingController? controller;
   final bool isRequired;
-  final String? Function(String?)? validator; // Validator function for form validation
+  final String? Function(String?)?
+      validator; // Validator function for form validation
+  final int lineNumbers;
 
   const TextInput({
     super.key,
@@ -18,6 +20,7 @@ class TextInput extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.validator,
+    this.lineNumbers = 1,
   });
 
   @override
@@ -30,6 +33,7 @@ class TextInput extends StatelessWidget {
           onChanged: onChanged,
           controller: controller,
           obscureText: obscureText,
+          maxLines: lineNumbers,
           validator: (value) {
             // If isRequired is true, ensure the field is not empty
             if (isRequired && (value == null || value.isEmpty)) {
@@ -43,20 +47,26 @@ class TextInput extends StatelessWidget {
           },
           decoration: InputDecoration(
             label: label != null
-                ? Text(label!, style: const TextStyle(fontSize: 16, color: Colors.white))
+                ? Text(label!,
+                    style: const TextStyle(fontSize: 16, color: Colors.white))
                 : null,
             hintText: hintText,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15), // Add border radius here
-              borderSide: const BorderSide(color: Colors.grey), // Customize border color if needed
+              borderSide: const BorderSide(
+                  color: Colors.grey), // Customize border color if needed
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15), // Add border radius for enabled state
-              borderSide: const BorderSide(color: Colors.grey), // Customize border color if needed
+              borderRadius: BorderRadius.circular(
+                  15), // Add border radius for enabled state
+              borderSide: const BorderSide(
+                  color: Colors.grey), // Customize border color if needed
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15), // Add border radius for focused state
-              borderSide: const BorderSide(color: Colors.white), // Change color when focused
+              borderRadius: BorderRadius.circular(
+                  15), // Add border radius for focused state
+              borderSide: const BorderSide(
+                  color: Colors.white), // Change color when focused
             ),
           ),
         ),
