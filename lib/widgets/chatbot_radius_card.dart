@@ -9,13 +9,13 @@ class ChatbotRadiusCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const ChatbotRadiusCard({
-    Key? key,
+    super.key,
     required this.botNames,
     required this.imageUrl,
     required this.onPressed,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

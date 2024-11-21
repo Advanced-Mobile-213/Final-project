@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
 import 'package:chatbot_agents/utils/validator_utils.dart';
+import 'package:chatbot_agents/widgets/app_logo.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');
+  // final emailController = TextEditingController();
   final passwordController = TextEditingController(text: 'Adv@ncedMobile213');
+  // final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state
 
@@ -52,6 +55,8 @@ class _LoginViewState extends State<LoginView> {
                         mainAxisAlignment: MainAxisAlignment.center, // Vertically centers the children
                         crossAxisAlignment: CrossAxisAlignment.center, // Horizontally centers the children
                         children: [
+                          AppLogo(width: isWindows ? 50 : 40, height: isWindows ? 50 : 40,),
+                          const SizedBox(height: 20),
                           // Title
                           Text(
                             'Sign in your account',
@@ -136,17 +141,7 @@ class _LoginViewState extends State<LoginView> {
                                 ),
                                 onPressed: () {},
                               ),
-                              const SizedBox(width: 20),
-                              IconButton(
-                                icon: SizedBox(
-                                  width: isWindows ? 50 : 40,
-                                  height: isWindows ? 50 : 40,
-                                  child: Image.memory(
-                                    AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString),
-                                  ),
-                                ),
-                                onPressed: () {},
-                              ),
+
                             ],
                           ),
                           const SizedBox(height: 20),
