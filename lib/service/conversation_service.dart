@@ -1,9 +1,9 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
-import 'package:chatbot_agents/models/get_conversation_history/list_message_response_model.dart';
+import 'package:chatbot_agents/models/get_conversation_history/list_couple_message_model.dart';
 import 'package:chatbot_agents/models/get_conversations/list_thread_chat_model.dart';
 import 'package:chatbot_agents/models/send_message/list_message_model.dart';
-import 'package:chatbot_agents/models/send_message/message_response_dto.dart';
-import 'package:chatbot_agents/models/send_message/meta_data_dto/assistant_dto.dart';
+import 'package:chatbot_agents/dto/send_message/message_response.dart';
+import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
 import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:dio/dio.dart';
@@ -67,7 +67,7 @@ class ConversationService {
   
  }
 
- Future<ListMessageResponseModel?> getConversationHistory({
+ Future<ListCoupleMessageModel?> getConversationHistory({
     required String conversationId,
     required String assistantModel, 
     required String assistantId,
@@ -99,7 +99,7 @@ class ConversationService {
           );
   
         if (response.statusCode! <300 && response.statusCode! >= 200) {
-          return ListMessageResponseModel.fromJson(response.data);
+          return ListCoupleMessageModel.fromJson(response.data);
         }
       } on  DioException catch (e) {
         print("An DioException occurs: ${e}");
@@ -111,7 +111,7 @@ class ConversationService {
     return null;
  }
  
- Future<MessageResponseDto?> createConversation({
+ Future<MessageResponse?> createConversation({
     required String assistantModel, 
     required String assistantId,
     String? assistantName,
@@ -128,7 +128,7 @@ class ConversationService {
           _apiService.setToken(accessToken, refreshToken);
         }
 
-        final AssistantDto assistantDto = AssistantDto(
+        final AssistantRequest assistantDto = AssistantRequest(
           model: assistantModel,
           id: assistantId, 
           name: assistantName ?? ''
@@ -146,7 +146,7 @@ class ConversationService {
           );
   
         if (response.statusCode! <300 && response.statusCode! >= 200) {
-          return MessageResponseDto.fromJson(response.data);
+          return MessageResponse.fromJson(response.data);
         }
       } on  DioException catch (e) {
         print("An DioException occurs: ${e}");
@@ -158,7 +158,7 @@ class ConversationService {
     return null;
  }
  
- Future<MessageResponseDto?> sendMessage({
+ Future<MessageResponse?> sendMessage({
     required String assistantModel,
     required String assistantId,
     required String content,
@@ -207,7 +207,7 @@ class ConversationService {
           );
   
         if (response.statusCode! <300 && response.statusCode! >= 200) {
-          return MessageResponseDto.fromJson(response.data);
+          return MessageResponse.fromJson(response.data);
         }
       } on  DioException catch (e) {
         print("An DioException occurs: ${e}");

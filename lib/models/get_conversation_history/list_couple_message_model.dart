@@ -1,25 +1,25 @@
-import 'package:chatbot_agents/models/get_conversation_history/message_response_model.dart';
+import 'package:chatbot_agents/models/get_conversation_history/couple_message_model.dart';
 
-class ListMessageResponseModel {
+class ListCoupleMessageModel {
   String cursor;
   bool hasMore;
   int limit;
-  List<MessageResponseModel> items;
+  List<CoupleMessageModel> items;
 
-  ListMessageResponseModel({
+  ListCoupleMessageModel({
     required this.cursor,
     required this.hasMore,
     required this.limit,
     required this.items,
   });
 
-  factory ListMessageResponseModel.fromJson(Map<String, dynamic> json) {
-    return ListMessageResponseModel(
+  factory ListCoupleMessageModel.fromJson(Map<String, dynamic> json) {
+    return ListCoupleMessageModel(
       cursor: json['cursor'],
       hasMore: json['has_more'],
       limit: json['limit'],
       items: (json['items'] as List)
-          .map((e) => MessageResponseModel.fromJson(e))
+          .map((e) => CoupleMessageModel.fromJson(e))
           .toList(),
     );
   }

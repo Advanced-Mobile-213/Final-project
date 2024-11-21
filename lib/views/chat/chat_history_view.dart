@@ -2,7 +2,7 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
-import 'package:chatbot_agents/views/chat/chat_thread_view.dart';
+import 'package:chatbot_agents/views/chat/new_chat_thread_view.dart';
 import 'package:chatbot_agents/views/chat/widgets/thread_chat.dart';
 import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +142,15 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
       backgroundColor: AppColors.primaryBackground,
       // Floating Action Button to create new chat thread
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _createNewThreadDialog(context),
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:  (context) => const NewChatThreadView(),
+            ),
+          ),
+        },
+          //_createNewThreadDialog(context),
         backgroundColor: AppColors.secondaryBackground,
         child: const Icon(
           Icons.add,
@@ -207,22 +215,19 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
                 //   _isCreatingThread = true;
                 // });
 
-                await listConversationsViewModel.createConversation(
-                  assistantModel: EnumAssistantModel.DIFY,
-                  assistantId: EnumAssisstantId.GPT_4O_MINI,
-                  //assistantName: titleController.text, 
-                  content: titleController.text,
-                );
+                // await listConversationsViewModel.createConversation(
+                //   assistantModel: EnumAssistantModel.DIFY,
+                //   assistantId: EnumAssisstantId.GPT_4O_MINI,
+                //   //assistantName: titleController.text, 
+                //   content: titleController.text,
+                // );
 
                 Navigator.of(context).pop(); // Close the dialog
 
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:  (context) => ChatThreadView(
-                      conversationId: listConversationsViewModel
-                          .messageResponseDto!.conversationId,
-                    ),
+                    builder:  (context) => const NewChatThreadView(),
                   ),
                 );
 

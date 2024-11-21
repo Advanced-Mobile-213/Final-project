@@ -7,10 +7,9 @@ import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
-import 'package:chatbot_agents/widgets/text_input.dart' as CustomizedTextInput;
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,21 +20,19 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ChatThreadView extends StatefulWidget {
-  final String conversationId;
-  const ChatThreadView({
+class NewChatThreadView extends StatefulWidget {
+  const NewChatThreadView({
     super.key,
-    required this.conversationId,
   });
 
   @override
-  _ChatThreadViewState createState() => _ChatThreadViewState();
+  _NewChatThreadViewState createState() => _NewChatThreadViewState();
 }
 
 typedef OnPickImageCallback = void Function(
     double? maxWidth, double? maxHeight, int? quality, int? limit);
 
-class _ChatThreadViewState extends State<ChatThreadView> {
+class _NewChatThreadViewState extends State<NewChatThreadView> {
   final TextEditingController _controller = TextEditingController();
   List<MessageRendererModel> messages = [];
   bool _showPromptSelection = false;
@@ -50,6 +47,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   String selectedBot = 'gpt-4o-mini'; // Default bot
   final List<int> costToken = [1,3,1,5,5,1];
 
+  late String _conversationId = '';
+
   @override
   Widget build(BuildContext context) {
     // Use MediaQuery to make the layout responsive
@@ -62,10 +61,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           icon: const Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
           onPressed: () {
             _conversationViewModel.clearContextOfConversation();
-            // _listConversationsViewModel.getConversations(
-            //   assistantModel: EnumAssistantModel.DIFY,
-            //   assistantId: EnumAssisstantId.GPT_4O_MINI,
-            // );
+            _listConversationsViewModel.getConversations(
+              assistantModel: EnumAssistantModel.DIFY,
+              assistantId: EnumAssisstantId.GPT_4O_MINI,
+            );
             Navigator.pop(context); // Pops the current screen from the navigation stack
           },
         ),
@@ -122,7 +121,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   : _conversationViewModel.remainingToken != 0 
                   ? _conversationViewModel.remainingToken.toString()
                   : '0', 
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                   ),
@@ -139,17 +138,25 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             child: Container(
               child: Consumer<ConversationViewModel>(
                 builder: (context, ConversationViewModel conversationViewModel, child) {
-                  if (conversationViewModel.isLoadingConversationHistory==true) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.quaternaryBackground,
-                      ),
+                  if (messages.isNotEmpty) {
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.all(5.0),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        final isUserMessage = message.isUserMessage;
+
+                        return isUserMessage
+                            ? _buildMeReply(message, screenWidth)
+                            : _buildChatbotReply(message, screenWidth);
+                      },
                     );
                   } else if (conversationViewModel.isLoadingConversationHistory==false 
-                   && (conversationViewModel.listHistoryMessages == null
-                   || conversationViewModel.listHistoryMessages!.items.isEmpty)) {
-                    return const Center(
-                      child: Text('No messages found'),
+                   && (conversationViewModel.messages == null
+                   || conversationViewModel.messages!.messages.isEmpty)) {
+                    return Center(
+                      child: Container(),
                     );
                   }
 
@@ -217,7 +224,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           ),
           // Input field to send new message
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(screenWidth * 0.05, screenHeight*0.001 , screenHeight * 0.005, screenWidth * 0.05),
+            padding: EdgeInsets.symmetric(
+                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               //mainAxisAlignment: MainAxisAlignment.center,
@@ -232,7 +240,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   ),
                 ),
                 Expanded(
-                  child: CustomizedTextInput.TextInput(
+                  child: TextInput(
                       controller: _controller,
                       hintText: "Enter message",
                       onChanged: (value){}
@@ -360,12 +368,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   }
 
   void _fetchConversationHistory() async {
-    await _conversationViewModel.getConversationHistory(
-                      conversationId: widget.conversationId, 
-                      assistantModel: EnumAssistantModel.DIFY, 
-                      assistantId: EnumAssisstantId.GPT_4O_MINI,
-                      //limit: 2,
-                      );
                     
     if (_conversationViewModel.listHistoryMessages != null && _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
       messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
@@ -376,10 +378,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     await _conversationViewModel.getRemainingToken();
   }
 
-  void _setContextOfConversation()  {
-   // _conversationViewModel.setContextOfConversation();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -387,7 +385,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     _conversationViewModel = context.read<ConversationViewModel>();
     _listConversationsViewModel = context.read<ListConversationsViewModel>();
     _fetchRemainingToken();
-    _fetchConversationHistory();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
     // });
@@ -404,13 +401,11 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 200),
+        duration: Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
     }
   }
-
-  
 
   @override
   void dispose() {
@@ -511,44 +506,26 @@ class _ChatThreadViewState extends State<ChatThreadView> {
               color: Colors.grey[800],
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                message.icon !=null
-                ? Icon(message.icon, color: Colors.white)
-                : MarkdownBody(
-                  data: message.content,
-                  onTapLink: (text, href, title) async {
-                    if (href != null) {
-                      print('Link clicked: $href');
-                      if (await canLaunchUrl(Uri.parse(href))) {
-                        await launchUrl(Uri.parse(href));
-                      } else {
-                        print('Could not launch $href');
-                      }
-                    }
-                  },
-                  styleSheet: MarkdownStyleSheet(
-                    p: TextStyle(color: Colors.white), // Change text color here
-                    h1: TextStyle(color: Colors.white),
-                    h3: TextStyle(color: Colors.white),
-                    blockquote: TextStyle(color: Colors.white),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.copy, color: Colors.white),
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: message.content));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Copied to clipboard')),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            )
+            child: message.icon !=null ? Icon(message.icon, color: Colors.white)
+            : MarkdownBody(
+              data: message.content,
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  print('Link clicked: $href');
+                  if (await canLaunchUrl(Uri.parse(href))) {
+                    await launchUrl(Uri.parse(href));
+                  } else {
+                    print('Could not launch $href');
+                  }
+                }
+              }, 
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(color: Colors.white), 
+                h1: TextStyle(color: Colors.white), 
+                h3: TextStyle(color: Colors.white),
+                blockquote: TextStyle(color: Colors.white),
+              ),
+            ),          
           ),
         ),
       ],
@@ -557,36 +534,31 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
   Widget _buildMeReply(MessageRendererModel message, double screenWidth) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end, // Align the message bubble to the right
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Flexible(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: screenWidth * 0.7, // Limit the width to 70% of the screen width
+        // User Message
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.blue[400],
+              borderRadius: BorderRadius.circular(15),
             ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              decoration: BoxDecoration(
-                color: Colors.blue[400],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                message.content,
-                textDirection: TextDirection.ltr, // Keep text left-to-right
-                style: const TextStyle(color: Colors.white),
-              ),
+            child: Text(
+              textDirection: TextDirection.rtl,
+              message.content,
+              maxLines: null,
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),
+        
         SizedBox(width: screenWidth * 0.02),
       ],
     );
   }
-
-
-
-
+   
   Widget _buildPromptSelection() {
     return Container(
       padding: EdgeInsets.all(8.0),
@@ -640,16 +612,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           ),
         );
 
-        // Simulate chatbot reply based on selected bot
-        // Future.delayed(const Duration(milliseconds: 500), () {
-        //   setState(() {
-        //     messages.insert(messages.length, {
-        //       'content': '[$selectedBot] This is a reply to: ${_controller.text}',
-        //       'isUserMessage': false,
-        //     });
-        //   });
-        // });
-
         messages.insert(
           messages.length, 
           MessageRendererModel(
@@ -667,29 +629,30 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       String searchText = _controller.text;
       _controller.clear();
 
-      print('widget.conversationId: ${widget.conversationId}');
+      print('_conversationId: ${_conversationId}');
 
       await _conversationViewModel.sendMessage(
           assistantModel: EnumAssistantModel.DIFY, 
           assistantId: selectedBot, 
           content: searchText,
-          conversationId: widget.conversationId,
+          conversationId: _conversationId,
           files: _mediaFileList?.map((file) => file.path).toList(),
       );
 
-      if (_conversationViewModel.messageResponseDto != null) {
-        setState(() {       
-          // messages.insert(messages.length, 
-          //   MessageRendererModel(
-          //     content: _conversationViewModel.messageResponseDto!.message,
-          //     isUserMessage: false
-          //   )
-          // );
+      print('_conversationViewModel.messageResponseDto: ${_conversationViewModel.messageResponseDto}');
 
+      if (_conversationViewModel.messageResponseDto != null) {
+        setState(() {   
           messages[messages.length - 1] = MessageRendererModel(
             content: _conversationViewModel.messageResponseDto!.message,
             isUserMessage: false
           );
+        });
+      }
+
+      if (_conversationViewModel.messageResponseDto != null) {
+        setState(() {
+          _conversationId = _conversationViewModel.messageResponseDto!.conversationId;
         });
       }
 
@@ -720,20 +683,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     }
   }
 
-  void _fetchMoreConversationHistory() async {
-    await _conversationViewModel.getMoreConversationHistory(
-                      conversationId: widget.conversationId, 
-                      assistantModel: EnumAssistantModel.DIFY, 
-                      assistantId: EnumAssisstantId.GPT_4O_MINI,
-                      limit: 2, 
-                      cursor: _conversationViewModel.listHistoryMessages!.cursor,
-                    );
-                    
-    if (_conversationViewModel.moreMessage != null && _conversationViewModel.moreMessage!.items.isNotEmpty) {
-      List<MessageRendererModel> more_messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
-      messages.insertAll(0, more_messages);
-    }
-  }
 }
 
 

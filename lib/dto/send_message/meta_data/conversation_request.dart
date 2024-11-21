@@ -1,20 +1,20 @@
-import 'package:chatbot_agents/models/send_message/meta_data_dto/message_metadata_dto.dart';
+import 'package:chatbot_agents/dto/send_message/meta_data/message_metadata_request.dart';
 
-class ConversationDto {
-  final List<MessageMetadataDto> messages;
+class ConversationRequest {
+  final List<MessageMetadataRequest> messages;
   final String id;
 
-  ConversationDto({
+  ConversationRequest({
     required this.messages,
     required this.id,
   });
 
-  factory ConversationDto.fromJson(Map<String, dynamic> json) {
-    return ConversationDto(
-      messages: List<MessageMetadataDto>
+  factory ConversationRequest.fromJson(Map<String, dynamic> json) {
+    return ConversationRequest(
+      messages: List<MessageMetadataRequest>
           .from(
             json['messages'].map(
-              (x) => MessageMetadataDto.fromJson(x)
+              (x) => MessageMetadataRequest.fromJson(x)
             )
           ),
       id: json['id'],
