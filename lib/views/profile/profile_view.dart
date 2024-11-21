@@ -1,6 +1,8 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {
  
@@ -9,8 +11,11 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-   @override
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = context.read<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
@@ -164,15 +169,15 @@ class _ProfileViewState extends State<ProfileView> {
                                 ),
                               ),
                             ),
-                            ListTile(
-                              leading: const Text('Tokens',
-                                  style: const TextStyle(
+                            const ListTile(
+                              leading: Text('Tokens',
+                                  style: TextStyle(
                                     fontSize: 20,
                                     color: AppColors.primaryText,
                                   )
                               ),
                               trailing: Text('30/50',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 20,
                                     color: AppColors.primaryText,
                                   )
@@ -199,7 +204,7 @@ class _ProfileViewState extends State<ProfileView> {
                             Container(
                                 child: ListTile(
                                   tileColor: AppColors.primaryBackground,
-                                  leading: Icon(Icons.settings,
+                                  leading: const Icon(Icons.settings,
                                       color: AppColors.quaternaryText
                                   ),
                                   title: const Text('Chat Settings',
@@ -208,7 +213,7 @@ class _ProfileViewState extends State<ProfileView> {
                                           fontSize: 20,
                                       )
                                   ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
+                                  trailing: const Icon(Icons.arrow_forward_ios,
                                       color: AppColors.quaternaryText,
                                   ),
                                   onTap: () {
@@ -219,7 +224,7 @@ class _ProfileViewState extends State<ProfileView> {
                             Container(
                                 child: ListTile(
                                   tileColor: AppColors.primaryBackground,
-                                  leading: Icon(Icons.dark_mode,
+                                  leading: const Icon(Icons.dark_mode,
                                     color: AppColors.quaternaryText
                                   ),
                                   title: const Text('Color Scheme',
@@ -228,7 +233,7 @@ class _ProfileViewState extends State<ProfileView> {
                                           fontSize: 20,
                                       )
                                   ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
+                                  trailing: const Icon(Icons.arrow_forward_ios,
                                       color: AppColors.quaternaryText
                                   ),
                                   onTap: () {
@@ -239,7 +244,7 @@ class _ProfileViewState extends State<ProfileView> {
                             Container(
                                 child: ListTile(
                                   tileColor: AppColors.primaryBackground,
-                                  leading: Icon(FontAwesomeIcons.globe,
+                                  leading: const Icon(FontAwesomeIcons.globe,
                                       color: AppColors.quaternaryText
                                   ),
                                   title: const Text('Language',
@@ -248,13 +253,33 @@ class _ProfileViewState extends State<ProfileView> {
                                           fontSize: 20,
                                       )
                                   ),
-                                  trailing: Icon(Icons.arrow_forward_ios,
+                                  trailing: const Icon(Icons.arrow_forward_ios,
                                       color: AppColors.quaternaryText
                                   ),
                                   onTap: () {
                                     // Add your onPressed code here!
                                   },
                                 ),
+                            ),
+                            Container(
+                              child: ListTile(
+                                tileColor: AppColors.primaryBackground,
+                                leading: const Icon(FontAwesomeIcons.doorOpen,
+                                    color: AppColors.quaternaryText
+                                ),
+                                title: const Text('Logout',
+                                    style: const TextStyle(
+                                      color: AppColors.quaternaryText,
+                                      fontSize: 20,
+                                    )
+                                ),
+                                trailing: const Icon(Icons.arrow_forward_ios,
+                                    color: AppColors.quaternaryText
+                                ),
+                                onTap: () {
+                                  authProvider.logout();
+                                },
+                              ),
                             ),
                           ],
                         ),

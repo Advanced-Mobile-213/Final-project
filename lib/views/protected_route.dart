@@ -2,7 +2,6 @@ import 'package:chatbot_agents/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class ProtectedRoute extends StatelessWidget {
   final Widget child;
 
@@ -10,7 +9,7 @@ class ProtectedRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
+    final authProvider = context.watch<AuthProvider>(); // Automatically listens for changes
 
     if (authProvider.isAuthenticated) {
       return child; // User is authenticated, show the requested screen
@@ -19,7 +18,7 @@ class ProtectedRoute extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacementNamed(context, '/login');
       });
-      return Container(); // Placeholder while redirecting
+      return const SizedBox(); // Placeholder while redirecting
     }
   }
 }
