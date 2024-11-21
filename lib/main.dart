@@ -19,16 +19,20 @@ import 'package:chatbot_agents/views/subscription/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-
+import 'view_models/prompt_view_model.dart';
+import 'package:chatbot_agents/service/prompt_service.dart';
 
 // For dependency injection
 void setup() {
-  GetItInstance.getIt.registerSingleton<JarvisApiClient>(JarvisApiClient.init(ApiConfig.jarvisUrl));
+  GetItInstance.getIt.registerSingleton<JarvisApiClient>(
+      JarvisApiClient.init(ApiConfig.jarvisUrl));
   //GetItInstance.getIt.registerSingleton<SharedPreferencesUtil>(SharedPreferencesUtil());
-  GetItInstance.getIt.registerSingleton<ConversationService>(ConversationService());
+  GetItInstance.getIt
+      .registerSingleton<ConversationService>(ConversationService());
   GetItInstance.getIt.registerSingleton<TokenService>(TokenService());
   GetItInstance.getIt.registerSingleton<AuthService>(AuthService());
   GetItInstance.getIt.registerSingleton<UserService>(UserService());
+  GetItInstance.getIt.registerSingleton<PromptService>(PromptService());
 }
 
 void main() async {
@@ -43,11 +47,20 @@ void main() async {
   //   GetItInstance.getIt<JarvisApiService>().setToken(accessToken, refreshToken);
   // }
 
-  runApp(MultiProvider(
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ListConversationsViewModel()),
         ChangeNotifierProvider(create: (_) => ConversationViewModel()),
+        ChangeNotifierProvider(create: (_) => PromptViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -62,8 +75,11 @@ void main() async {
           '/register': (context) => const RegisterView(),
           '/forgot_password': (context) => const EnterEmailView(),
           '/main': (context) => const ProtectedRoute(child: MainView()),
-          '/subscription': (context) => const ProtectedRoute(child: SubscriptionView()),
+          '/subscription': (context) =>
+              const ProtectedRoute(child: SubscriptionView()),
           '/email-reply': (context) => ProtectedRoute(child: EmailReplyView()),
         },
-      )));
+      ),
+    );
+  }
 }

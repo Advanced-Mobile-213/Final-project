@@ -7,7 +7,7 @@ import 'package:chatbot_agents/widgets/app_logo.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';  // Add provider for managing authentication
+import 'package:provider/provider.dart'; // Add provider for managing authentication
 
 import '../../constants/app_icons.dart';
 import '../../constants/app_tab.dart';

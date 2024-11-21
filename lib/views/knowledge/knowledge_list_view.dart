@@ -11,49 +11,37 @@ class KnowledgeListView extends StatefulWidget {
 }
 
 class _KnowledgeListViewState extends State<KnowledgeListView> {
+  String searchTitle = '';
+
+  void onSearchInputChanged(String value) {
+    setState(() {
+      searchTitle = value;
+    });
+  }
+
+  void onDialogOpen(BuildContext context) {
+    showAddKnowledgeDialog(context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Knowledge',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppColors.primaryBackground,
+    return Screen(
+      title: 'Knowledge',
+      titleButton: WideButton(
+        width: 100,
+        text: 'Add',
+        onPressed: () {
+          onDialogOpen(context);
+        },
       ),
-      backgroundColor: AppColors.primaryBackground,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final availableWidth = constraints.maxWidth;
-            return SingleChildScrollView(
-              child: SizedBox(
-                width: availableWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    PublishCard(
-                      name: 'Company resources',
-                      status: '',
-                      buttonText: 'enable',
-                      onTap: () {},
-                    ),
-                    const Gap(32),
-                    PublishCard(
-                      name: 'Self researching',
-                      status: '',
-                      buttonText: 'disable',
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+      children: [
+        SearchInput(
+          onChanged: onSearchInputChanged,
+          hintText: 'Knowledge title',
         ),
-      ),
+        Gap(spacing[2]),
+        KnowledgeList(searchingTitle: searchTitle),
+      ],
     );
   }
 }

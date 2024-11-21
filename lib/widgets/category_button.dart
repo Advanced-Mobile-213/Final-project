@@ -18,7 +18,9 @@ class CategoryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: isActive ? Colors.grey : Colors.white, // Black when active, gray when not
+        backgroundColor: isActive
+            ? Colors.white
+            : Colors.grey, // Black when active, gray when not
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -26,9 +28,10 @@ class CategoryButton extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? Colors.black : Colors.black,
-          fontWeight: FontWeight.w800// White text when active, black text otherwise
-        ),
+            color: isActive ? Colors.black : Colors.black.withOpacity(0.5),
+            fontWeight:
+                FontWeight.w800 // White text when active, black text otherwise
+            ),
       ),
     );
   }
