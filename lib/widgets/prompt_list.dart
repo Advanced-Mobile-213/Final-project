@@ -18,16 +18,30 @@ class PromptList extends StatefulWidget {
   State<PromptList> createState() => _PromptListState();
 }
 
-class _PromptListState extends State<PromptList> {
+class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      if (mounted) {
-        final promptViewModel = context.read<PromptViewModel>();
-        promptViewModel.getPrompts();
-      }
-    });
+    WidgetsBinding.instance.addObserver(this);
+    _fetchPrompts();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _fetchPrompts();
+    }
+  }
+
+  Future<void> _fetchPrompts() async {
+    final promptViewModel = context.read<PromptViewModel>();
+    await promptViewModel.getPrompts();
   }
 
   List<Prompt> getFilteredPromptList(List<Prompt> promptList) {
@@ -103,7 +117,6 @@ class _PromptListState extends State<PromptList> {
     }
 
     final Widget content;
-    print('--> isLoading:  ${promptViewModel.isLoading}');
     if (promptViewModel.isLoading) {
       content = const Expanded(
         child: Center(
