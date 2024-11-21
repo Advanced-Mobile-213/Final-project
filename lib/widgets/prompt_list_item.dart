@@ -85,11 +85,10 @@ class _PromptListItemState extends State<PromptListItem> {
                           : Colors.white),
                 ),
                 Gap(spacing[1]),
-                if (widget.prompt.isPublic == true)
-                  TouchableOpacity(
-                    onTap: () => widget.onDeleted(widget.prompt),
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
+                TouchableOpacity(
+                  onTap: () => widget.onDeleted(widget.prompt),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
               ],
             )),
           ],

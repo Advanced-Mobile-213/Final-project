@@ -5,6 +5,8 @@ import 'custom_dialog.dart';
 import 'package:gap/gap.dart';
 import 'text_input.dart';
 import 'prompt_category_selector.dart';
+import 'package:provider/provider.dart';
+import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 
 const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
 
@@ -28,21 +30,15 @@ class _AddPromptDialogState extends State<AddPromptDialog> {
         descriptionController.text.isNotEmpty &&
         contentController.text.isNotEmpty &&
         langueController.text.isNotEmpty) {
-      Prompt prompt = Prompt(
+      final promptViewModel = context.read<PromptViewModel>();
+      promptViewModel.createPrompt(
         title: titleController.text,
         description: descriptionController.text,
         content: contentController.text,
         language: langueController.text,
         category: category,
-        createdAt: DateTime.now().toString(),
-        updatedAt: DateTime.now().toString(),
         isPublic: isPublic,
-        userId: '1',
-        userName: 'John Doe',
-        isFavorite: false,
-        id: '1',
       );
-      FakeData.prompts.add(prompt);
 
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,14 +64,14 @@ class _AddPromptDialogState extends State<AddPromptDialog> {
             label: 'Description',
             hintText: 'Enter prompt description',
             onChanged: (value) => descriptionController.text = value,
-            lineNumbers: 5,
+            lineNumbers: 3,
           ),
           Gap(spacing[2]),
           TextInput(
             label: 'Content',
             hintText: 'Enter prompt content',
             onChanged: (value) => contentController.text = value,
-            lineNumbers: 5,
+            lineNumbers: 8,
           ),
           Gap(spacing[2]),
           TextInput(

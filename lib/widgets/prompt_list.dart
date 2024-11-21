@@ -4,8 +4,8 @@ import 'package:chatbot_agents/models/models.dart';
 import 'prompt_list_item.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/views/prompt/prompt_detail_view.dart';
-
-final List<Prompt> promptList = FakeData.prompts;
+import 'package:provider/provider.dart';
+import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 
 class PromptList extends StatefulWidget {
   final String? searchText;
@@ -19,12 +19,22 @@ class PromptList extends StatefulWidget {
 }
 
 class _PromptListState extends State<PromptList> {
-  List<Prompt> get filteredPromptList {
-    List<Prompt> result;
-    if (widget.searchText == null || widget.searchText!.isEmpty) {
-      result = promptList;
-    } else {
-      result = promptList
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (mounted) {
+        final promptViewModel = context.read<PromptViewModel>();
+        promptViewModel.getPrompts();
+      }
+    });
+  }
+
+  List<Prompt> getFilteredPromptList(List<Prompt> promptList) {
+    List<Prompt> result = promptList;
+
+    if (widget.searchText != null && widget.searchText!.isNotEmpty) {
+      result = result
           .where((prompt) => prompt.title
               .toLowerCase()
               .contains(widget.searchText!.toLowerCase()))
@@ -47,12 +57,9 @@ class _PromptListState extends State<PromptList> {
       }
     }
 
-    if (widget.category != null) {
-      if (widget.category != PromptCategory.all) {
-        result = result
-            .where((prompt) => prompt.category == widget.category)
-            .toList();
-      }
+    if (widget.category != null && widget.category != PromptCategory.all) {
+      result =
+          result.where((prompt) => prompt.category == widget.category).toList();
     }
 
     return result;
@@ -60,6 +67,8 @@ class _PromptListState extends State<PromptList> {
 
   @override
   Widget build(BuildContext context) {
+    final promptViewModel = context.watch<PromptViewModel>();
+
     void onPromptTap(Prompt prompt) {
       Navigator.push(
         context,
@@ -68,9 +77,7 @@ class _PromptListState extends State<PromptList> {
     }
 
     void onPromptDeleted(Prompt prompt) {
-      setState(() {
-        promptList.remove(prompt);
-      });
+      promptViewModel.deletePrompt(prompt.id!);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Prompt deleted successfully')),
@@ -78,9 +85,11 @@ class _PromptListState extends State<PromptList> {
     }
 
     void onPromptFavorite(Prompt prompt) {
-      setState(() {
-        prompt.isFavorite = !prompt.isFavorite;
-      });
+      if (prompt.isFavorite) {
+        promptViewModel.removePromptFromFavorite(prompt.id!);
+      } else {
+        promptViewModel.addPromptToFavorite(prompt.id!);
+      }
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -93,19 +102,34 @@ class _PromptListState extends State<PromptList> {
       );
     }
 
-    return Expanded(
-      child: ListView.separated(
-        separatorBuilder: (context, index) => Gap(spacing[2]),
-        itemCount: filteredPromptList.length,
-        itemBuilder: (context, index) {
-          return PromptListItem(
-            filteredPromptList[index],
-            onPromptTap,
-            onPromptDeleted,
-            onPromptFavorite,
-          );
-        },
-      ),
-    );
+    final Widget content;
+    print('--> isLoading:  ${promptViewModel.isLoading}');
+    if (promptViewModel.isLoading) {
+      content = const Expanded(
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        ),
+      );
+    } else {
+      final filteredPromptList = getFilteredPromptList(promptViewModel.prompts);
+      content = Expanded(
+        child: ListView.separated(
+          separatorBuilder: (context, index) => Gap(spacing[2]),
+          itemCount: filteredPromptList.length,
+          itemBuilder: (context, index) {
+            return PromptListItem(
+              filteredPromptList[index],
+              onPromptTap,
+              onPromptDeleted,
+              onPromptFavorite,
+            );
+          },
+        ),
+      );
+    }
+
+    return content;
   }
 }

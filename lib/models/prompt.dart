@@ -1,33 +1,33 @@
 import 'package:chatbot_agents/constants/prompt_category.dart';
 
 class Prompt {
-  final String _id;
-  String createdAt;
-  String updatedAt;
+  String? id; // remember to set id to final when the service is implemented
+  String? createdAt;
+  String? updatedAt;
   PromptCategory category;
   String content;
-  String? description;
+  String description;
   bool isPublic;
   String language;
   String title;
-  final String userId;
-  final String userName;
+  final String? userId;
+  final String? userName;
   bool isFavorite;
 
   Prompt({
-    required String id,
-    required this.createdAt,
-    required this.updatedAt,
+    this.id,
+    this.createdAt,
+    this.updatedAt,
     required this.category,
     required this.content,
-    this.description,
+    required this.description,
     required this.isPublic,
     required this.language,
     required this.title,
-    required this.userId,
-    required this.userName,
-    required this.isFavorite,
-  }) : _id = id;
+    this.userId,
+    this.userName,
+    this.isFavorite = false,
+  });
 
   // constructor from json
   factory Prompt.fromJson(Map<String, dynamic> json) {
@@ -46,6 +46,4 @@ class Prompt {
       isFavorite: json['isFavorite'],
     );
   }
-
-  String get id => _id;
 }
