@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/app_icons.dart';
+import '../../widgets/app_logo.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -54,6 +55,8 @@ class _RegisterViewState extends State<RegisterView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          AppLogo(width: isWindows ? 50 : 40, height: isWindows ? 50 : 40,),
+                          const SizedBox(height: 20),
                           // Title
                           Text(
                             'Create your account',
@@ -147,15 +150,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 ),
                                 onPressed: () {},
                               ),
-                              const SizedBox(width: 20),
-                              IconButton(
-                                icon: SizedBox(
-                                  width: isWindows ? 50 : 40, // Adjust icon size for larger screens
-                                  height: isWindows ? 50 : 40,
-                                  child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
-                                ),
-                                onPressed: () {},
-                              ),
+
                             ],
                           ),
 
