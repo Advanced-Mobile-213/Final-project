@@ -59,6 +59,7 @@ class JarvisApiClient {
                 );
                 return handler.resolve(retryResponse);
               } on DioException catch (e) {
+                print('Get access token failed');
                 return handler.reject(e);
               }
             }
@@ -82,6 +83,7 @@ class JarvisApiClient {
       return false;
     }
     try {
+      print('refreshing token: $_refreshToken');
       final response = await publicDio.get("api/v1/auth/refresh?refreshToken=${_refreshToken}");
       _accessToken = response.data['token']["accessToken"];
 
