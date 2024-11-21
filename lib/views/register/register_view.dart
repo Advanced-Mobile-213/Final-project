@@ -33,175 +33,159 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
-      body: Stack(
-        children: [
-          _buildForm(),  // Form content
-          if (isLoading) _buildLoadingIndicator(), // Loading indicator
-        ],
-      ),
-    );
-  }
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height, // Fill at least the screen height
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  bool isWindows = Platform.isWindows;
+                  double containerWidth = isWindows ? 400 : double.infinity;
 
-  // Method to build the form
-  Widget _buildForm() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              bool isWindows = Platform.isWindows;
-              double containerWidth = isWindows ? 400 : double.infinity;
-              return Center(
-                child: Container(
-                  width: containerWidth, // Limit width on large screens
-                  child: Form(
-                    key: _formKey, // Form key for validation
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Title
-                        Text(
-                          'Create your account',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isWindows ? 28 : 24,
-                            fontWeight: FontWeight.bold,
+                  return SizedBox(
+                    width: containerWidth, // Limit width for larger screens
+                    child: Form(
+                      key: _formKey, // Form key for validation
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Title
+                          Text(
+                            'Create your account',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isWindows ? 28 : 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 20),
+                          const SizedBox(height: 20),
 
-                        // Username input
-                        TextInput(
-                          label: "Username",
-                          hintText: "Enter your username",
-                          controller: usernameController,
-                          isRequired: true,
-                          onChanged: (value) {},
-                        ),
-                        const SizedBox(height: 20),
+                          // Username input
+                          TextInput(
+                            label: "Username",
+                            hintText: "Enter your username",
+                            controller: usernameController,
+                            isRequired: true,
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 20),
 
-                        // Email input with validation
-                        TextInput(
-                          label: "Email",
-                          hintText: "Enter your email",
-                          controller: emailController,
-                          isRequired: true,
-                          onChanged: (value) {},
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            } else if (!ValidatorUtils.isValidEmail(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Password input
-                        TextInput(
-                          label: "Password",
-                          hintText: "Enter your password",
-                          controller: passwordController,
-                          obscureText: isPasswordHidden,
-                          isRequired: true,
-                          onChanged: (value) {},
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Confirm Password input
-                        TextInput(
-                          label: "Confirm Password",
-                          hintText: "Confirm your password",
-                          controller: confirmPasswordController,
-                          obscureText: isConfirmPasswordHidden,
-                          isRequired: true,
-                          onChanged: (value) {},
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Sign up button
-                        SizedBox(
-                          width: double.infinity,
-                          child: WideButton(
-                            text: 'SIGN UP',
-                            onPressed: () async {
-                              await _handleRegister(context);
+                          // Email input with validation
+                          TextInput(
+                            label: "Email",
+                            hintText: "Enter your email",
+                            controller: emailController,
+                            isRequired: true,
+                            onChanged: (value) {},
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              } else if (!ValidatorUtils.isValidEmail(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
                             },
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'or sign in with',
-                          style: TextStyle(color: AppColors.tertiaryText),
-                        ),
-                        const SizedBox(height: 10),
+                          const SizedBox(height: 20),
 
-                        // Social Media Icons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: SizedBox(
-                                width: isWindows ? 50 : 40, // Adjust icon size for larger screens
-                                height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
-                              ),
-                              onPressed: () {},
-                            ),
-                            const SizedBox(width: 20),
-                            IconButton(
-                              icon: SizedBox(
-                                width: isWindows ? 50 : 40, // Adjust icon size for larger screens
-                                height: isWindows ? 50 : 40,
-                                child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ],
-                        ),
+                          // Password input
+                          TextInput(
+                            label: "Password",
+                            hintText: "Enter your password",
+                            controller: passwordController,
+                            obscureText: isPasswordHidden,
+                            isRequired: true,
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 20),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Have an account?",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, "/login");
+                          // Confirm Password input
+                          TextInput(
+                            label: "Confirm Password",
+                            hintText: "Confirm your password",
+                            controller: confirmPasswordController,
+                            obscureText: isConfirmPasswordHidden,
+                            isRequired: true,
+                            onChanged: (value) {},
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Sign up button or loader
+                          isLoading
+                              ? const CircularProgressIndicator() // Show loader
+                              : SizedBox(
+                            width: double.infinity,
+                            child: WideButton(
+                              text: 'SIGN UP',
+                              onPressed: () async {
+                                await _handleRegister(context);
                               },
-                              child: const Text(
-                                'LOGIN',
-                                style: TextStyle(color: AppColors.tertiaryText),
-                              ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+                          ),
+                          const SizedBox(height: 10),
+                          const Text(
+                            'or sign in with',
+                            style: TextStyle(color: AppColors.tertiaryText),
+                          ),
+                          const SizedBox(height: 10),
 
-  // Method to build the loading indicator
-  Widget _buildLoadingIndicator() {
-    return Container(
-      color: Colors.black54,
-      child: const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          // Social Media Icons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: SizedBox(
+                                  width: isWindows ? 50 : 40, // Adjust icon size for larger screens
+                                  height: isWindows ? 50 : 40,
+                                  child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString)),
+                                ),
+                                onPressed: () {},
+                              ),
+                              const SizedBox(width: 20),
+                              IconButton(
+                                icon: SizedBox(
+                                  width: isWindows ? 50 : 40, // Adjust icon size for larger screens
+                                  height: isWindows ? 50 : 40,
+                                  child: Image.memory(AppUtils.bytesFromBase64String(AppIcons.FacebookBase64ImageString)),
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+
+                          // Login prompt
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Have an account?",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "/login");
+                                },
+                                child: const Text(
+                                  'LOGIN',
+                                  style: TextStyle(color: AppColors.tertiaryText),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -239,7 +223,7 @@ class _RegisterViewState extends State<RegisterView> {
     });
 
     if (errorResponse != null && errorResponse.isNotEmpty) {
-      _showDialog(context, "Register Error", errorResponse);
+      _showDialog(context, "Error", errorResponse);
     } else {
       _showDialog(
         context,
@@ -280,4 +264,3 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
-

@@ -121,7 +121,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   : _conversationViewModel.remainingToken != 0 
                   ? _conversationViewModel.remainingToken.toString()
                   : '0', 
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                   ),
@@ -147,7 +147,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                   } else if (conversationViewModel.isLoadingConversationHistory==false 
                    && (conversationViewModel.listHistoryMessages == null
                    || conversationViewModel.listHistoryMessages!.items.isEmpty)) {
-                    return Center(
+                    return const Center(
                       child: Text('No messages found'),
                     );
                   }
@@ -216,8 +216,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           ),
           // Input field to send new message
           Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
+            padding: EdgeInsetsDirectional.fromSTEB(screenWidth * 0.05, screenHeight*0.001 , screenHeight * 0.005, screenWidth * 0.05),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               //mainAxisAlignment: MainAxisAlignment.center,
@@ -404,7 +403,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
       );
     }
@@ -525,10 +524,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 }
               }, 
               styleSheet: MarkdownStyleSheet(
-                p: TextStyle(color: Colors.white), // Change text color here
-                h1: TextStyle(color: Colors.white), 
-                h3: TextStyle(color: Colors.white),
-                blockquote: TextStyle(color: Colors.white),
+                p: const TextStyle(color: Colors.white), // Change text color here
+                h1: const TextStyle(color: Colors.white),
+                h3: const TextStyle(color: Colors.white),
+                blockquote: const TextStyle(color: Colors.white),
               ),
             ),          
           ),
@@ -539,31 +538,36 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
   Widget _buildMeReply(MessageRendererModel message, double screenWidth) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.end, // Align the message bubble to the right
       children: [
-        // User Message
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(screenWidth * 0.04),
-            decoration: BoxDecoration(
-              color: Colors.blue[400],
-              borderRadius: BorderRadius.circular(15),
+        Flexible(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: screenWidth * 0.7, // Limit the width to 70% of the screen width
             ),
-            child: Text(
-              textDirection: TextDirection.rtl,
-              message.content,
-              maxLines: null,
-              style: TextStyle(color: Colors.white),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: BoxDecoration(
+                color: Colors.blue[400],
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                message.content,
+                textDirection: TextDirection.ltr, // Keep text left-to-right
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ),
-        
         SizedBox(width: screenWidth * 0.02),
       ],
     );
   }
-   
+
+
+
+
   Widget _buildPromptSelection() {
     return Container(
       padding: EdgeInsets.all(8.0),

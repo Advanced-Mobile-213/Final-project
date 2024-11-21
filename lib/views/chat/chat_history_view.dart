@@ -127,14 +127,14 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
           if (_isCreatingThread)
             Container(
               color: Colors.black.withOpacity(0.5),
-              child: ModalBarrier(
+              child: const ModalBarrier(
                 dismissible: false, 
                 color: Colors.black
               ),
             ),
 
           if (_isCreatingThread)
-            Center(
+            const Center(
               child: CircularProgressIndicator(),
             ),
         ],
@@ -171,21 +171,21 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
             style: TextStyle(color: Colors.white, fontSize: 24),
           ),
           content: TextField(
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
               controller: titleController,
               decoration: InputDecoration(
-                hintStyle: TextStyle(color: Colors.grey),
+                hintStyle: const TextStyle(color: Colors.grey),
                 hintText: 'Enter what you want to ask...',
                 border: OutlineInputBorder(
                   borderRadius:
                   BorderRadius.circular(10), // Add border radius here
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                       color: Colors.grey),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(
                       10), // Add border radius for focused state
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                       color: Colors.white), // Change color when focused
                 ),
               )),

@@ -61,7 +61,7 @@ void main() async {
           '/login': (context) => const LoginView(),
           '/register': (context) => const RegisterView(),
           '/forgot_password': (context) => const EnterEmailView(),
-          '/main': (context) => ProtectedRoute(child: MainView()),
+          '/main': (context) => const ProtectedRoute(child: MainView()),
           '/subscription': (context) => const ProtectedRoute(child: SubscriptionView()),
           '/email-reply': (context) => ProtectedRoute(child: EmailReplyView()),
         },
