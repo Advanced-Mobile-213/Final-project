@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class WideButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final double? width;
 
   const WideButton({

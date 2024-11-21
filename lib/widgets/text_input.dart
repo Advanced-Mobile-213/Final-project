@@ -4,7 +4,7 @@ class TextInput extends StatelessWidget {
   final String? label;
   final String hintText;
   final bool obscureText;
-  final Function(String) onChanged;
+  final Function(String)? onChanged;
   final TextEditingController? controller;
   final bool isRequired;
   final String? Function(String?)? validator; // Validator function for form validation
@@ -15,7 +15,7 @@ class TextInput extends StatelessWidget {
     required this.hintText,
     this.obscureText = false,
     this.isRequired = false,
-    required this.onChanged,
+    this.onChanged,
     this.controller,
     this.validator,
   });
