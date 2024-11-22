@@ -28,8 +28,11 @@ class PromptService {
 
       final response = await jarvisApiClient.authenticatedDio
           .get("/api/v1/prompts", queryParameters: queryParams);
-      final result = GetPromptsResponse.fromJson(response.data);
-      return result;
+
+      if (response.statusCode! <300 && response.statusCode! >= 200) {
+        return GetPromptsResponse.fromJson(response.data);
+      }
+   
     } on DioException catch (e) {
       print("--> An DioException occurs: ${e}");
     } catch (e) {
@@ -38,16 +41,40 @@ class PromptService {
     return null;
   }
 
-  Future<void> createPrompt({
+  Future<Prompt?> createPrompt({
     required PromptCategory category,
     required String content,
     required String description,
     required bool isPublic,
     required String language,
     required String title,
-  }) async {}
+  }) async {
+    try {
+      final response = await jarvisApiClient.authenticatedDio.post(
+        "/api/v1/prompts",
+        data: {
+          'category': category.id,
+          'content': content,
+          'description': description,
+          'isPublic': isPublic,
+          'language': language,
+          'title': title,
+        },
+      );
 
-  Future<void> updatePrompt({
+      if (response.statusCode! <300 && response.statusCode! >= 200) {
+        return Prompt.fromJson(response.data);
+      }
+      
+    } on DioException catch (e) {
+      print("--> An DioException occurs: ${e}");
+    } catch (e) {
+      print("--> An error occurs: ${e}");
+    }
+    return null;
+  }
+
+  Future<bool> updatePrompt({
     required String id,
     required PromptCategory category,
     required String content,
@@ -55,9 +82,51 @@ class PromptService {
     required bool isPublic,
     required String language,
     required String title,
-  }) async {}
+  }) async {
+    try {
+      final response = await jarvisApiClient.authenticatedDio.patch(
+        "/api/v1/prompts/$id",
+        data: {
+          'category': category.id,
+          'content': content,
+          'description': description,
+          'isPublic': isPublic,
+          'language': language,
+          'title': title,
+        },
+      );
 
-  Future<void> deletePrompt(String id) async {}
+      if (response.statusCode! <300 && response.statusCode! >= 200) {
+        return true;
+      }
+      
+    } on DioException catch (e) {
+      print("--> An DioException occurs: ${e}");
+    } catch (e) {
+      print("--> An error occurs: ${e}");
+    }
+
+    return false;
+  }
+
+  Future<bool> deletePrompt(String id) async {
+    try {
+      final response = await jarvisApiClient.authenticatedDio.delete(
+        "/api/v1/prompts/$id",
+      );
+
+      if (response.statusCode! <300 && response.statusCode! >= 200) {
+        return true;
+      }
+      
+    } on DioException catch (e) {
+      print("--> An DioException occurs: ${e}");
+    } catch (e) {
+      print("--> An error occurs: ${e}");
+    }
+
+    return false;
+  }
 
   Future<void> addPromptToFavorite(String id) async {}
 

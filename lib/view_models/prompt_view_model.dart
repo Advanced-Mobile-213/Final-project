@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/models/models.dart';
 import 'package:chatbot_agents/constants/constants.dart';
@@ -5,10 +6,13 @@ import 'package:chatbot_agents/service/prompt_service.dart';
 
 class PromptViewModel extends ChangeNotifier {
   // adding services here
-  final PromptService _promptService = PromptService();
+  final PromptService _promptService = GetItInstance.getIt<PromptService>();
 
   List<Prompt> prompts = [];
   bool isLoading = false;
+  List<Prompt> privatePrompts = [];
+  List<Prompt> publicPrompts = [];
+  Prompt? newPrompt;
 
   Future<void> getPrompts({
     String? query,
@@ -50,32 +54,37 @@ class PromptViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
+      newPrompt = null;
+
       // call the service here
-
-      isLoading = false;
-
-      // add the new prompt to the list
-      final Prompt newPrompt = Prompt(
+      newPrompt = await _promptService.createPrompt(
         category: category,
         content: content,
         description: description,
-        isPublic: isPublic,
-        language: language,
+        isPublic: isPublic, 
+        language: language, 
         title: title,
       );
+      isLoading = false;
 
-      // Fake the id, remove this line when the service is implemented
-      newPrompt.id = DateTime.now().millisecondsSinceEpoch.toString();
+      if (newPrompt != null) {
+        if (isPublic) {
+          publicPrompts.add(newPrompt!);
+        } else {
+          privatePrompts.add(newPrompt!);
+        }
+      }
 
-      prompts.add(newPrompt);
+      notifyListeners();
+
     } catch (e) {
       print('--> Error creating prompt: $e');
       isLoading = false;
     }
-    notifyListeners();
+    
   }
 
-  Future<void> updatePrompt({
+  Future<bool> updatePrompt({
     required String id,
     required PromptCategory category,
     required String content,
@@ -87,27 +96,41 @@ class PromptViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
-      // call the service here
+      bool result = await _promptService.updatePrompt(
+        id: id,
+        category: category,
+        content: content,
+        description: description,
+        isPublic: isPublic, 
+        language: language, 
+        title: title,
+      );
 
-      isLoading = false;
+      if (result) {
+        // update the prompt in the list
+        final index = prompts.indexWhere((element) => element.id == id);
 
-      // update the prompt in the list
-      final index = prompts.indexWhere((element) => element.id == id);
-      if (index != -1) {
-        prompts[index] = Prompt(
+        if (index != -1) {
+          prompts[index] = Prompt(
             id: id,
             category: category,
             content: content,
             description: description,
             isPublic: isPublic,
             language: language,
-            title: title);
+            title: title
+          );
+        }
       }
+      
+      isLoading = false;
+      notifyListeners();
+      return result;
     } catch (e) {
       print('--> Error updating prompt: $e');
       isLoading = false;
     }
-    notifyListeners();
+    return false;
   }
 
   Future<void> deletePrompt(String id) async {
@@ -115,16 +138,22 @@ class PromptViewModel extends ChangeNotifier {
       isLoading = true;
 
       // call the service here
+      bool result = await _promptService.deletePrompt(id);
+
+      if (result) {
+        // update the prompt in the list
+        prompts.removeWhere((element) => element.id == id);
+      }
 
       isLoading = false;
-
+      notifyListeners();
       // remove the prompt from the list
-      prompts.removeWhere((element) => element.id == id);
+      
     } catch (e) {
       print('--> Error deleting prompt: $e');
       isLoading = false;
     }
-    notifyListeners();
+    
   }
 
   Future<void> addPromptToFavorite(String id) async {

@@ -11,7 +11,6 @@ enum PromptCategory {
   seo,
   writing,
   other,
-  ai_painting,
 }
 
 extension PromptCategoryId on PromptCategory {
@@ -41,10 +40,9 @@ extension PromptCategoryId on PromptCategory {
         return 'writing';
       case PromptCategory.other:
         return 'other';
-      case PromptCategory.ai_painting:
-        return 'ai_painting';
+
       default:
-        throw Exception('--> Invalid category id: $id');
+        return 'all';
     }
   }
 }
@@ -76,8 +74,6 @@ extension PromptCategoryTitle on PromptCategory {
         return 'Writing';
       case PromptCategory.other:
         return 'Other';
-      case PromptCategory.ai_painting:
-        return 'AI Painting';
     }
   }
 }
@@ -108,9 +104,7 @@ PromptCategory getCategory(String id) {
       return PromptCategory.writing;
     case 'other':
       return PromptCategory.other;
-    case 'ai_painting':
-      return PromptCategory.ai_painting;
     default:
-      throw Exception('Invalid category id: $id');
+      return PromptCategory.all;
   }
 }

@@ -1,8 +1,8 @@
+import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
-import 'prompt_detail_view.dart';
 
 class PromptListView extends StatefulWidget {
   const PromptListView({super.key});
@@ -17,7 +17,12 @@ class _PromptListViewState extends State<PromptListView> {
   PromptCategory selectedCategory = PromptCategory.all;
 
   void onAddPromptDialog(BuildContext context) {
-    showAddPromptDialog(context);
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return AddPromptPopUpDialog();
+      }
+    );
   }
 
   void onSearch(String value) {
