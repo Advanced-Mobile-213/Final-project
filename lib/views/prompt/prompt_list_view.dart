@@ -1,8 +1,8 @@
+import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
-import 'prompt_detail_view.dart';
 import './sub_views/my_prompt_view.dart';
 import './sub_views/public_prompt_view.dart';
 import './sub_views/favorites_prompt_view.dart';
@@ -20,7 +20,12 @@ class _PromptListViewState extends State<PromptListView> {
   PromptCategory selectedCategory = PromptCategory.business;
 
   void onAddPromptDialog(BuildContext context) {
-    showAddPromptDialog(context);
+    showDialog(
+      context: context, 
+      builder: (BuildContext context) {
+        return AddPromptPopUpDialog();
+      }
+    );
   }
 
   void onSearch(String value) {
