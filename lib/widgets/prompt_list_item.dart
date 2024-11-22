@@ -66,7 +66,7 @@ class _PromptListItemState extends State<PromptListItem> {
                     maxLines: 1,
                   ),
                   Text(
-                    widget.prompt.category.id,
+                    widget.prompt.description,
                     style: _descriptionTextStyle,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
