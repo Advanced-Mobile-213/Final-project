@@ -3,11 +3,11 @@ import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:dio/dio.dart';
 
 class TokenService {
-  late final JarvisApiClient _apiService =  GetItInstance.getIt<JarvisApiClient>();
+  late final JarvisApiClient _jarvisApiClient =  GetItInstance.getIt<JarvisApiClient>();
 
   Future<int> getRemainingToken() async {
     try {
-      final response = await _apiService
+      final response = await _jarvisApiClient
         .authenticatedDio
         .get(
           '/api/v1/tokens/usage',

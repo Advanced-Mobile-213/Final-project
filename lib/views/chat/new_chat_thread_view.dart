@@ -7,9 +7,10 @@ import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
-import 'package:chatbot_agents/widgets/text_input.dart';
+import 'package:chatbot_agents/widgets/text_input.dart' as CustomizedTextInput;
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -240,7 +241,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                   ),
                 ),
                 Expanded(
-                  child: TextInput(
+                  child: CustomizedTextInput.TextInput(
                       controller: _controller,
                       hintText: "Enter message",
                       onChanged: (value){}
@@ -506,26 +507,44 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
               color: Colors.grey[800],
               borderRadius: BorderRadius.circular(15),
             ),
-            child: message.icon !=null ? Icon(message.icon, color: Colors.white)
-            : MarkdownBody(
-              data: message.content,
-              onTapLink: (text, href, title) async {
-                if (href != null) {
-                  print('Link clicked: $href');
-                  if (await canLaunchUrl(Uri.parse(href))) {
-                    await launchUrl(Uri.parse(href));
-                  } else {
-                    print('Could not launch $href');
-                  }
-                }
-              }, 
-              styleSheet: MarkdownStyleSheet(
-                p: TextStyle(color: Colors.white), 
-                h1: TextStyle(color: Colors.white), 
-                h3: TextStyle(color: Colors.white),
-                blockquote: TextStyle(color: Colors.white),
-              ),
-            ),          
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                message.icon !=null
+                ? Icon(message.icon, color: Colors.white)
+                : MarkdownBody(
+                  data: message.content,
+                  onTapLink: (text, href, title) async {
+                    if (href != null) {
+                      print('Link clicked: $href');
+                      if (await canLaunchUrl(Uri.parse(href))) {
+                        await launchUrl(Uri.parse(href));
+                      } else {
+                        print('Could not launch $href');
+                      }
+                    }
+                  },
+                  styleSheet: MarkdownStyleSheet(
+                    p: TextStyle(color: Colors.white), // Change text color here
+                    h1: TextStyle(color: Colors.white),
+                    h3: TextStyle(color: Colors.white),
+                    blockquote: TextStyle(color: Colors.white),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.copy, color: Colors.white),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: message.content));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Copied to clipboard')),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),     
           ),
         ),
       ],
@@ -536,24 +555,27 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // User Message
-        Expanded(
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(screenWidth * 0.04),
-            decoration: BoxDecoration(
-              color: Colors.blue[400],
-              borderRadius: BorderRadius.circular(15),
+        Flexible(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: screenWidth * 0.7, // Limit the width to 70% of the screen width
             ),
-            child: Text(
-              textDirection: TextDirection.rtl,
-              message.content,
-              maxLines: null,
-              style: TextStyle(color: Colors.white),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              decoration: BoxDecoration(
+                color: Colors.blue[400],
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                textDirection: TextDirection.ltr,
+                message.content,
+                maxLines: null,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ),
-        
         SizedBox(width: screenWidth * 0.02),
       ],
     );
