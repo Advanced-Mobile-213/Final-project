@@ -9,26 +9,37 @@ import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 
-class PromptList extends StatefulWidget {
-  final String? searchText;
-  final PromptViewMode? viewMode;
-  final PromptCategory? category;
+const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
-  const PromptList({super.key, this.searchText, this.viewMode, this.category});
+class PromptList extends StatefulWidget {
+  final String? query;
+  final int? offset;
+  final int? limit;
+  final PromptCategory? category;
+  final bool? isFavorite;
+  final bool? isPublic;
+
+  const PromptList({
+    super.key,
+    this.query,
+    this.offset,
+    this.limit,
+    this.category,
+    this.isFavorite,
+    this.isPublic,
+  });
 
   @override
   State<PromptList> createState() => _PromptListState();
 }
 
 class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
-  final PromptService _conversationService =
-      GetItInstance.getIt<PromptService>();
+  //final PromptService _promptService = GetItInstance.getIt<PromptService>();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _conversationService.getPrompts();
     _fetchPrompts();
   }
 
@@ -45,44 +56,29 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _fetchPrompts() async {
-    final promptViewModel = context.read<PromptViewModel>();
-    await promptViewModel.getPrompts();
+  @override
+  void didUpdateWidget(covariant PromptList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.query != oldWidget.query ||
+        widget.offset != oldWidget.offset ||
+        widget.limit != oldWidget.limit ||
+        widget.category != oldWidget.category ||
+        widget.isFavorite != oldWidget.isFavorite ||
+        widget.isPublic != oldWidget.isPublic) {
+      _fetchPrompts();
+    }
   }
 
-  List<Prompt> getFilteredPromptList(List<Prompt> promptList) {
-    List<Prompt> result = promptList;
-
-    if (widget.searchText != null && widget.searchText!.isNotEmpty) {
-      result = result
-          .where((prompt) => prompt.title
-              .toLowerCase()
-              .contains(widget.searchText!.toLowerCase()))
-          .toList();
-    }
-
-    if (widget.viewMode != null) {
-      switch (widget.viewMode) {
-        case PromptViewMode.private:
-          result = result.where((prompt) => !prompt.isPublic).toList();
-          break;
-        case PromptViewMode.public:
-          result = result.where((prompt) => prompt.isPublic).toList();
-          break;
-        case PromptViewMode.favorite:
-          result = result.where((prompt) => prompt.isFavorite).toList();
-          break;
-        default:
-          break;
-      }
-    }
-
-    if (widget.category != null && widget.category != PromptCategory.all) {
-      result =
-          result.where((prompt) => prompt.category == widget.category).toList();
-    }
-
-    return result;
+  Future<void> _fetchPrompts() async {
+    final promptViewModel = context.read<PromptViewModel>();
+    await promptViewModel.getPrompts(
+      query: widget.query,
+      offset: widget.offset,
+      limit: widget.limit,
+      category: widget.category,
+      isFavorite: widget.isFavorite,
+      isPublic: widget.isPublic,
+    );
   }
 
   @override
@@ -128,23 +124,29 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
         child: Center(child: CircularProgressIndicator()),
       );
     } else {
-      final filteredPromptList = getFilteredPromptList(promptViewModel.prompts);
-      content = Expanded(
-        child: ListView.separated(
-          separatorBuilder: (context, index) => Gap(spacing[2]),
-          itemCount: filteredPromptList.length,
-          itemBuilder: (context, index) {
-            return PromptListItem(
-              filteredPromptList[index],
-              onPromptTap,
-              onPromptDeleted,
-              onPromptFavorite,
-            );
-          },
-        ),
-      );
+      if (promptViewModel.prompts.isEmpty) {
+        content = const Expanded(
+          child:
+              Center(child: Text('No prompts found', style: _emptyTextStyle)),
+        );
+      } else {
+        final filteredPromptList = promptViewModel.prompts;
+        content = Expanded(
+          child: ListView.separated(
+            separatorBuilder: (context, index) => Gap(spacing[2]),
+            itemCount: filteredPromptList.length,
+            itemBuilder: (context, index) {
+              return PromptListItem(
+                filteredPromptList[index],
+                onPromptTap,
+                onPromptDeleted,
+                onPromptFavorite,
+              );
+            },
+          ),
+        );
+      }
     }
-
     return content;
   }
 }

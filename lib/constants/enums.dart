@@ -1,4 +1,8 @@
-enum PromptViewMode { all, private, public, favorite }
+enum PromptViewMode {
+  private,
+  public,
+  favorite
+}
 
 enum KnowledgeUnitType {
   localFile,

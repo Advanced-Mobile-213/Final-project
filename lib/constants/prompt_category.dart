@@ -12,6 +12,10 @@ enum PromptCategory {
   writing,
   other,
   ai_painting,
+  sales,
+  youtube,
+  health,
+  fitness,
 }
 
 extension PromptCategoryId on PromptCategory {
@@ -43,6 +47,14 @@ extension PromptCategoryId on PromptCategory {
         return 'other';
       case PromptCategory.ai_painting:
         return 'ai_painting';
+      case PromptCategory.sales:
+        return 'sales';
+      case PromptCategory.youtube:
+        return 'youtube';
+      case PromptCategory.health:
+        return 'health';
+      case PromptCategory.fitness:
+        return 'fitness';
       default:
         throw Exception('--> Invalid category id: $id');
     }
@@ -78,6 +90,16 @@ extension PromptCategoryTitle on PromptCategory {
         return 'Other';
       case PromptCategory.ai_painting:
         return 'AI Painting';
+      case PromptCategory.sales:
+        return 'Sales';
+      case PromptCategory.youtube:
+        return 'Youtube';
+      case PromptCategory.health:
+        return 'Health';
+      case PromptCategory.fitness:
+        return 'Fitness';
+      default:
+        throw Exception('--> Invalid category id: $id');
     }
   }
 }
@@ -110,6 +132,14 @@ PromptCategory getCategory(String id) {
       return PromptCategory.other;
     case 'ai_painting':
       return PromptCategory.ai_painting;
+    case 'sales':
+      return PromptCategory.sales;
+    case 'youtube':
+      return PromptCategory.youtube;
+    case 'health':
+      return PromptCategory.health;
+    case 'fitness':
+      return PromptCategory.fitness;
     default:
       throw Exception('Invalid category id: $id');
   }
