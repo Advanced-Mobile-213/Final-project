@@ -23,9 +23,7 @@ class PromptCategorySelector extends StatelessWidget {
     if (hasAllCategory) {
       return PromptCategory.values;
     } else {
-      return PromptCategory.values
-          .where((PromptCategory category) => category != PromptCategory.all)
-          .toList();
+      return PromptCategory.values;
     }
   }
 

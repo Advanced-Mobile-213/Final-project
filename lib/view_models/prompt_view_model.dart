@@ -131,7 +131,7 @@ class PromptViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
-      // call the service here
+      await _promptService.addPromptToFavorite(id);
 
       isLoading = false;
 
@@ -151,15 +151,12 @@ class PromptViewModel extends ChangeNotifier {
     try {
       isLoading = true;
 
-      // call the service here
+      await _promptService.removePromptFromFavorite(id);
 
       isLoading = false;
 
-      // update the prompt in the list
-      final index = prompts.indexWhere((element) => element.id == id);
-      if (index != -1) {
-        prompts[index].isFavorite = false;
-      }
+      // remove the prompt from the list
+      prompts.removeWhere((element) => element.id == id);
     } catch (e) {
       print('--> Error removing prompt from favorite: $e');
       isLoading = false;

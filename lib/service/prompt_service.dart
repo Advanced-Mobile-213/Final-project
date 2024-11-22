@@ -59,7 +59,23 @@ class PromptService {
 
   Future<void> deletePrompt(String id) async {}
 
-  Future<void> addPromptToFavorite(String id) async {}
+  Future<void> addPromptToFavorite(String id) async {
+    try {
+      await jarvisApiClient.authenticatedDio.post("/api/v1/prompts/$id/favorite");
+    } on DioException catch (e) {
+      print("--> An DioException occurs: ${e}");
+    } catch (e) {
+      print("--> An error occurs: ${e}");
+    }
+  }
 
-  Future<void> removePromptFromFavorite(String id) async {}
+  Future<void> removePromptFromFavorite(String id) async {
+    try {
+      await jarvisApiClient.authenticatedDio.delete("/api/v1/prompts/$id/favorite");
+    } on DioException catch (e) {
+      print("--> An DioException occurs: ${e}");
+    } catch (e) {
+      print("--> An error occurs: ${e}");
+    }
+  }
 }

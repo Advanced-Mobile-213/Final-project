@@ -3,6 +3,9 @@ import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
 import 'prompt_detail_view.dart';
+import './sub_views/my_prompt_view.dart';
+import './sub_views/public_prompt_view.dart';
+import './sub_views/favorites_prompt_view.dart';
 
 class PromptListView extends StatefulWidget {
   const PromptListView({super.key});
@@ -13,8 +16,8 @@ class PromptListView extends StatefulWidget {
 
 class _PromptListViewState extends State<PromptListView> {
   String searchText = '';
-  PromptViewMode chosenViewMode = PromptViewMode.all;
-  PromptCategory selectedCategory = PromptCategory.all;
+  PromptViewMode chosenViewMode = PromptViewMode.private;
+  PromptCategory selectedCategory = PromptCategory.business;
 
   void onAddPromptDialog(BuildContext context) {
     showAddPromptDialog(context);
@@ -48,14 +51,9 @@ class _PromptListViewState extends State<PromptListView> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          CategoryButton(
-            label: 'All prompts',
-            onPressed: () => onViewModeSelected(PromptViewMode.all),
-            isActive: isModeSelected(PromptViewMode.all),
-          ),
           Gap(spacing[2]),
           CategoryButton(
-            label: 'Private prompts',
+            label: 'My prompts',
             onPressed: () => onViewModeSelected(PromptViewMode.private),
             isActive: isModeSelected(PromptViewMode.private),
           ),
@@ -75,6 +73,20 @@ class _PromptListViewState extends State<PromptListView> {
       ),
     );
 
+    Widget content;
+
+    switch (chosenViewMode) {
+      case PromptViewMode.private:
+        content = const MyPromptView();
+        break;
+      case PromptViewMode.public:
+        content = const PublicPromptView();
+        break;
+      case PromptViewMode.favorite:
+        content = const FavoritesPromptView();
+        break;
+    }
+
     return Screen(
       title: 'Prompt Library',
       titleButton: WideButton(
@@ -84,29 +96,31 @@ class _PromptListViewState extends State<PromptListView> {
       ),
       children: [
         promptModeFilter,
+        // Gap(spacing[2]),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       flex: 2,
+        //       child: PromptCategorySelector(
+        //         category: selectedCategory,
+        //         onChanged: onCategorySelected,
+        //         hasAllCategory: true,
+        //       ),
+        //     ),
+        //     Expanded(
+        //         flex: 3,
+        //         child:
+        //             SearchInput(hintText: 'Prompt name', onChanged: onSearch)),
+        //   ],
+        // ),
+        // Gap(spacing[3]),
+        // PromptList(
+        //   searchText: searchText,
+        //   viewMode: chosenViewMode,
+        //   category: selectedCategory,
+        // ),
         Gap(spacing[2]),
-        Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: PromptCategorySelector(
-                category: selectedCategory,
-                onChanged: onCategorySelected,
-                hasAllCategory: true,
-              ),
-            ),
-            Expanded(
-                flex: 3,
-                child:
-                    SearchInput(hintText: 'Prompt name', onChanged: onSearch)),
-          ],
-        ),
-        Gap(spacing[3]),
-        PromptList(
-          searchText: searchText,
-          viewMode: chosenViewMode,
-          category: selectedCategory,
-        ),
+        content,
       ],
     );
   }
