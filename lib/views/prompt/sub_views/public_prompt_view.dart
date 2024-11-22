@@ -16,7 +16,7 @@ class PublicPromptView extends StatefulWidget {
 }
 
 class _PublicPromptViewState extends State<PublicPromptView> {
-  PromptCategory selectedCategory = PromptCategory.all;
+  PromptCategory selectedCategory = PromptCategory.business;
   String query = '';
 
   void _showConfirmDeletePromptDialog(BuildContext context, int index) {
@@ -149,9 +149,7 @@ class _PublicPromptViewState extends State<PublicPromptView> {
           ),
           Gap(spacing[3]),
           PromptList(
-            category: (selectedCategory != PromptCategory.all)
-                ? selectedCategory
-                : null,
+            category: selectedCategory,
             query: query,
           ),
         ],

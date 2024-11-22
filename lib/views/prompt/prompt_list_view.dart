@@ -17,7 +17,7 @@ class PromptListView extends StatefulWidget {
 class _PromptListViewState extends State<PromptListView> {
   String searchText = '';
   PromptViewMode chosenViewMode = PromptViewMode.private;
-  PromptCategory selectedCategory = PromptCategory.all;
+  PromptCategory selectedCategory = PromptCategory.business;
 
   void onAddPromptDialog(BuildContext context) {
     showAddPromptDialog(context);
