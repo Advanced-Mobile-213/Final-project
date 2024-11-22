@@ -103,19 +103,17 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     void onPromptFavorite(Prompt prompt) {
       if (prompt.isFavorite) {
         promptViewModel.removePromptFromFavorite(prompt.id!);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Prompt removed from favorite')),
+        );
       } else {
         promptViewModel.addPromptToFavorite(prompt.id!);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Prompt added to favorite')),
+        );
       }
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            prompt.isFavorite
-                ? 'Prompt added to favorite'
-                : 'Prompt removed from favorite',
-          ),
-        ),
-      );
     }
 
     final Widget content;
