@@ -86,12 +86,7 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     return result;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final promptViewModel = context.watch<PromptViewModel>();
-
-    
-    void showDynamicInput(Prompt prompt) {
+  void showDynamicInput(Prompt prompt) {
       print(prompt.content);
       List<String> placeholders = StringUtils.getAllPlacehoders(prompt.content);
       List<TextEditingController> controllers = placeholders.map((_) => TextEditingController()).toList();
@@ -161,13 +156,18 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
         
         },
       );
-    }
+  }
 
+
+  @override
+  Widget build(BuildContext context) {
+    final promptViewModel = context.watch<PromptViewModel>();
+    
     void onPromptTap(Prompt prompt) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => PromptDetailView(prompt)),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PromptDetailView(prompt)),
+      );
 
       showDynamicInput(prompt);
 
