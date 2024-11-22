@@ -41,7 +41,7 @@ extension PromptCategoryId on PromptCategory {
       case PromptCategory.ai_painting:
         return 'ai_painting';
       default:
-        return 'all';
+        return 'other';
     }
   }
 }
@@ -104,6 +104,6 @@ PromptCategory getCategory(String id) {
     case 'ai_painting':
       return PromptCategory.ai_painting;
     default:
-      return PromptCategory.all;
+      return PromptCategory.other;
   }
 }
