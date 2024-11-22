@@ -10,8 +10,8 @@ import 'package:dio/dio.dart';
 
 class ConversationService {
   
-  late final JarvisApiClient _apiService =  GetItInstance.getIt<JarvisApiClient>();
- //final JarvisApiService _apiService = JarvisApiService();
+  late final JarvisApiClient _jarvisApiClient =  GetItInstance.getIt<JarvisApiClient>();
+ //final JarvisApiService _jarvisApiClient = JarvisApiService();
  Future<ListThreadChatModel?> getConversations(
     {required String assistantModel, 
     required String assistantId,
@@ -31,20 +31,20 @@ class ConversationService {
 
       //print(queryParams);
 
-      final accessToken = await SharedPreferencesUtil.getAccessToken();
-      final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+      // final accessToken = await SharedPreferencesUtil.getAccessToken();
+      // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 
-      //print('accessToken: $accessToken');
-      //print('refreshToken: $refreshToken');
+      // //print('accessToken: $accessToken');
+      // //print('refreshToken: $refreshToken');
 
-      if (accessToken != null && refreshToken != null) {
-        _apiService.setToken(accessToken, refreshToken);
-      }
+      // if (accessToken != null && refreshToken != null) {
+      //   _jarvisApiClient.setToken(accessToken, refreshToken);
+      // }
 
-      //print('_apiService.accessToken: ${_apiService.accessToken}');
-      //print('_apiService.refreshToken: ${_apiService.refreshToken}');
+      //print('_jarvisApiClient.accessToken: ${_jarvisApiClient.accessToken}');
+      //print('_jarvisApiClient.refreshToken: ${_jarvisApiClient.refreshToken}');
 
-      final response = await _apiService
+      final response = await _jarvisApiClient
         .authenticatedDio
         .get(
           'api/v1/ai-chat/conversations',
@@ -84,14 +84,14 @@ class ConversationService {
           if (limit != null) 'limit': limit,
         };
 
-        final accessToken = await SharedPreferencesUtil.getAccessToken();
-        final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+        // final accessToken = await SharedPreferencesUtil.getAccessToken();
+        // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 
-        if (accessToken != null && refreshToken != null) {
-          _apiService.setToken(accessToken, refreshToken);
-        }
+        // if (accessToken != null && refreshToken != null) {
+        //   _jarvisApiClient.setToken(accessToken, refreshToken);
+        // }
 
-        final response = await _apiService
+        final response = await _jarvisApiClient
           .authenticatedDio
           .get(
             'api/v1/ai-chat/conversations/$conversationId/messages',
@@ -121,12 +121,12 @@ class ConversationService {
     // Fetch conversation from the server
     try {
 
-        final accessToken = await SharedPreferencesUtil.getAccessToken();
-        final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+        // final accessToken = await SharedPreferencesUtil.getAccessToken();
+        // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 
-        if (accessToken != null && refreshToken != null) {
-          _apiService.setToken(accessToken, refreshToken);
-        }
+        // if (accessToken != null && refreshToken != null) {
+        //   _jarvisApiClient.setToken(accessToken, refreshToken);
+        // }
 
         final AssistantRequest assistantDto = AssistantRequest(
           model: assistantModel,
@@ -134,7 +134,7 @@ class ConversationService {
           name: assistantName ?? ''
         );
         
-        final response = await _apiService
+        final response = await _jarvisApiClient
           .authenticatedDio
           .post(
             'api/v1/ai-chat/messages',
@@ -168,12 +168,12 @@ class ConversationService {
     // Send message to the server
     try {
 
-        final accessToken = await SharedPreferencesUtil.getAccessToken();
-        final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+        // final accessToken = await SharedPreferencesUtil.getAccessToken();
+        // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 
-        if (accessToken != null && refreshToken != null) {
-          _apiService.setToken(accessToken, refreshToken);
-        }
+        // if (accessToken != null && refreshToken != null) {
+        //   _jarvisApiClient.setToken(accessToken, refreshToken);
+        // }
 
         Map<String, dynamic> temp = {
               'assistant': {
@@ -189,7 +189,7 @@ class ConversationService {
         
         print('send data: $temp');
 
-        final response = await _apiService
+        final response = await _jarvisApiClient
           .authenticatedDio
           .post(
             'api/v1/ai-chat/messages',
@@ -220,7 +220,7 @@ class ConversationService {
  }
 }
 
-// _apiService.setToken(
+// _jarvisApiClient.setToken(
     //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlMmM2MGE3LWJmZDgtNDY4NC1hYmQxLTQ4NjZiOGQ1NGMwYiIsImVtYWlsIjoiaG9hbmdxdW9jMjEwNkBnbWFpbC5jb20iLCJpYXQiOjE3MzE3NTc1ODQsImV4cCI6MTczMTc1NzY0NH0.h1t69wIbQgGf3KqNxTd-tMQ4EaRcR1Rn9emf9T96Zz0',
     //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlMmM2MGE3LWJmZDgtNDY4NC1hYmQxLTQ4NjZiOGQ1NGMwYiIsImVtYWlsIjoiaG9hbmdxdW9jMjEwNkBnbWFpbC5jb20iLCJpYXQiOjE3MzE3NTc1ODQsImV4cCI6MTc2MzI5MzU4NH0.8ApmOFprWX290DmZKpuk8xExLGvgh318skwLtajiNkA'
     //   );
