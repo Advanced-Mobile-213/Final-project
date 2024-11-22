@@ -1,8 +1,11 @@
+import 'package:chatbot_agents/constants/enum_language.dart';
+import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:chatbot_agents/models/models.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 
 const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
@@ -23,10 +26,12 @@ class _PromptDetailViewState extends State<PromptDetailView> {
   late bool isPublic;
   late PromptCategory category;
   late bool isFavorite;
+  late PromptViewModel _promptViewModel;
 
   @override
   void initState() {
     super.initState();
+    _promptViewModel = context.read<PromptViewModel>();
     _titleController.text = widget.prompt.title;
     _descriptionController.text = widget.prompt.description ?? '';
     _contentController.text = widget.prompt.content;
@@ -36,7 +41,16 @@ class _PromptDetailViewState extends State<PromptDetailView> {
     isFavorite = widget.prompt.isFavorite;
   }
 
-  void onUpdated() {
+  void onUpdated() async {
+    bool result = await _promptViewModel.updatePrompt(
+      title: _titleController.text,
+      description: _descriptionController.text,
+      content: _contentController.text, 
+      id: widget.prompt.id  ?? '', 
+      category: category, 
+      isPublic: isPublic, 
+      language: EnumLanguage.ENGLISH,
+    );
     widget.prompt.title = _titleController.text;
     widget.prompt.description = _descriptionController.text;
     widget.prompt.content = _contentController.text;
@@ -45,9 +59,16 @@ class _PromptDetailViewState extends State<PromptDetailView> {
     widget.prompt.category = category;
 
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Prompt saved successfully')),
-    );
+    if (result) {
+    
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prompt saved successfully!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prompt saved failed!')),
+      );
+    }
   }
 
   void onToggleFavorite() {
