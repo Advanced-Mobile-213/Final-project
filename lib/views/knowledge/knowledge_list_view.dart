@@ -25,23 +25,37 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Screen(
-      title: 'Knowledge',
-      titleButton: WideButton(
-        width: 100,
-        text: 'Add',
-        onPressed: () {
-          onDialogOpen(context);
-        },
-      ),
-      children: [
-        SearchInput(
-          onChanged: onSearchInputChanged,
-          hintText: 'Knowledge title',
+    return Scaffold(
+      body:  Screen(
+        title: 'Knowledge',
+        // titleButton: WideButton(
+        //   width: 100,
+        //   text: 'Add',
+        //   onPressed: () {
+        //     onDialogOpen(context);
+        //   },
+        // ),
+        titleButton:  FloatingActionButton(
+          onPressed: () => {
+          onDialogOpen(context)
+          },
+          //_createNewThreadDialog(context),
+          backgroundColor: AppColors.secondaryBackground,
+          child: const Icon(
+            Icons.add,
+            color: AppColors.quaternaryText,
+          ),
         ),
-        Gap(spacing[2]),
-        KnowledgeList(searchingTitle: searchTitle),
-      ],
-    );
+        children: [
+          SearchInput(
+            onChanged: onSearchInputChanged,
+            hintText: 'Knowledge title',
+          ),
+          Gap(spacing[2]),
+          KnowledgeList(searchingTitle: searchTitle),
+        ],
+      ),
+
+    ) ;
   }
 }

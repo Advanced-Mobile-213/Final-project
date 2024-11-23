@@ -44,7 +44,7 @@ class Prompt {
       title: json['title'] ?? '',
       userId: json['userId'] ?? '',
       userName: json['userName'] ?? '',
-      isFavorite: json['isFavorite'],
+      isFavorite: json['isFavorite'] ?? false,
     );
   }
 }
