@@ -10,10 +10,13 @@ import 'package:touchable_opacity/touchable_opacity.dart';
 class DetailPromptPopUpDialog extends StatefulWidget {
   //final int index;
   final Prompt prompt;
+  final void Function(Prompt)? onUseInCurrentChat;
+
 
   const DetailPromptPopUpDialog({
     super.key,
     required this.prompt,
+    this.onUseInCurrentChat
     //required this.index,
   });
 
@@ -37,6 +40,11 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
   }
 
   void _onUseThisPromptPressed() {
+    if (widget.onUseInCurrentChat != null) {
+      Navigator.of(context).pop();
+      widget.onUseInCurrentChat!(widget.prompt);
+      return;
+    }
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>

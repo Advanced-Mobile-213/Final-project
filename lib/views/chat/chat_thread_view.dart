@@ -23,6 +23,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ChatThreadView extends StatefulWidget {
   final String conversationId;
+
+
   const ChatThreadView({
     super.key,
     required this.conversationId,
@@ -485,7 +487,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       context: context,
       builder: (context) {
          _bottomSheetContext = context;
-        return PromptSelectionWidget(onPromptSelected: handlePromptSelection);},
+        return PromptSelectionWidget(onPromptSelected: handlePromptSelection, textSendController: _controller);},
     ).whenComplete(() {
       _bottomSheetContext = null;
     });

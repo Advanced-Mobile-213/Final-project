@@ -89,6 +89,8 @@ class JarvisApiClient {
         },
       );
       _accessToken = response.data['token']["accessToken"];
+      print('new access token: $_accessToken');
+
       if (_accessToken != null) {
         return true;
       }
