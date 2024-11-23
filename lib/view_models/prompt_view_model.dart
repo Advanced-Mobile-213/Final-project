@@ -14,6 +14,7 @@ class PromptViewModel extends ChangeNotifier {
   List<Prompt> publicPrompts = [];
   Prompt? newPrompt;
 
+
   Future<void> getPrompts({
     String? query,
     int? offset,
@@ -34,8 +35,15 @@ class PromptViewModel extends ChangeNotifier {
         isPublic: isPublic,
       );
       isLoading = false;
+      prompts = result!.items ?? [];
+      for (var prompt in prompts) {
+        if (prompt.isPublic == true) {
+          publicPrompts.add(prompt);
+        } else {
+          privatePrompts.add(prompt);
+        }
+      }
 
-      prompts = result?.items ?? [];
     } catch (e) {
       print('--> Error fetching prompts: $e');
       isLoading = false;

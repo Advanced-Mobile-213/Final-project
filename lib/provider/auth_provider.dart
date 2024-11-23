@@ -24,8 +24,10 @@ class AuthProvider with ChangeNotifier {
   Future<String?> login(String email, String password) async {
     final error = await authService.login(email, password);
     if (error == null) {
-      _isAuthenticated = true;
       _user = await userService.fetchCurrentUser();
+      if (_user != null ) {
+        _isAuthenticated = true;
+      }
       notifyListeners();
     }
     return error;

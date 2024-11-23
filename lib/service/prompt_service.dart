@@ -26,6 +26,7 @@ class PromptService {
         if (isPublic != null) 'isPublic': isPublic,
       };
 
+
       final response = await jarvisApiClient.authenticatedDio
           .get("/api/v1/prompts", queryParameters: queryParams);
 

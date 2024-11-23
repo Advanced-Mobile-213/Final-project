@@ -27,13 +27,13 @@ class JarvisApiClient {
         onRequest: (options, handler) async {
           if (_accessToken != null) {
             options.headers['Authorization'] = 'Bearer $_accessToken';
+            print("accessToken in interceptor $_accessToken");
           }
           return handler.next(options);
         },
         onError: (error, handler) async {
           if (error.response?.statusCode == 401 && _refreshToken != null) {
             // Attempt to refresh the token if unauthorized (401) error occurs
-            print('${error.response?.statusCode} error occurred IN INTERCEPTOR');
             final success = await refreshAccessToken();
             if (success) {
               // Retry the original request with the new token
@@ -73,7 +73,6 @@ class JarvisApiClient {
   void clearToken() {
     _accessToken = null;
     _refreshToken = null;
-    authenticatedDio.interceptors.clear(); // Remove interceptor on logout
   }
 
   // Private method to refresh the access token
@@ -83,9 +82,13 @@ class JarvisApiClient {
     }
     try {
       print('refreshing token: $_refreshToken');
-      final response = await publicDio.get("api/v1/auth/refresh?refreshToken=${_refreshToken}");
+      final response = await publicDio.get(
+        "api/v1/auth/refresh",
+        queryParameters: {
+          'refreshToken': _refreshToken,
+        },
+      );
       _accessToken = response.data['token']["accessToken"];
-
       if (_accessToken != null) {
         return true;
       }
