@@ -22,10 +22,10 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');
-  // final emailController = TextEditingController();
-  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');
-  // final passwordController = TextEditingController();
+  // final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');
+  final emailController = TextEditingController();
+  // final passwordController = TextEditingController(text: 'Adv@ncedMobile213');
+  final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state
 
@@ -91,6 +91,7 @@ class _LoginViewState extends State<LoginView> {
                             hintText: "Enter password",
                             controller: passwordController,
                             obscureText: isPasswordHidden,
+                            isRequired: true,
                           ),
                           const SizedBox(height: 20),
 
