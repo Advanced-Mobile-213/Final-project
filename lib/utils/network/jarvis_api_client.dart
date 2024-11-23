@@ -73,7 +73,6 @@ class JarvisApiClient {
   void clearToken() {
     _accessToken = null;
     _refreshToken = null;
-    authenticatedDio.interceptors.clear(); // Remove interceptor on logout
   }
 
   // Private method to refresh the access token

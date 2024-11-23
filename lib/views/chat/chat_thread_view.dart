@@ -538,11 +538,11 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: Icon(Icons.copy, color: Colors.white),
+                    icon: const Icon(Icons.copy, color: Colors.white),
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: message.content));
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Copied to clipboard')),
+                        const SnackBar(content: Text('Copied to clipboard')),
                       );
                     },
                   ),
@@ -594,7 +594,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 4.0,
