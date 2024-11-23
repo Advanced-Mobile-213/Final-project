@@ -25,17 +25,37 @@ class _PromptSelectionWidgetState extends State<PromptSelectionWidget> {
   late final PromptViewModel _promptViewModel;
   late final List<Prompt> _privatePrompts;
   late final List<Prompt> _publicPrompts;
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
     _promptViewModel = Provider.of<PromptViewModel>(context, listen: false);
-    _promptViewModel.getPrompts(category: PromptCategory.other, isPublic: false, limit: 50);
-    _promptViewModel.getPrompts(category: PromptCategory.business, isPublic:true, limit: 50);
-    _privatePrompts = _promptViewModel.privatePrompts;
-    _publicPrompts = _promptViewModel.publicPrompts;
-    // TODO: handle loading
+    _fetchPrompts();
   }
 
+  void _fetchPrompts() async {
+    setState(() {
+      isLoading = true;
+    });
+    await _promptViewModel.getPrompts(
+        category: PromptCategory.other, isPublic: false, limit: 50);
+    await _promptViewModel.getPrompts(
+        category: PromptCategory.business, isPublic: true, limit: 50);
+    setState(() {
+      _privatePrompts = _promptViewModel.privatePrompts;
+      _publicPrompts = _promptViewModel.publicPrompts;
+    });
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _privatePrompts.clear();
+    _publicPrompts.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,20 +78,23 @@ class _PromptSelectionWidgetState extends State<PromptSelectionWidget> {
             ),
           ),
           Expanded(
-            child: ListView(
-              shrinkWrap: true, // Allow ListView to shrink to fit
-              children: _privatePrompts.map((prompt) {
-                return ListTile(
-                  title: Text(
-                    prompt.title,
-                    style: const TextStyle(color: AppColors.quaternaryText),
-                  ),
-                  onTap: () {
-                    onPromptDetail(prompt);
-                  },
-                );
-              }).toList(),
-            ),
+            child: !isLoading
+                ? ListView(
+                    shrinkWrap: true, // Allow ListView to shrink to fit
+                    children: _privatePrompts.map((prompt) {
+                      return ListTile(
+                        title: Text(
+                          prompt.title,
+                          style:
+                              const TextStyle(color: AppColors.quaternaryText),
+                        ),
+                        onTap: () {
+                          onPromptDetail(prompt);
+                        },
+                      );
+                    }).toList(),
+                  )
+                : const Center(child: CircularProgressIndicator()),
           ),
           const ListTile(
             title: Text(
@@ -80,32 +103,38 @@ class _PromptSelectionWidgetState extends State<PromptSelectionWidget> {
             ),
           ),
           Expanded(
-            child: ListView(
-              shrinkWrap: true, // Allow ListView to shrink to fit
-              children: _publicPrompts.map((prompt) {
-                return ListTile(
-                  title: Text(
-                    prompt.title,
-                    style: const TextStyle(color: AppColors.quaternaryText),
-                  ),
-                  onTap: () {
-                    onPromptDetail(prompt);
-                  },
-                );
-              }).toList(),
-            ),
+            child: !isLoading
+                ? ListView(
+                    shrinkWrap: true, // Allow ListView to shrink to fit
+                    children: _publicPrompts.map((prompt) {
+                      return ListTile(
+                        title: Text(
+                          prompt.title,
+                          style:
+                              const TextStyle(color: AppColors.quaternaryText),
+                        ),
+                        onTap: () {
+                          onPromptDetail(prompt);
+                        },
+                      );
+                    }).toList(),
+                  )
+                : const Center(child: CircularProgressIndicator()),
           ),
         ],
       ),
     );
   }
+
   void onPromptDetail(Prompt prompt) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return DetailPromptPopUpDialog(prompt: prompt, onUseInCurrentChat: (prompt) {
-          sendCurrentChatThread(prompt);
-        },
+        return DetailPromptPopUpDialog(
+          prompt: prompt,
+          onUseInCurrentChat: (prompt) {
+            sendCurrentChatThread(prompt);
+          },
         );
       },
     );
