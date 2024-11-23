@@ -7,8 +7,11 @@
 - Link GitHub (branch mock-ui): https://github.com/Advanced-Mobile-213/Final-project/tree/mock-ui
 - Link demo: https://www.youtube.com/watch?v=K1GLePm-LF8&ab_channel=TuanTruong
 ## Milestone 2: Xây dựng hoàn thiện (có kết nối API) nhóm các tính năng sau trong đô án cuối kì:
+#### Xác thực và phân quyền (2)
+#### AI Chat (3)
+#### Quản lý và sử dụng prompt (6)
 - Link GitHub (branch basic-feature): https://github.com/Advanced-Mobile-213/Final-project/tree/basic-feature
-- Link demo:
+- Link demo: https://youtu.be/Qa5Pa3BLvnU
 ## Cấu trúc Project
 
 ```
