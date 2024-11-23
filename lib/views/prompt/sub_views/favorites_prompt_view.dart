@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/models.dart';
 
 class FavoritesPromptView extends StatefulWidget {
   const FavoritesPromptView({Key? key}) : super(key: key);
@@ -33,21 +34,21 @@ class _FavoritesPromptViewState extends State<FavoritesPromptView> {
         });
   }
 
-  void _showDetailPromptDialog(BuildContext context, int index) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return DetailPromptPopUpDialog(index: index);
-        });
-  }
+  // void _showDetailPromptDialog(BuildContext context, int index) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return DetailPromptPopUpDialog(index: index);
+  //       });
+  // }
 
-  void _showUpdatePromptDialog(BuildContext context, int index) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return UpdatePromptPopUpDialog(index: index);
-        });
-  }
+  // void _showUpdatePromptDialog(BuildContext context, int index) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return UpdatePromptPopUpDialog(index: index);
+  //       });
+  // }
 
   String query = '';
 

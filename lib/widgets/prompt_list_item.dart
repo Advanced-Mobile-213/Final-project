@@ -29,8 +29,11 @@ class PromptListItem extends StatefulWidget {
   final void Function(Prompt) onTap;
   final void Function(Prompt) onDeleted;
   final void Function(Prompt) onFavorite;
+  final void Function(BuildContext, Prompt) onEdit;
+  final void Function(Prompt) onDetail;
 
   const PromptListItem(this.prompt, this.onTap, this.onDeleted, this.onFavorite,
+      this.onEdit, this.onDetail,
       {super.key});
 
   @override
@@ -55,7 +58,7 @@ class _PromptListItemState extends State<PromptListItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              flex: 4,
+              flex: 7,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -75,24 +78,35 @@ class _PromptListItemState extends State<PromptListItem> {
               ),
             ),
             Expanded(
-                flex: 1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TouchableOpacity(
-                      onTap: () => widget.onFavorite(widget.prompt),
-                      child: Icon(Icons.star,
-                          color: widget.prompt.isFavorite
-                              ? Colors.yellow
-                              : Colors.white),
+              flex: 3,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TouchableOpacity(
+                    onTap: () => widget.onFavorite(widget.prompt),
+                    child: Icon(
+                      Icons.star,
+                      color: widget.prompt.isFavorite
+                          ? Colors.yellow
+                          : Colors.white,
                     ),
-                    Gap(spacing[1]),
+                  ),
+                  if (!widget.prompt.isPublic)
                     TouchableOpacity(
                       onTap: () => widget.onDeleted(widget.prompt),
                       child: const Icon(Icons.delete, color: Colors.white),
                     ),
-                  ],
-                )),
+                  if (!widget.prompt.isPublic)
+                    TouchableOpacity(
+                      onTap: () => widget.onEdit(context, widget.prompt),
+                      child: const Icon(Icons.edit, color: Colors.white),
+                    ),
+                  TouchableOpacity(
+                      onTap: () => widget.onDetail(widget.prompt),
+                      child: const Icon(Icons.info, color: Colors.white)),
+                ],
+              ),
+            ),
           ],
         ),
       ),

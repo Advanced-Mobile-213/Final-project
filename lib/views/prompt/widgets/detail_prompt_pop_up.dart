@@ -1,27 +1,59 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/views/chat/new_chat_thread_view.dart';
+import 'package:touchable_opacity/touchable_opacity.dart';
 
-class DetailPromptPopUpDialog extends StatefulWidget{
-  final int index;
+class DetailPromptPopUpDialog extends StatefulWidget {
+  //final int index;
+  final Prompt prompt;
 
-  DetailPromptPopUpDialog({super.key, required this.index});
+  const DetailPromptPopUpDialog({
+    super.key,
+    required this.prompt,
+    //required this.index,
+  });
 
-  
   @override
   State<DetailPromptPopUpDialog> createState() => _DetailPromptPopUpState();
-
 }
 
 class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
-  final TextEditingController _nameInputFieldController = TextEditingController(text: 'This is prompt name');
-  final TextEditingController _promptInputFieldController = TextEditingController(text: "This is prompt");
-  final TextEditingController _descriptionInputFieldController = TextEditingController(text: 'This is prompt description');
+  late TextEditingController _titleController;
+  late TextEditingController _userNameController;
+  late TextEditingController _contentController;
+  late bool _isFavorite;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.prompt.title);
+    _userNameController = TextEditingController(text: widget.prompt.userName);
+    _contentController = TextEditingController(text: widget.prompt.content);
+    _isFavorite = widget.prompt.isFavorite;
+  }
+
+  void _onUseThisPromptPressed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const NewChatThreadView(),
+      ),
+    );
+  }
+
+  void _onContentCopyPressed() {
+    Clipboard.setData(ClipboardData(text: _contentController.text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Copied to clipboard')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
+    //var width = MediaQuery.of(context).size.width;
     // TODO: implement build
     return AlertDialog(
       backgroundColor: AppColors.secondaryBackground,
@@ -29,7 +61,8 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          const Text('Detail Prompt',
+          const Text(
+            'Detail Prompt',
             style: TextStyle(
               color: AppColors.quaternaryText,
             ),
@@ -41,20 +74,21 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
                   onPressed: () {
                     //Navigator.of(context).pop();
                   },
-                  icon: const Icon(Icons.star_border,
-                    color: AppColors.quaternaryText,
-                  ),
+                  icon: Icon(Icons.star,
+                      color: _isFavorite
+                          ? Colors.yellow
+                          : AppColors.quaternaryText),
                 ),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  icon: const Icon(Icons.close,
+                  icon: const Icon(
+                    Icons.close,
                     color: AppColors.quaternaryText,
                   ),
                 ),
               ],
-
             ),
           ),
         ],
@@ -63,28 +97,27 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
         children: <Widget>[
           Expanded(
             child: Column(
-
-              children:  <Widget>[
+              children: <Widget>[
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.only(bottom: 5),
-                  child: const Text('Name:',
+                  child: const Text(
+                    'Name:',
                     style: TextStyle(
                       color: AppColors.quaternaryText,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-
                 TextField(
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   enabled: false,
-                  controller: _nameInputFieldController,
+                  controller: _titleController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[200],
-                    hintText: 'Enter Prompt Name',
+                    hintText: _titleController.text,
                     contentPadding: const EdgeInsets.all(5),
                     hintStyle: const TextStyle(
                       color: AppColors.greyText,
@@ -97,31 +130,28 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
                       ),
                     ),
                   ),
-                  onSubmitted: (value) {
-
-                  },
+                  onSubmitted: (value) {},
                 ),
-                
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.only(bottom: 5),
-                  child: const Text('Written by Author:',
+                  child: const Text(
+                    'Written by Author:',
                     style: TextStyle(
                       color: AppColors.quaternaryText,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-
                 TextField(
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   enabled: false,
-                  controller: _descriptionInputFieldController,
+                  controller: _userNameController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[200],
-                    hintText: 'Enter Prompt Description',
+                    hintText: _userNameController.text,
                     contentPadding: const EdgeInsets.all(5),
                     hintStyle: const TextStyle(
                       color: AppColors.greyText,
@@ -134,55 +164,57 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
                       ),
                     ),
                   ),
-                  onSubmitted: (value) {
-
-                  },
+                  onSubmitted: (value) {},
                 ),
-               Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 2),
-                child:  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                    alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(bottom: 5),
-                      child: const Text('Prompt:',
-                        style: TextStyle(
-                          color: AppColors.quaternaryText,
-                          fontWeight: FontWeight.bold,
+                Container(
+                  margin: const EdgeInsets.only(top: 10, bottom: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.only(bottom: 5),
+                        child: const Text(
+                          'Prompt:',
+                          style: TextStyle(
+                            color: AppColors.quaternaryText,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    Icon(Icons.file_copy,
-                      color: AppColors.quaternaryText,
-                    ),
-                    
-                  ],
+                      TouchableOpacity(
+                        onTap: () => _onContentCopyPressed(),
+                        child: const Icon(
+                          Icons.file_copy,
+                          color: AppColors.quaternaryText,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              
-               ),
-               
-                TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  enabled: false,
-                  controller: _promptInputFieldController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    hintText: 'eg: Write an article about [TOPIC], make sure to include these keywords: [KEYWORDS]',
-                    hintMaxLines: 3,
-                    contentPadding: const EdgeInsets.all(10),
-                    hintStyle: const TextStyle(
-                      color: AppColors.greyText,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: TextField(
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      enabled: false,
+                      controller: _contentController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        hintText: _contentController.text,
+                        hintMaxLines: 3,
+                        contentPadding: const EdgeInsets.all(10),
+                        hintStyle: const TextStyle(
+                          color: AppColors.greyText,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onSubmitted: (value) {},
                     ),
                   ),
-                  onSubmitted: (value) {
-
-                  },
                 ),
               ],
             ),
@@ -191,20 +223,18 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
       ),
       actions: <Widget>[
         ElevatedButton.icon(
-          onPressed: (){
-            Navigator.of(context).pop();
-          },
-          icon:  const Icon(Icons.chat),
-          label: const Text('Using this prompt'),
+          onPressed: () => _onUseThisPromptPressed(),
+          icon: const Icon(Icons.chat),
+          label: const Text('Use this prompt'),
           style: ElevatedButton.styleFrom(
             foregroundColor: AppColors.quaternaryText,
             backgroundColor: AppColors.tertiaryBackground, // Text color
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
+            padding:
+                EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
             textStyle: TextStyle(fontSize: 16), // Text style
           ),
         ),
       ],
     );
   }
-  
 }

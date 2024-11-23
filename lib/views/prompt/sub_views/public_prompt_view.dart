@@ -35,13 +35,13 @@ class _PublicPromptViewState extends State<PublicPromptView> {
         });
   }
 
-  void _showDetailPromptDialog(BuildContext context, int index) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return DetailPromptPopUpDialog(index: index);
-        });
-  }
+  // void _showDetailPromptDialog(BuildContext context, int index) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return DetailPromptPopUpDialog(index: index);
+  //       });
+  // }
 
   void onSearchChanged(String value) {
     setState(() {
