@@ -574,6 +574,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
               child: Text(
                 message.content,
                 textDirection: TextDirection.ltr, // Keep text left-to-right
+                maxLines: null,
                 style: const TextStyle(color: Colors.white),
               ),
             ),

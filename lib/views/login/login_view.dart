@@ -7,7 +7,7 @@ import 'package:chatbot_agents/widgets/app_logo.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:chatbot_agents/widgets/wide_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';  // Add provider for managing authentication
+import 'package:provider/provider.dart'; // Add provider for managing authentication
 
 import '../../constants/app_icons.dart';
 import '../../constants/app_tab.dart';
@@ -22,14 +22,15 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');
+  final emailController = TextEditingController(text: 'tien.hcmus.569@gmail.com');//tien123@gmail.com
+  //hoangquoc2106@gmail.com
   // final emailController = TextEditingController();
-  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');
+  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');//Adv@ncedMobile213
   // final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state
 
-  @override
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
