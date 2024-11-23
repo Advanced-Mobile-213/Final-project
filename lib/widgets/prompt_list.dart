@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
+import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
+import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
@@ -83,18 +85,19 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
   }
 
   void showDynamicInput(Prompt prompt) {
-      print(prompt.content);
-      List<String> placeholders = StringUtils.getAllPlacehoders(prompt.content);
-      List<TextEditingController> controllers = placeholders.map((_) => TextEditingController()).toList();
+    print(prompt.content);
+    List<String> placeholders = StringUtils.getAllPlacehoders(prompt.content);
+    List<TextEditingController> controllers =
+        placeholders.map((_) => TextEditingController()).toList();
 
-      showModalBottomSheet(
-        context: context, 
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return DraggableScrollableSheet(
-            expand: false,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return SingleChildScrollView(
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          builder: (BuildContext context, ScrollController scrollController) {
+            return SingleChildScrollView(
                 controller: scrollController,
                 child: Container(
                   padding: EdgeInsets.all(16.0),
@@ -132,12 +135,16 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
-                            List<String> inputValues = controllers.map((controller) => controller.text).toList();
+                            List<String> inputValues = controllers
+                                .map((controller) => controller.text)
+                                .toList();
                             // Handle the collected input values here
-                           String result = StringUtils.replacePlaceholders(prompt.content, inputValues);
+                            String result = StringUtils.replacePlaceholders(
+                                prompt.content, inputValues);
                             // Handle the result here
                             print(result);
-                            Navigator.of(context).pop(); // Close the bottom sheet
+                            Navigator.of(context)
+                                .pop(); // Close the bottom sheet
                           },
                           child: Text('Send'),
                         ),
@@ -145,29 +152,28 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
                       // Add other dynamic input fields here if needed
                     ],
                   ),
-                )
-              );
-            },
-          );
-        
-        },
-      );
+                ));
+          },
+        );
+      },
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
     final promptViewModel = context.watch<PromptViewModel>();
-    
+
     void onPromptTap(Prompt prompt) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PromptDetailView(prompt)),
-      );
-
       showDynamicInput(prompt);
+    }
 
-      
+    void onPromptDetail(Prompt prompt) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(prompt: prompt);
+        },
+      );
     }
 
     void onPromptDeleted(Prompt prompt) {
@@ -194,6 +200,14 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
       }
     }
 
+    void _showUpdatePromptDialog(BuildContext context, Prompt prompt) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return UpdatePromptPopUpDialog(prompt: prompt);
+          });
+    }
+
     final Widget content;
     if (promptViewModel.isLoading) {
       content = const Expanded(
@@ -217,6 +231,8 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
                 onPromptTap,
                 onPromptDeleted,
                 onPromptFavorite,
+                _showUpdatePromptDialog,
+                onPromptDetail,
               );
             },
           ),
