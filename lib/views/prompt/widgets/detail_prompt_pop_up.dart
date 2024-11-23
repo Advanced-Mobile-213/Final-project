@@ -39,7 +39,8 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
   void _onUseThisPromptPressed() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const NewChatThreadView(),
+        builder: (context) =>
+            NewChatThreadView(passingPromptContent: _contentController.text),
       ),
     );
   }

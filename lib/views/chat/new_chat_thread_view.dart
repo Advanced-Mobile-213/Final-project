@@ -22,9 +22,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewChatThreadView extends StatefulWidget {
-  const NewChatThreadView({
-    super.key,
-  });
+  final String? passingPromptContent;
+  const NewChatThreadView({super.key, this.passingPromptContent});
 
   @override
   _NewChatThreadViewState createState() => _NewChatThreadViewState();
@@ -46,7 +45,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
   String selectedBot = 'gpt-4o-mini'; // Default bot
-  final List<int> costToken = [1,3,1,5,5,1];
+  final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
   late String _conversationId = '';
 
@@ -59,20 +58,22 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Back arrow icon
+          icon: const Icon(Icons.arrow_back,
+              color: Colors.white), // Back arrow icon
           onPressed: () {
             _conversationViewModel.clearContextOfConversation();
             _listConversationsViewModel.getConversations(
               assistantModel: EnumAssistantModel.DIFY,
               assistantId: EnumAssisstantId.GPT_4O_MINI,
             );
-            Navigator.pop(context); // Pops the current screen from the navigation stack
+            Navigator.pop(
+                context); // Pops the current screen from the navigation stack
           },
         ),
         // title: IconButton(
         //   onPressed: () async {
         //     _fetchMoreConversationHistory();
-        //   }, 
+        //   },
         //   icon: Icon(Icons.replay_outlined, color: Colors.white)
         // ),
         centerTitle: true,
@@ -94,7 +95,8 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
               items: bots.map<DropdownMenuItem<String>>((String bot) {
                 return DropdownMenuItem<String>(
                   value: bot,
-                  child: Text('$bot : ${costToken[bots.indexOf(bot)]} tokens', 
+                  child: Text(
+                    '$bot : ${costToken[bots.indexOf(bot)]} tokens',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -109,19 +111,22 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
             child: Row(
               children: [
                 const Icon(
-                  Icons.local_fire_department, 
+                  Icons.local_fire_department,
                   color: Colors.white,
                   size: 15,
                 ),
-                // const Text('Tokens: ', 
+                // const Text('Tokens: ',
                 //   style: TextStyle(color: Colors.white),
                 // ),
                 Text(
-                  _conversationViewModel.messageResponseDto?.remainingUsage != null 
-                  ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
-                  : _conversationViewModel.remainingToken != 0 
-                  ? _conversationViewModel.remainingToken.toString()
-                  : '0', 
+                  _conversationViewModel.messageResponseDto?.remainingUsage !=
+                          null
+                      ? _conversationViewModel
+                          .messageResponseDto!.remainingUsage
+                          .toString()
+                      : _conversationViewModel.remainingToken != 0
+                          ? _conversationViewModel.remainingToken.toString()
+                          : '0',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -135,36 +140,11 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       body: Column(
         children: [
           // Chat messages area
-          Expanded(
-            child: Container(
-              child: Consumer<ConversationViewModel>(
-                builder: (context, ConversationViewModel conversationViewModel, child) {
-                  if (messages.isNotEmpty) {
-                    return ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.all(5.0),
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        final message = messages[index];
-                        final isUserMessage = message.isUserMessage;
-
-                        return isUserMessage
-                            ? _buildMeReply(message, screenWidth)
-                            : _buildChatbotReply(message, screenWidth);
-                      },
-                    );
-                  } else if (conversationViewModel.isLoadingConversationHistory==false 
-                   && (conversationViewModel.messages == null
-                   || conversationViewModel.messages!.messages.isEmpty)) {
-                    return Center(
-                      child: Container(),
-                    );
-                  }
-
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToBottomAnimated();
-                  });
-
+          Expanded(child: Container(
+            child: Consumer<ConversationViewModel>(
+              builder: (context, ConversationViewModel conversationViewModel,
+                  child) {
+                if (messages.isNotEmpty) {
                   return ListView.builder(
                     controller: _scrollController,
                     padding: EdgeInsets.all(5.0),
@@ -178,10 +158,35 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                           : _buildChatbotReply(message, screenWidth);
                     },
                   );
-                },
-              ),
-            )
-          ),
+                } else if (conversationViewModel.isLoadingConversationHistory ==
+                        false &&
+                    (conversationViewModel.messages == null ||
+                        conversationViewModel.messages!.messages.isEmpty)) {
+                  return Center(
+                    child: Container(),
+                  );
+                }
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _scrollToBottomAnimated();
+                });
+
+                return ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.all(5.0),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    final isUserMessage = message.isUserMessage;
+
+                    return isUserMessage
+                        ? _buildMeReply(message, screenWidth)
+                        : _buildChatbotReply(message, screenWidth);
+                  },
+                );
+              },
+            ),
+          )),
 
           // Container(
           //   padding: EdgeInsets.symmetric(
@@ -195,32 +200,33 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
           Center(
             child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
                 ? FutureBuilder<void>(
-              future: retrieveLostData(),
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const Text(
-                      'You have not yet picked an image.',
-                      textAlign: TextAlign.center,
-                    );
-                  case ConnectionState.done:
-                    return _previewImages();
-                  case ConnectionState.active:
-                    if (snapshot.hasError) {
-                      return Text(
-                        'Pick image/video error: ${snapshot.error}}',
-                        textAlign: TextAlign.center,
-                      );
-                    } else {
-                      return const Text(
-                        'You have not yet picked an image.',
-                        textAlign: TextAlign.center,
-                      );
-                    }
-                }
-              },
-            )
+                    future: retrieveLostData(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<void> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                        case ConnectionState.waiting:
+                          return const Text(
+                            'You have not yet picked an image.',
+                            textAlign: TextAlign.center,
+                          );
+                        case ConnectionState.done:
+                          return _previewImages();
+                        case ConnectionState.active:
+                          if (snapshot.hasError) {
+                            return Text(
+                              'Pick image/video error: ${snapshot.error}}',
+                              textAlign: TextAlign.center,
+                            );
+                          } else {
+                            return const Text(
+                              'You have not yet picked an image.',
+                              textAlign: TextAlign.center,
+                            );
+                          }
+                      }
+                    },
+                  )
                 : _previewImages(),
           ),
           // Input field to send new message
@@ -232,30 +238,26 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  onPressed: (){
+                  onPressed: () {
                     _showNonTextInputSelectionBottomSheet();
                   },
-                  icon: const Icon(
-                      Icons.add_box_outlined,
-                      color: AppColors.quaternaryBackground
-                  ),
+                  icon: const Icon(Icons.add_box_outlined,
+                      color: AppColors.quaternaryBackground),
                 ),
                 Expanded(
                   child: CustomizedTextInput.TextInput(
                       controller: _controller,
                       hintText: "Enter message",
-                      onChanged: (value){}
-                  ),
+                      onChanged: (value) {}),
                 ),
                 SizedBox(width: screenWidth * 0.02),
 
                 // Send button
                 IconButton(
-                  icon: const Icon(Icons.send, color: Colors.white),
-                  onPressed:  () async {
-                    _sendMessage();
-                  }
-                ),
+                    icon: const Icon(Icons.send, color: Colors.white),
+                    onPressed: () async {
+                      _sendMessage();
+                    }),
               ],
             ),
           )
@@ -279,7 +281,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     bool isMultiImage = false,
     bool isMedia = false,
   }) async {
-    if (context.mounted) { 
+    if (context.mounted) {
       try {
         final XFile? pickedFile = await _picker.pickImage(
           source: source,
@@ -299,10 +301,10 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
           _pickImageError = e;
         });
       }
-    };
-        
+    }
+    ;
   }
-  
+
   Text? _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {
       final Text result = Text(_retrieveDataError!);
@@ -329,8 +331,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                     errorBuilder: (BuildContext context, Object error,
                         StackTrace? stackTrace) {
                       return const Center(
-                          child:
-                              Text('This image type is not supported'));
+                          child: Text('This image type is not supported'));
                     },
                   )
                 : null),
@@ -369,9 +370,10 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   }
 
   void _fetchConversationHistory() async {
-                    
-    if (_conversationViewModel.listHistoryMessages != null && _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
-      messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
+    if (_conversationViewModel.listHistoryMessages != null &&
+        _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
+      messages = MessageMapper.toMessageRendererModels(
+          _conversationViewModel.listHistoryMessages!.items);
     }
   }
 
@@ -389,7 +391,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
     // });
-
   }
 
   void _scrollToBottom() {
@@ -454,39 +455,42 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       }
     });
   }
-  
+
   void _showDetailPromptBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
         context: context,
         builder: (BuildContext context) {
           return PromptBottomSheet();
-        }
-    );
+        });
   }
 
   void _showNonTextInputSelectionBottomSheet() {
     showModalBottomSheet<void>(
       context: context,
       builder: (context) {
-         _bottomSheetContext = context;
-        return NonTextInputSelectionWidget(onPromptSelected: handleCloseBottomSheet, onImageButtonPressed: _onImageButtonPressed,);
+        _bottomSheetContext = context;
+        return NonTextInputSelectionWidget(
+          onPromptSelected: handleCloseBottomSheet,
+          onImageButtonPressed: _onImageButtonPressed,
+        );
       },
     ).whenComplete(() {
       _bottomSheetContext = null;
     });
   }
-  
+
   void _showPromptSelectionBottomSheet() {
     showModalBottomSheet<void>(
       context: context,
       builder: (context) {
-         _bottomSheetContext = context;
-        return PromptSelectionWidget(onPromptSelected: handlePromptSelection);},
+        _bottomSheetContext = context;
+        return PromptSelectionWidget(onPromptSelected: handlePromptSelection);
+      },
     ).whenComplete(() {
       _bottomSheetContext = null;
     });
   }
-  
+
   Widget _buildChatbotReply(MessageRendererModel message, double screenWidth) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -510,27 +514,28 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                message.icon !=null
-                ? Icon(message.icon, color: Colors.white)
-                : MarkdownBody(
-                  data: message.content,
-                  onTapLink: (text, href, title) async {
-                    if (href != null) {
-                      print('Link clicked: $href');
-                      if (await canLaunchUrl(Uri.parse(href))) {
-                        await launchUrl(Uri.parse(href));
-                      } else {
-                        print('Could not launch $href');
-                      }
-                    }
-                  },
-                  styleSheet: MarkdownStyleSheet(
-                    p: TextStyle(color: Colors.white), // Change text color here
-                    h1: TextStyle(color: Colors.white),
-                    h3: TextStyle(color: Colors.white),
-                    blockquote: TextStyle(color: Colors.white),
-                  ),
-                ),
+                message.icon != null
+                    ? Icon(message.icon, color: Colors.white)
+                    : MarkdownBody(
+                        data: message.content,
+                        onTapLink: (text, href, title) async {
+                          if (href != null) {
+                            print('Link clicked: $href');
+                            if (await canLaunchUrl(Uri.parse(href))) {
+                              await launchUrl(Uri.parse(href));
+                            } else {
+                              print('Could not launch $href');
+                            }
+                          }
+                        },
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(
+                              color: Colors.white), // Change text color here
+                          h1: TextStyle(color: Colors.white),
+                          h3: TextStyle(color: Colors.white),
+                          blockquote: TextStyle(color: Colors.white),
+                        ),
+                      ),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
@@ -544,7 +549,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                   ),
                 ),
               ],
-            ),     
+            ),
           ),
         ),
       ],
@@ -558,7 +563,8 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
         Flexible(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: screenWidth * 0.7, // Limit the width to 70% of the screen width
+              maxWidth: screenWidth *
+                  0.7, // Limit the width to 70% of the screen width
             ),
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 8),
@@ -580,7 +586,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       ],
     );
   }
-   
+
   Widget _buildPromptSelection() {
     return Container(
       padding: EdgeInsets.all(8.0),
@@ -626,22 +632,18 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
 
   void _sendMessage() async {
     if (_controller.text.isNotEmpty) {
-      setState(() {       
-        messages.insert(messages.length, 
-          MessageRendererModel(
-            content: _controller.text, 
-            isUserMessage: true
-          ),
+      setState(() {
+        messages.insert(
+          messages.length,
+          MessageRendererModel(content: _controller.text, isUserMessage: true),
         );
 
         messages.insert(
-          messages.length, 
-          MessageRendererModel(
-            content: '', 
-            isUserMessage: false,
-            icon: FontAwesomeIcons.ellipsisH
-          )
-        );
+            messages.length,
+            MessageRendererModel(
+                content: '',
+                isUserMessage: false,
+                icon: FontAwesomeIcons.ellipsisH));
       });
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -654,27 +656,28 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       print('_conversationId: ${_conversationId}');
 
       await _conversationViewModel.sendMessage(
-          assistantModel: EnumAssistantModel.DIFY, 
-          assistantId: selectedBot, 
-          content: searchText,
-          conversationId: _conversationId,
-          files: _mediaFileList?.map((file) => file.path).toList(),
+        assistantModel: EnumAssistantModel.DIFY,
+        assistantId: selectedBot,
+        content: searchText,
+        conversationId: _conversationId,
+        files: _mediaFileList?.map((file) => file.path).toList(),
       );
 
-      print('_conversationViewModel.messageResponseDto: ${_conversationViewModel.messageResponseDto}');
+      print(
+          '_conversationViewModel.messageResponseDto: ${_conversationViewModel.messageResponseDto}');
 
       if (_conversationViewModel.messageResponseDto != null) {
-        setState(() {   
+        setState(() {
           messages[messages.length - 1] = MessageRendererModel(
-            content: _conversationViewModel.messageResponseDto!.message,
-            isUserMessage: false
-          );
+              content: _conversationViewModel.messageResponseDto!.message,
+              isUserMessage: false);
         });
       }
 
       if (_conversationViewModel.messageResponseDto != null) {
         setState(() {
-          _conversationId = _conversationViewModel.messageResponseDto!.conversationId;
+          _conversationId =
+              _conversationViewModel.messageResponseDto!.conversationId;
         });
       }
 
@@ -682,7 +685,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
         _scrollToBottomAnimated();
       });
       // Clear the input field
-      
     }
 
     if (_mediaFileList != null) {
@@ -690,12 +692,9 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       // Add media file to messages
       setState(() {
         messages.insert(
-          messages.length, 
-          MessageRendererModel(
-            content: 'Media file uploaded', 
-            isUserMessage: true
-          )
-        );
+            messages.length,
+            MessageRendererModel(
+                content: 'Media file uploaded', isUserMessage: true));
       });
 
       // Clear the media file list
@@ -704,8 +703,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       });
     }
   }
-
 }
-
 
 //d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438
