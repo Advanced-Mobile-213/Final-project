@@ -496,7 +496,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Chatbot Icon
-        CircleAvatar(
+        const CircleAvatar(
           backgroundColor: Colors.transparent,
           child: Icon(Icons.android, color: Colors.white),
         ),
@@ -505,8 +505,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         // Chatbot Message
         Expanded(
           child: Container(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            padding: EdgeInsets.all(5.0),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               color: Colors.grey[800],
               borderRadius: BorderRadius.circular(15),
@@ -529,10 +529,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                     }
                   },
                   styleSheet: MarkdownStyleSheet(
-                    p: TextStyle(color: Colors.white), // Change text color here
-                    h1: TextStyle(color: Colors.white),
-                    h3: TextStyle(color: Colors.white),
-                    blockquote: TextStyle(color: Colors.white),
+                    p: const TextStyle(color: Colors.white), // Change text color here
+                    h1: const TextStyle(color: Colors.white),
+                    h3: const TextStyle(color: Colors.white),
+                    blockquote: const TextStyle(color: Colors.white),
                   ),
                 ),
                 Align(
@@ -590,7 +590,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
   Widget _buildPromptSelection() {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.0),

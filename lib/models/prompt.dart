@@ -47,4 +47,22 @@ class Prompt {
       isFavorite: json['isFavorite'] ?? false,
     );
   }
+
+  @override
+  String toString() {
+    return 'Prompt('
+        'id: $id, '
+        'createdAt: $createdAt, '
+        'updatedAt: $updatedAt, '
+        'category: ${category.name}, '
+        'content: $content, '
+        'description: $description, '
+        'isPublic: $isPublic, '
+        'language: $language, '
+        'title: $title, '
+        'userId: $userId, '
+        'userName: $userName, '
+        'isFavorite: $isFavorite'
+        ')';
+  }
 }

@@ -1,4 +1,5 @@
 enum PromptCategory {
+  // all,
   business,
   career,
   chatbot,
@@ -16,6 +17,8 @@ enum PromptCategory {
 extension PromptCategoryId on PromptCategory {
   String get id {
     switch (this) {
+      // case PromptCategory.all:
+      //   return 'all';
       case PromptCategory.business:
         return 'business';
       case PromptCategory.career:
@@ -49,6 +52,8 @@ extension PromptCategoryId on PromptCategory {
 extension PromptCategoryTitle on PromptCategory {
   String get title {
     switch (this) {
+      // case PromptCategory.all:
+      //   return 'All';
       case PromptCategory.business:
         return 'Business';
       case PromptCategory.career:
@@ -79,7 +84,9 @@ extension PromptCategoryTitle on PromptCategory {
 
 PromptCategory getCategory(String id) {
   switch (id) {
-    case 'business':
+    case 'all':
+    //   return PromptCategory.all ;
+    // case 'business':
       return PromptCategory.business;
     case 'career':
       return PromptCategory.career;
