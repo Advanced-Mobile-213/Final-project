@@ -13,7 +13,11 @@
 
 ```
 lib/
+├── config/       # Chứa config app
+├── dto/          # Chứa dto phục vô cho call api
 ├── constants/    # Chứa những hằng số dùng xuyên suốt trong app
+├── constants/    # Chứa những hằng số dùng xuyên suốt trong app
+├── service/      # Chứa các service để phục vụ cho ViewModel
 ├── models/       # Chứa các Model để bind vào các ViewModel
 ├── viewmodels/   # Chứa các ViewModel để bind vào View
 ├── views/        # Chứa các screens để hiển thị lên màn hình
