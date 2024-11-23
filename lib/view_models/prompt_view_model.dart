@@ -61,27 +61,25 @@ class PromptViewModel extends ChangeNotifier {
         category: category,
         content: content,
         description: description,
-        isPublic: isPublic, 
-        language: language, 
+        isPublic: isPublic,
+        language: language,
         title: title,
       );
       isLoading = false;
 
       if (newPrompt != null) {
         if (isPublic) {
-          publicPrompts.add(newPrompt!);
+          prompts.add(newPrompt!);
         } else {
-          privatePrompts.add(newPrompt!);
+          prompts.add(newPrompt!);
         }
       }
 
       notifyListeners();
-
     } catch (e) {
       print('--> Error creating prompt: $e');
       isLoading = false;
     }
-    
   }
 
   Future<bool> updatePrompt({
@@ -101,8 +99,8 @@ class PromptViewModel extends ChangeNotifier {
         category: category,
         content: content,
         description: description,
-        isPublic: isPublic, 
-        language: language, 
+        isPublic: isPublic,
+        language: language,
         title: title,
       );
 
@@ -112,17 +110,16 @@ class PromptViewModel extends ChangeNotifier {
 
         if (index != -1) {
           prompts[index] = Prompt(
-            id: id,
-            category: category,
-            content: content,
-            description: description,
-            isPublic: isPublic,
-            language: language,
-            title: title
-          );
+              id: id,
+              category: category,
+              content: content,
+              description: description,
+              isPublic: isPublic,
+              language: language,
+              title: title);
         }
       }
-      
+
       isLoading = false;
       notifyListeners();
       return result;
@@ -148,12 +145,10 @@ class PromptViewModel extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
       // remove the prompt from the list
-      
     } catch (e) {
       print('--> Error deleting prompt: $e');
       isLoading = false;
     }
-    
   }
 
   Future<void> addPromptToFavorite(String id) async {

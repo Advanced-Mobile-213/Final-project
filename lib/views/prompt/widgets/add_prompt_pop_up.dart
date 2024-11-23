@@ -15,12 +15,12 @@ class AddPromptPopUpDialog extends StatefulWidget{
 
 class _AddPromptPopUpDialogState extends State<AddPromptPopUpDialog> {
   int _selectedIndexView = 1;
-  
+  String _selectedLanguage = EnumLanguage.AUTO;
 
   static const List<String> promptLanguage = EnumLanguage.getAllLanguages;
   static List<PromptCategory> promptCategory = PromptCategory.values;
   late PromptViewModel _promptViewModel;
-  PromptCategory dropdownValue = promptCategory[0];
+  PromptCategory _selectedCategory = promptCategory[0];
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -131,7 +131,7 @@ class _AddPromptPopUpDialogState extends State<AddPromptPopUpDialog> {
                     ),
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      value: promptLanguage[0],
+                      value: _selectedLanguage,
                       icon: const Icon(Icons.arrow_drop_down),
                       iconSize: 24,
                       elevation: 16,
@@ -140,9 +140,9 @@ class _AddPromptPopUpDialogState extends State<AddPromptPopUpDialog> {
                       ),
                       
                       onChanged: (String? newValue) {
-                        // setState(() {
-                        //   dropdownValue = newValue!;
-                        // });
+                        setState(() {
+                          _selectedLanguage = newValue!;
+                        });
                       },
                       items: promptLanguage
                           .map<DropdownMenuItem<String>>((String value) {
@@ -221,7 +221,7 @@ class _AddPromptPopUpDialogState extends State<AddPromptPopUpDialog> {
                       
                       onChanged: (PromptCategory? newValue) {
                         setState(() {
-                          dropdownValue = newValue!;
+                          _selectedCategory = newValue!;
                         });
                       },
                       items: promptCategory
@@ -343,11 +343,11 @@ class _AddPromptPopUpDialogState extends State<AddPromptPopUpDialog> {
         ElevatedButton(
           onPressed: () async  {
             await _promptViewModel.createPrompt(
-              category: PromptCategory.other, 
+              category: _selectedIndexView == 1 ?  PromptCategory.other : _selectedCategory, 
               content: _contentController.text, 
-              description: '', 
-              isPublic: false, 
-              language: EnumLanguage.ENGLISH, 
+              description: _selectedIndexView == 1 ? '' : _descriptionController.text, 
+              isPublic: _selectedIndexView == 1 ?  false : true, 
+              language: _selectedIndexView == 1 ?  EnumLanguage.ENGLISH : _selectedLanguage, 
               title: _nameController.text
             );
             // Define the action to be performed when the button is pressed
