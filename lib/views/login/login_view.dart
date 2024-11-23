@@ -92,6 +92,7 @@ class _LoginViewState extends State<LoginView> {
                             hintText: "Enter password",
                             controller: passwordController,
                             obscureText: isPasswordHidden,
+                            isRequired: true,
                           ),
                           const SizedBox(height: 20),
 

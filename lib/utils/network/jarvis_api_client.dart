@@ -21,16 +21,9 @@ class JarvisApiClient {
 
     // Initialize authenticated Dio instance (interceptor added after login)
     authenticatedDio = Dio(BaseOptions(baseUrl: baseUrl));
-  }
-
-  // Method to set the tokens after login and add interceptor
-  void setToken(String accessToken, String refreshToken) {
-    _accessToken = accessToken;
-    _refreshToken = refreshToken;
-
     // Add the interceptor to authenticatedDio for attaching tokens
     authenticatedDio.interceptors.add(
-      InterceptorsWrapper(
+      QueuedInterceptorsWrapper(
         onRequest: (options, handler) async {
           if (_accessToken != null) {
             options.headers['Authorization'] = 'Bearer $_accessToken';
@@ -68,6 +61,12 @@ class JarvisApiClient {
         },
       ),
     );
+  }
+
+  // Method to set the tokens after login and add interceptor
+  void setToken(String accessToken, String refreshToken) {
+    _accessToken = accessToken;
+    _refreshToken = refreshToken;
   }
 
   // Optional: Clear the tokens on logout

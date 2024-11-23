@@ -58,9 +58,7 @@ class _ProfileViewState extends State<ProfileView> {
                               // Add your onPressed code here if necessary
                             },
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                AppColors.primaryBackground,
-                              ),
+                              backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
                             ),
                             child: Text(
                               context.watch<AuthProvider>().user!.username,
@@ -108,9 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 // Add your onPressed code here
                               },
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  AppColors.tertiaryBackground,
-                                ),
+                                backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
                               ),
                               child: const Text(
                                 'Cancel',
@@ -167,9 +163,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 Navigator.pushNamed(context, '/subscription');
                               },
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  AppColors.tertiaryBackground,
-                                ),
+                                backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
                               ),
                               child: const Text(
                                 'Upgrade',

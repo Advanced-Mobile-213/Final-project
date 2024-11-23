@@ -92,41 +92,56 @@ class _PromptListViewState extends State<PromptListView> {
         break;
     }
 
-    return Screen(
-      title: 'Prompt Library',
-      titleButton: WideButton(
-        text: 'Add',
-        width: 100,
-        onPressed: () => onAddPromptDialog(context),
+    return Scaffold(
+      body:  Screen(
+        title: 'Prompt Library',
+        // titleButton: WideButton(
+        //   width: 100,
+        //   text: 'Add',
+        //   onPressed: () {
+        //     onAddPromptDialog(context)
+        //   },
+        // ),
+        titleButton:  FloatingActionButton(
+          onPressed: () => {
+            onAddPromptDialog(context)
+          },
+          //_createNewThreadDialog(context),
+          backgroundColor: AppColors.secondaryBackground,
+          child: const Icon(
+            Icons.add,
+            color: AppColors.quaternaryText,
+          ),
+        ),
+        children: [
+          promptModeFilter,
+          // Gap(spacing[2]),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       flex: 2,
+          //       child: PromptCategorySelector(
+          //         category: selectedCategory,
+          //         onChanged: onCategorySelected,
+          //         hasAllCategory: true,
+          //       ),
+          //     ),
+          //     Expanded(
+          //         flex: 3,
+          //         child:
+          //             SearchInput(hintText: 'Prompt name', onChanged: onSearch)),
+          //   ],
+          // ),
+          // Gap(spacing[3]),
+          // PromptList(
+          //   searchText: searchText,
+          //   viewMode: chosenViewMode,
+          //   category: selectedCategory,
+          // ),
+          Gap(spacing[2]),
+          content,
+        ],
       ),
-      children: [
-        promptModeFilter,
-        // Gap(spacing[2]),
-        // Row(
-        //   children: [
-        //     Expanded(
-        //       flex: 2,
-        //       child: PromptCategorySelector(
-        //         category: selectedCategory,
-        //         onChanged: onCategorySelected,
-        //         hasAllCategory: true,
-        //       ),
-        //     ),
-        //     Expanded(
-        //         flex: 3,
-        //         child:
-        //             SearchInput(hintText: 'Prompt name', onChanged: onSearch)),
-        //   ],
-        // ),
-        // Gap(spacing[3]),
-        // PromptList(
-        //   searchText: searchText,
-        //   viewMode: chosenViewMode,
-        //   category: selectedCategory,
-        // ),
-        Gap(spacing[2]),
-        content,
-      ],
     );
   }
 }
