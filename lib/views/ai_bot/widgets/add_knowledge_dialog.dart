@@ -11,7 +11,7 @@ class AddKnowledgeDialog extends StatefulWidget {
 
 class _AddKnowledgeDialogState extends State<AddKnowledgeDialog> {
   void _onAddKnowledgePress() {
-    //showAddPromptDialog(context);
+    print('--> Add Knowledge Pressed');
   }
 
   @override
