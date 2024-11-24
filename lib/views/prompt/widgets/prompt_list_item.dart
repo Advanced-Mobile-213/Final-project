@@ -78,7 +78,7 @@ class _PromptListItemState extends State<PromptListItem> {
               ),
             ),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
