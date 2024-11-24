@@ -141,9 +141,8 @@ class _LoginViewState extends State<LoginView> {
                                     AppUtils.bytesFromBase64String(AppIcons.GoogleBase64ImageString),
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () async { await _handleGoogleLogin(context);},
                               ),
-
                             ],
                           ),
                           const SizedBox(height: 20),
@@ -189,6 +188,28 @@ class _LoginViewState extends State<LoginView> {
 
       final authProvider = context.read<AuthProvider>();
       final errorResponse = await authProvider.login(email, password);
+
+      if (!context.mounted) return; // Prevent further actions if widget is not mounted
+
+      setState(() => _isLoading = false); // Stop loading
+
+      if (errorResponse != null) {
+        _showDialog(context, errorResponse);
+      } else {
+        Navigator.pushNamed(
+          context,
+          "/main",
+          arguments: {'selectedTab': AppTab.chat},
+        );
+      }
+    }
+  }
+  Future<void> _handleGoogleLogin(BuildContext context) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true); // Start loading
+
+      final authProvider = context.read<AuthProvider>();
+      final errorResponse = await authProvider.googleLogin();
 
       if (!context.mounted) return; // Prevent further actions if widget is not mounted
 

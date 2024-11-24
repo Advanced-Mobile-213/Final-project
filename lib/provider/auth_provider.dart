@@ -33,6 +33,18 @@ class AuthProvider with ChangeNotifier {
     return error;
   }
 
+  Future<String?> googleLogin() async {
+    final error = await authService.googleLogin();
+    if (error == null) {
+      _user = await userService.fetchCurrentUser();
+      if (_user != null ) {
+        _isAuthenticated = true;
+      }
+      notifyListeners();
+    }
+    return error;
+  }
+
   // Logout user
   Future<void> logout() async {
     await authService.logout();
