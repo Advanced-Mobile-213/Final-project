@@ -4,6 +4,8 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
+import './ai_bot_detail_dialog.dart';
+import '../ai_bot_detail_view.dart';
 
 // Styles
 const TextStyle _titleTextStyle = TextStyle(
@@ -29,16 +31,18 @@ class AiBotListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void onAiBotTap(BuildContext context, AiBot aiBot) {
-      // Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (context) => AiBotDetailView(aiBot: aiBot),
-      //   ),
-      // );
+    void onAiBotPressed(BuildContext context, AiBot aiBot) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => AiBotDetailView(aiBot: aiBot)),
+      );
+    }
+
+    void onUpdatePressed() {
+      showAiBotDetailDialog(context, updatingAiBot: aiBot);
     }
 
     return TouchableOpacity(
-      onTap: () => onAiBotTap(context, aiBot),
+      onTap: () => onAiBotPressed(context, aiBot),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(
@@ -69,6 +73,11 @@ class AiBotListItem extends StatelessWidget {
                 ],
               ),
             ),
+            TouchableOpacity(
+              onTap: onUpdatePressed,
+              child: const Icon(Icons.edit, color: Colors.white),
+            ),
+            Gap(spacing[1]),
             TouchableOpacity(
               onTap: () => onDeleted(aiBot),
               child: const Icon(Icons.delete, color: Colors.white),
