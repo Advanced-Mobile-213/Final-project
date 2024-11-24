@@ -1,130 +1,150 @@
-import 'package:flutter/material.dart';
-import 'package:chatbot_agents/models/knowledge/knowledge.dart';
-import 'package:gap/gap.dart';
-import 'package:chatbot_agents/views/knowledge/widgets/knowledge_unit_list.dart';
-import 'package:chatbot_agents/views/knowledge/widgets/add_knowledge_unit_dialog.dart';
-import 'package:chatbot_agents/widgets/text_input.dart';
-import 'package:chatbot_agents/widgets/wide_button.dart';
-import 'package:chatbot_agents/widgets/screen.dart';
-import 'package:chatbot_agents/constants/fake_data.dart';
-import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/create_new_unit_dialog.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/unit_list_tile.dart';
+import 'package:flutter/material.dart';
 
-class KnowledgeDetailView extends StatefulWidget {
-  final Knowledge knowledge;
-  const KnowledgeDetailView({required this.knowledge, super.key});
-
+class KnowledgeDetailView extends StatefulWidget{
   @override
   State<KnowledgeDetailView> createState() => _KnowledgeDetailViewState();
 }
 
-class _KnowledgeDetailViewState extends State<KnowledgeDetailView> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    titleController.text = widget.knowledge.knowledgeName;
-    descriptionController.text = widget.knowledge.description;
-  }
-
-  void onSave() {
-    // update knowledge
-    Knowledge updateKnowledge = FakeData.knowledge.firstWhere(
-        (element) => element.createdAt == widget.knowledge.createdAt);
-
-    updateKnowledge.knowledgeName = titleController.text;
-    updateKnowledge.description = descriptionController.text;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Knowledge updated!')),
-    );
-  }
-
-  Widget get _detailTab {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Gap(spacing[2]),
-          TextInput(
-            controller: titleController,
-            label: 'Title',
-            hintText: 'Enter title',
-            onChanged: (value) => setState(() {
-              titleController.text = value;
-            }),
-          ),
-          Gap(spacing[2]),
-          TextInput(
-            controller: descriptionController,
-            label: 'Description',
-            hintText: 'Enter description',
-            onChanged: (value) => setState(() {
-              descriptionController.text = value;
-            }),
-            lineNumbers: 10,
-          ),
-          Gap(spacing[6]),
-          WideButton(text: 'Save', onPressed: onSave),
-        ],
-      ),
-    );
-  }
-
-  void onAddUnit() {
-    showAddKnowledgeUnitDialog(context);
-  }
-
-  Widget get _unitsTab {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Gap(spacing[2]),
-        WideButton(text: 'Add unit', onPressed: onAddUnit),
-        Gap(spacing[4]),
-        KnowledgeUnitList(widget.knowledge.userId),
-      ],
-    );
-  }
+class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
+  final int units = 15;
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Screen(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
+    return Scaffold(
+      backgroundColor: AppColors.primaryBackground,
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryBackground,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+            color: AppColors.quaternaryText,
           ),
-          title: const Text(
-            'Knowledge Detail',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: AppColors.primaryBackground,
-          surfaceTintColor: Colors.white,
-          bottom: const TabBar(
-            labelStyle: TextStyle(color: Colors.white),
-            indicatorColor: Colors.white,
-            tabs: [
-              Tab(text: 'Information'),
-              Tab(text: 'Units'),
-            ],
-          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        children: [
-          Expanded(
-            child: TabBarView(
-              children: [
-                _detailTab,
-                _unitsTab,
-              ],
-            ),
-          ),
-        ],
+        title: const Text('Knowledge Detail',
+            style: TextStyle(
+                color: AppColors.quaternaryText
+            )
+        ),
       ),
+      body: Center(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                //mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Knowledge 1', 
+                          style: TextStyle(
+                            color: AppColors.quaternaryText,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit,
+                            color: AppColors.quaternaryText,
+                          ),
+                          onPressed: (){},
+                        ),
+                      ],
+                    )
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                      
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          margin: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBackground,
+                            borderRadius: BorderRadius.circular(7),
+                            border: Border.all(
+                              color: AppColors.quaternaryText,
+                              width: 1,
+                            ),
+                          ),
+                          child: Text('$units Units', 
+                            style: TextStyle(
+                              color: AppColors.quaternaryText,
+                              fontSize: 15,
+                              
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          margin: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryBackground,
+                            borderRadius: BorderRadius.circular(7),
+                            border: Border.all(
+                              color: AppColors.quaternaryText,
+                              width: 1,
+                            ),
+                          ),
+                          child: Text('$units Bytes', 
+                            style: TextStyle(
+                              color: AppColors.quaternaryText,
+                              fontSize: 15,
+                              
+                            ),
+                          ),
+                        ),
+                       
+                      ],
+                    )
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: units,
+                      itemBuilder: (context, index) {
+                        return UnitListTile(index: index);
+                      }
+                    ),
+                  ),
+
+                ],
+
+              ),
+            ),
+          ],
+        )
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          _showCreateNewUnitDialog();
+        },
+        child: const Icon(Icons.add,
+          color: AppColors.primaryText,
+        ),
+        backgroundColor: AppColors.quaternaryBackground,
+      ),
+    );
+  }
+
+  void _showCreateNewUnitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreateNewUnitDialog();
+      },
     );
   }
 }

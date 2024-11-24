@@ -1,12 +1,8 @@
+import 'package:chatbot_agents/views/knowledge/widgets/create_new_knowledge_base_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:chatbot_agents/views/knowledge/widgets/knowledge_list.dart';
-import 'package:chatbot_agents/views/knowledge/widgets/add_knowledge_dialog.dart';
-import 'package:chatbot_agents/widgets/search_input.dart';
-import 'package:chatbot_agents/widgets/screen.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/constants/spacing.dart';
-
+import 'package:chatbot_agents/widgets/publish_card.dart';
+import 'package:gap/gap.dart';
 
 class KnowledgeListView extends StatefulWidget {
   const KnowledgeListView({super.key});
@@ -16,51 +12,70 @@ class KnowledgeListView extends StatefulWidget {
 }
 
 class _KnowledgeListViewState extends State<KnowledgeListView> {
-  String searchTitle = '';
-
-  void onSearchInputChanged(String value) {
-    setState(() {
-      searchTitle = value;
-    });
-  }
-
-  void onDialogOpen(BuildContext context) {
-    showAddKnowledgeDialog(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Screen(
-        title: 'Knowledge',
-        // titleButton: WideButton(
-        //   width: 100,
-        //   text: 'Add',
-        //   onPressed: () {
-        //     onDialogOpen(context);
-        //   },
-        // ),
-        titleButton:  FloatingActionButton(
-          onPressed: () => {
-          onDialogOpen(context)
-          },
-          //_createNewThreadDialog(context),
-          backgroundColor: AppColors.secondaryBackground,
-          child: const Icon(
-            Icons.add,
+      appBar: AppBar(
+        //iconTheme: const IconThemeData(color: AppColors.quaternaryText),
+        //iconTheme: const IconThemeData(color: AppColors.quaternaryText),
+        title: const Text(
+          'Knowledge',
+          style: TextStyle(
             color: AppColors.quaternaryText,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
           ),
         ),
-        children: [
-          SearchInput(
-            onChanged: onSearchInputChanged,
-            hintText: 'Knowledge title',
-          ),
-          Gap(spacing[2]),
-          KnowledgeList(searchingTitle: searchTitle),
-        ],
+        backgroundColor: AppColors.primaryBackground,
       ),
-
-    ) ;
+      backgroundColor: AppColors.primaryBackground,
+      body: Container(
+        color: AppColors.primaryBackground,
+        padding: const EdgeInsets.all(16.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableWidth = constraints.maxWidth;
+            return SingleChildScrollView(
+              child: SizedBox(
+                width: availableWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    PublishCard(
+                      name: 'Company resources',
+                      status: '',
+                      buttonText: 'enable',
+                      onTap: () {},
+                    ),
+                    const Gap(32),
+                    PublishCard(
+                      name: 'Self researching',
+                      status: '',
+                      buttonText: 'disable',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
+
+  void _showCreateNewKnowledgeBaseDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreateNewKnowledgeBaseDialog();
+      },
+    );
+  }
+
+  void _navigateToKnowledgeDetail() {
+    Navigator.pushNamed(context, '/knowledge-detail');
+  }
+
 }
