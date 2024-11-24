@@ -1,8 +1,9 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:dio/dio.dart';
 import '../utils/network/jarvis_api_client.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/prompt/get_prompts_response.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 
 class PromptService {
   late final JarvisApiClient jarvisApiClient =

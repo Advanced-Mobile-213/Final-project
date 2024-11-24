@@ -4,9 +4,13 @@ import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 
 import '../../../constants/app_colors.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
+
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_list.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_category_selector.dart';
+import '../../../constants/prompt_category.dart';
 
 class PublicPromptView extends StatefulWidget {
   const PublicPromptView({super.key});

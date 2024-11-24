@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 
 // Styles
 const TextStyle _titleTextStyle = TextStyle(

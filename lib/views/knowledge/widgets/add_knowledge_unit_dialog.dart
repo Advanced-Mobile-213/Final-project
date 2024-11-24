@@ -1,7 +1,9 @@
-import 'package:chatbot_agents/widgets/data_source_item.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/data_source_item.dart';
 import 'package:flutter/material.dart';
-import 'custom_dialog.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import '../../../widgets/custom_dialog.dart';
+import 'package:chatbot_agents/constants/enums.dart';
+import 'package:chatbot_agents/constants/data_sources.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
 
 class AddKnowledgeUnitDialog extends StatefulWidget {

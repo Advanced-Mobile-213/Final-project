@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:gap/gap.dart';
+import '../constants/spacing.dart';
 
 const TextStyle _titleStyle = TextStyle(
   color: Colors.white,

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
-import 'package:chatbot_agents/constants/constants.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/widgets/wide_button.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:chatbot_agents/views/ai_bot/widgets/ai_bot_list.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 
 class AiBotView extends StatefulWidget {
   const AiBotView({super.key});

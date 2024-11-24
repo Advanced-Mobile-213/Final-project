@@ -1,7 +1,6 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 import 'package:chatbot_agents/constants/enum_language.dart';
-import 'package:chatbot_agents/constants/enum_prompt_category.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

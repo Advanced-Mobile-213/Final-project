@@ -1,12 +1,16 @@
 import 'package:chatbot_agents/constants/enum_language.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
+import 'package:chatbot_agents/widgets/wide_button.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_category_selector.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 
 const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
 

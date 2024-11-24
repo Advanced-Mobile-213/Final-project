@@ -1,8 +1,9 @@
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/fake_data.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
+import 'ai_bot_list_item.dart';
 
 final List<AiBot> aiBots = FakeData.aiBots;
 

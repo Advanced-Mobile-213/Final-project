@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/knowledge/data_source.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:gap/gap.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
+import '../../../constants/spacing.dart';
 
 final BoxDecoration _containerDecoration = BoxDecoration(
   color: AppColors.tertiaryBackground.withOpacity(0.3),

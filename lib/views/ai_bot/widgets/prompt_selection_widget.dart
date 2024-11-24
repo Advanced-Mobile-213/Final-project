@@ -1,5 +1,5 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
 import 'package:chatbot_agents/utils/function/prompt_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,8 +1,9 @@
-import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
 import 'package:gap/gap.dart';
+import 'knowledge_unit_list_item.dart';
+import 'package:chatbot_agents/constants/fake_data.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 
 class KnowledgeUnitList extends StatefulWidget {
   final String knowledgeId;

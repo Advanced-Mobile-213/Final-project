@@ -1,9 +1,7 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
 import 'package:chatbot_agents/views/chat/new_chat_thread_view.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/widgets/publish_card.dart';
+import 'package:chatbot_agents/widgets/wide_button.dart';
 
 class AiBotPublishView extends StatefulWidget {
   const AiBotPublishView({super.key});

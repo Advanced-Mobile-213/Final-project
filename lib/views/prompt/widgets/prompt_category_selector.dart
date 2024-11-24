@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 
 const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
 

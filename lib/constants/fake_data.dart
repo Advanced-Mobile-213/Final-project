@@ -1,5 +1,6 @@
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
 
 class FakeData {
   static List<AiBot> aiBots = [

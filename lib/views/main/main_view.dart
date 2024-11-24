@@ -1,6 +1,5 @@
 import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
 import 'package:chatbot_agents/views/chat//chat_history_view.dart';
-import 'package:chatbot_agents/views/knowledge/knowledge.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:chatbot_agents/views/prompt/prompt_list_view.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 import 'package:touchable_opacity/touchable_opacity.dart';
 import 'package:chatbot_agents/views/knowledge/knowledge_detail_view.dart';
 

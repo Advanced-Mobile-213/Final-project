@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'custom_dialog.dart';
+import '../../../widgets/custom_dialog.dart';
 import 'package:gap/gap.dart';
-import 'text_input.dart';
+import '../../../widgets/text_input.dart';
 import 'prompt_category_selector.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
+import '../../../constants/prompt_category.dart';
+import '../../../constants/spacing.dart';
 
 const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
 

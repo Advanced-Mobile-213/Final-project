@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
 
 class AiBotCreateView extends StatefulWidget {
   const AiBotCreateView({super.key});

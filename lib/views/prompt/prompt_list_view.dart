@@ -1,11 +1,15 @@
 import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
 import './sub_views/my_prompt_view.dart';
 import './sub_views/public_prompt_view.dart';
 import './sub_views/favorites_prompt_view.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/widgets/category_button.dart';
+import '../../constants/enums.dart';
+import '../../constants/prompt_category.dart';
+import '../../constants/app_colors.dart';
 
 class PromptListView extends StatefulWidget {
   const PromptListView({super.key});

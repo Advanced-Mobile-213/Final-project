@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/knowledge_list.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/add_knowledge_dialog.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
+
 
 class KnowledgeListView extends StatefulWidget {
   const KnowledgeListView({super.key});

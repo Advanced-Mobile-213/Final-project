@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/knowledge_list_item.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/knowledge_list_item.dart';
+import 'package:chatbot_agents/constants/fake_data.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 
 final List<Knowledge> knowledgeList = FakeData.knowledge;
 

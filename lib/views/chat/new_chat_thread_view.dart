@@ -22,7 +22,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
 
 class NewChatThreadView extends StatefulWidget {
   final Prompt? passingPrompt;
