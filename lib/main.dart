@@ -16,7 +16,7 @@ void main() {
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryBackground),
           useMaterial3: true,
     ),
-    initialRoute: "/knowledge-detail",
+    initialRoute: "/main",
     routes: {
       '/login' : (context) => LoginView(),
       '/main' : (context) => MainView(),
