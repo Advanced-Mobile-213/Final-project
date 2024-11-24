@@ -343,11 +343,7 @@ hs_err_pid*
 ./.env
 
 ###
-./android/app/google-services.json
-./ios/Runner/info.plist
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter,dart,androidstudio,xcode,intellij,visualstudiocode
 android/app/google-services.json
-android/app/google-services.json
 ios/Runner/Info.plist
-android/app/google-services.json
