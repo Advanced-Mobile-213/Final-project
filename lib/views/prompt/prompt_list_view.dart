@@ -25,11 +25,10 @@ class _PromptListViewState extends State<PromptListView> {
 
   void onAddPromptDialog(BuildContext context) {
     showDialog(
-      context: context, 
-      builder: (BuildContext context) {
-        return AddPromptPopUpDialog();
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AddPromptPopUpDialog();
+        });
   }
 
   void onSearch(String value) {
@@ -60,7 +59,6 @@ class _PromptListViewState extends State<PromptListView> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          Gap(spacing[2]),
           CategoryButton(
             label: 'My prompts',
             onPressed: () => onViewModeSelected(PromptViewMode.private),
@@ -97,7 +95,7 @@ class _PromptListViewState extends State<PromptListView> {
     }
 
     return Scaffold(
-      body:  Screen(
+      body: Screen(
         title: 'Prompt Library',
         // titleButton: WideButton(
         //   width: 100,
@@ -106,10 +104,8 @@ class _PromptListViewState extends State<PromptListView> {
         //     onAddPromptDialog(context)
         //   },
         // ),
-        titleButton:  FloatingActionButton(
-          onPressed: () => {
-            onAddPromptDialog(context)
-          },
+        titleButton: FloatingActionButton(
+          onPressed: () => {onAddPromptDialog(context)},
           //_createNewThreadDialog(context),
           backgroundColor: AppColors.secondaryBackground,
           child: const Icon(
