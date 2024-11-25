@@ -340,4 +340,9 @@ hs_err_pid*
 
 !/gradle/wrapper/gradle-wrapper.jar
 
+
+###
+
 # End of https://www.toptal.com/developers/gitignore/api/flutter,dart,androidstudio,xcode,intellij,visualstudiocode
+android/app/google-services.json
+ios/Runner/Info.plist

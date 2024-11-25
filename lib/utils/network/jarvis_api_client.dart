@@ -69,7 +69,6 @@ class JarvisApiClient {
     _refreshToken = refreshToken;
   }
 
-  // Optional: Clear the tokens on logout
   void clearToken() {
     _accessToken = null;
     _refreshToken = null;
@@ -89,7 +88,7 @@ class JarvisApiClient {
         },
       );
       _accessToken = response.data['token']["accessToken"];
-      print('new access token: $_accessToken');
+      print('new access token: $_accessToken  ');
 
       if (_accessToken != null) {
         return true;
