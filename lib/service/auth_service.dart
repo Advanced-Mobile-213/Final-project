@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
 import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
-import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -15,10 +14,8 @@ const List<String> scopes = <String>[
 ];
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
-
-  // Optional clientId
-  // clientId: 'your-client_id.apps.googleusercontent.com',
   scopes: scopes,
+  forceCodeForRefreshToken: true,
 );
 
 class AuthService {
@@ -83,6 +80,9 @@ class AuthService {
 
   Future<String?> googleLogin() async {
     try {
+      if (await _googleSignIn.isSignedIn()) {
+        _googleSignIn.signOut();
+      }
       GoogleSignInAccount? account = await _googleSignIn.signIn();
       log("--> Login Google in Jarvis... ");
       if (account == null) {
@@ -144,6 +144,9 @@ class AuthService {
       // Handle logout errors
     } finally {
       await SharedPreferencesUtil.clearTokens(); // Clear tokens
+      if (await _googleSignIn.isSignedIn()) {
+        _googleSignIn.signOut();
+      }
       jarvisApiClient.clearToken(); // Reset API client token
       knowledgeBaseApiClient.clearToken();
     }
