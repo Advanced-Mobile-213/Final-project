@@ -1,4 +1,4 @@
-import 'package:chatbot_agents/models/data_source.dart';
+import 'package:chatbot_agents/models/knowledge/data_source.dart';
 import 'enums.dart';
 
 

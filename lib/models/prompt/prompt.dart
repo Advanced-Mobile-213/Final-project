@@ -1,5 +1,4 @@
 import 'package:chatbot_agents/constants/prompt_category.dart';
-import 'package:chatbot_agents/constants/constants.dart';
 
 class Prompt {
   String? id; // remember to set id to final when the service is implemented

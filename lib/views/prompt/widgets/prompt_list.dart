@@ -1,16 +1,14 @@
 import 'package:chatbot_agents/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
 import 'prompt_list_item.dart';
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/views/prompt/prompt_detail_view.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';
-import 'package:chatbot_agents/service/prompt_service.dart';
-import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
 import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
+import '../../../constants/spacing.dart';
+import '../../../constants/prompt_category.dart';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 

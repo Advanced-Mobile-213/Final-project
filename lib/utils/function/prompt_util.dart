@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../models/prompt.dart';
+import '../../models/prompt/prompt.dart';
 import '../string_utils.dart';
 
 class PromptUtil {

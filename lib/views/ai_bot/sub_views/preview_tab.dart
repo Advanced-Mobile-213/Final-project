@@ -3,7 +3,6 @@ import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/mapper/message_mapper.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
 import 'package:chatbot_agents/utils/function/prompt_util.dart';
-import 'package:chatbot_agents/utils/string_utils.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
@@ -23,19 +22,22 @@ import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:chatbot_agents/models/prompt/prompt.dart';
+import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
+import '../../../widgets/screen.dart';
 
-class NewChatThreadView extends StatefulWidget {
+class PreviewTab extends StatefulWidget {
   final Prompt? passingPrompt;
-  const NewChatThreadView({super.key, this.passingPrompt});
+  final AiBot? aiBot;
+  const PreviewTab(this.aiBot, {super.key, this.passingPrompt});
 
   @override
-  _NewChatThreadViewState createState() => _NewChatThreadViewState();
+  State<PreviewTab> createState() => _PreviewTabState();
 }
 
 typedef OnPickImageCallback = void Function(
     double? maxWidth, double? maxHeight, int? quality, int? limit);
 
-class _NewChatThreadViewState extends State<NewChatThreadView> {
+class _PreviewTabState extends State<PreviewTab> {
   final TextEditingController _controller = TextEditingController();
   List<MessageRendererModel> messages = [];
   bool _showPromptSelection = false;
@@ -45,21 +47,19 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   final ScrollController _scrollController = ScrollController();
   late final ConversationViewModel _conversationViewModel;
   late final ListConversationsViewModel _listConversationsViewModel;
-  // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
   String selectedBot = 'gpt-4o-mini'; // Default bot
   final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
   late String _conversationId = '';
 
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.passingPrompt != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        PromptUtil.showDynamicInput(context, widget.passingPrompt!, _controller);
+        PromptUtil.showDynamicInput(
+            context, widget.passingPrompt!, _controller);
       });
     }
   }
@@ -70,125 +70,15 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: Colors.white), // Back arrow icon
-          onPressed: () {
-            _conversationViewModel.clearContextOfConversation();
-            _listConversationsViewModel.getConversations(
-              assistantModel: EnumAssistantModel.DIFY,
-              assistantId: EnumAssisstantId.GPT_4O_MINI,
-            );
-            Navigator.pop(
-                context); // Pops the current screen from the navigation stack
-          },
-        ),
-        // title: IconButton(
-        //   onPressed: () async {
-        //     _fetchMoreConversationHistory();
-        //   },
-        //   icon: Icon(Icons.replay_outlined, color: Colors.white)
-        // ),
-        centerTitle: true,
-        backgroundColor: AppColors.primaryBackground,
-        actions: [
-          // Dropdown button to select bot
-          Container(
-            child: DropdownButton<String>(
-              alignment: AlignmentDirectional.centerEnd,
-              value: selectedBot,
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-              dropdownColor: AppColors.secondaryBackground,
-              underline: const SizedBox(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedBot = newValue!;
-                });
-              },
-              items: bots.map<DropdownMenuItem<String>>((String bot) {
-                return DropdownMenuItem<String>(
-                  value: bot,
-                  child: Text(
-                    '$bot : ${costToken[bots.indexOf(bot)]} tokens',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.local_fire_department,
-                  color: Colors.white,
-                  size: 15,
-                ),
-                // const Text('Tokens: ',
-                //   style: TextStyle(color: Colors.white),
-                // ),
-                Text(
-                  _conversationViewModel.messageResponseDto?.remainingUsage !=
-                          null
-                      ? _conversationViewModel
-                          .messageResponseDto!.remainingUsage
-                          .toString()
-                      : _conversationViewModel.remainingToken != 0
-                          ? _conversationViewModel.remainingToken.toString()
-                          : '0',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Chat messages area
-          Expanded(child: Container(
-            child: Consumer<ConversationViewModel>(
-              builder: (context, ConversationViewModel conversationViewModel,
-                  child) {
-                if (messages.isNotEmpty) {
-                  return ListView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(5.0),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final message = messages[index];
-                      final isUserMessage = message.isUserMessage;
-
-                      return isUserMessage
-                          ? _buildMeReply(message, screenWidth)
-                          : _buildChatbotReply(message, screenWidth);
-                    },
-                  );
-                } else if (conversationViewModel.isLoadingConversationHistory ==
-                        false &&
-                    (conversationViewModel.messages == null ||
-                        conversationViewModel.messages!.messages.isEmpty)) {
-                  return Center(
-                    child: Container(),
-                  );
-                }
-
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollToBottomAnimated();
-                });
-
+    return Screen(
+      children: [
+        Expanded(
+          child: Consumer<ConversationViewModel>(
+            builder:
+                (context, ConversationViewModel conversationViewModel, child) {
+              if (messages.isNotEmpty) {
                 return ListView.builder(
                   controller: _scrollController,
-                  padding: EdgeInsets.all(5.0),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final message = messages[index];
@@ -199,86 +89,89 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                         : _buildChatbotReply(message, screenWidth);
                   },
                 );
-              },
-            ),
-          )),
+              } else if (conversationViewModel.isLoadingConversationHistory ==
+                      false &&
+                  (conversationViewModel.messages == null ||
+                      conversationViewModel.messages!.messages.isEmpty)) {
+                return Center(
+                  child: Container(),
+                );
+              }
 
-          // Container(
-          //   padding: EdgeInsets.symmetric(
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _scrollToBottomAnimated();
+              });
 
-          //     horizontal: screenWidth * 0.04,
-          //     vertical: screenHeight * 0.02,
-          //   ),
-          //   child:  (_showPromptSelection) ? PromptSelectionWidget(onPromptSelected: handlePromptSelection,) : null,
+              return ListView.builder(
+                controller: _scrollController,
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  final isUserMessage = message.isUserMessage;
 
-          // ),
-          Center(
-            child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-                ? FutureBuilder<void>(
-                    future: retrieveLostData(),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<void> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.none:
-                        case ConnectionState.waiting:
+                  return isUserMessage
+                      ? _buildMeReply(message, screenWidth)
+                      : _buildChatbotReply(message, screenWidth);
+                },
+              );
+            },
+          ),
+        ),
+        Center(
+          child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+              ? FutureBuilder<void>(
+                  future: retrieveLostData(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const Text(
+                          'You have not yet picked an image.',
+                          textAlign: TextAlign.center,
+                        );
+                      case ConnectionState.done:
+                        return _previewImages();
+                      case ConnectionState.active:
+                        if (snapshot.hasError) {
+                          return Text(
+                            'Pick image/video error: ${snapshot.error}}',
+                            textAlign: TextAlign.center,
+                          );
+                        } else {
                           return const Text(
                             'You have not yet picked an image.',
                             textAlign: TextAlign.center,
                           );
-                        case ConnectionState.done:
-                          return _previewImages();
-                        case ConnectionState.active:
-                          if (snapshot.hasError) {
-                            return Text(
-                              'Pick image/video error: ${snapshot.error}}',
-                              textAlign: TextAlign.center,
-                            );
-                          } else {
-                            return const Text(
-                              'You have not yet picked an image.',
-                              textAlign: TextAlign.center,
-                            );
-                          }
-                      }
-                    },
-                  )
-                : _previewImages(),
-          ),
-          // Input field to send new message
-          Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: screenHeight * 0.001, horizontal: screenWidth * 0.04),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _showNonTextInputSelectionBottomSheet();
+                        }
+                    }
                   },
-                  icon: const Icon(Icons.add_box_outlined,
-                      color: AppColors.quaternaryBackground),
-                ),
-                Expanded(
-                  child: CustomizedTextInput.TextInput(
-                      controller: _controller,
-                      hintText: "Enter message",
-                      onChanged: (value) {}),
-                ),
-                SizedBox(width: screenWidth * 0.02),
-
-                // Send button
-                IconButton(
-                    icon: const Icon(Icons.send, color: Colors.white),
-                    onPressed: () async {
-                      _sendMessage();
-                    }),
-              ],
+                )
+              : _previewImages(),
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                _showNonTextInputSelectionBottomSheet();
+              },
+              icon: const Icon(Icons.add_box_outlined, color: Colors.white),
             ),
-          )
-        ],
-      ),
-      backgroundColor: AppColors.primaryBackground,
+            Expanded(
+              child: CustomizedTextInput.TextInput(
+                  controller: _controller,
+                  hintText: "Enter message",
+                  onChanged: (value) {}),
+            ),
+            IconButton(
+              icon: const Icon(Icons.send, color: Colors.white),
+              onPressed: () async {
+                _sendMessage();
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -317,7 +210,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
         });
       }
     }
-    ;
   }
 
   Text? _getRetrieveErrorWidget() {
@@ -403,9 +295,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     _conversationViewModel = context.read<ConversationViewModel>();
     _listConversationsViewModel = context.read<ListConversationsViewModel>();
     _fetchRemainingToken();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scrollToBottom();
-    // });
   }
 
   void _scrollToBottom() {
@@ -450,7 +339,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   }
 
   void handlePromptSelection(String prompt) {
-    //_controller.text += prompt;
     setState(() {
       _showPromptSelection = false;
       if (_bottomSheetContext != null) {
@@ -499,7 +387,10 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       context: context,
       builder: (context) {
         _bottomSheetContext = context;
-        return PromptSelectionWidget(onPromptSelected: handlePromptSelection, textSendController: _controller,);
+        return PromptSelectionWidget(
+          onPromptSelected: handlePromptSelection,
+          textSendController: _controller,
+        );
       },
     ).whenComplete(() {
       _bottomSheetContext = null;
@@ -510,14 +401,10 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Chatbot Icon
-        CircleAvatar(
+        const CircleAvatar(
           backgroundColor: Colors.transparent,
           child: Icon(Icons.android, color: Colors.white),
         ),
-        SizedBox(width: screenWidth * 0.02),
-
-        // Chatbot Message
         Expanded(
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 8),
@@ -544,8 +431,7 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                           }
                         },
                         styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(
-                              color: Colors.white), // Change text color here
+                          p: const TextStyle(color: Colors.white),
                           h1: TextStyle(color: Colors.white),
                           h3: TextStyle(color: Colors.white),
                           blockquote: TextStyle(color: Colors.white),
@@ -576,35 +462,27 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Flexible(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: screenWidth *
-                  0.7, // Limit the width to 70% of the screen width
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            decoration: BoxDecoration(
+              color: Colors.blue[400],
+              borderRadius: BorderRadius.circular(15),
             ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              decoration: BoxDecoration(
-                color: Colors.blue[400],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                textDirection: TextDirection.ltr,
-                message.content,
-                maxLines: null,
-                style: TextStyle(color: Colors.white),
-              ),
+            child: Text(
+              textDirection: TextDirection.ltr,
+              message.content,
+              maxLines: null,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ),
-        SizedBox(width: screenWidth * 0.02),
       ],
     );
   }
 
   Widget _buildPromptSelection() {
     return Container(
-      padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.0),
@@ -632,14 +510,12 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
           ListTile(
             title: Text('Prompt 2'),
             onTap: () {
-              // Handle prompt selection
               _controller.text += 'Prompt 2';
               setState(() {
                 _showPromptSelection = false;
               });
             },
           ),
-          // Add more prompts as needed
         ],
       ),
     );
@@ -719,5 +595,3 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     }
   }
 }
-
-//d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438

@@ -1,8 +1,8 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 
 class PromptViewModel extends ChangeNotifier {
   // adding services here

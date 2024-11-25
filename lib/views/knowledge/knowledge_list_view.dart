@@ -2,6 +2,9 @@ import 'package:chatbot_agents/views/knowledge/widgets/create_new_knowledge_base
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/constants/constants.dart';
 import 'package:chatbot_agents/widgets/widget.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/widgets/publish_card.dart';
+import 'package:gap/gap.dart';
 
 class KnowledgeListView extends StatefulWidget {
   const KnowledgeListView({super.key});
@@ -93,6 +96,40 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
             ),
             
           ],
+        ),
+        backgroundColor: AppColors.primaryBackground,
+      ),
+      backgroundColor: AppColors.primaryBackground,
+      body: Container(
+        color: AppColors.primaryBackground,
+        padding: const EdgeInsets.all(16.0),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final availableWidth = constraints.maxWidth;
+            return SingleChildScrollView(
+              child: SizedBox(
+                width: availableWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    PublishCard(
+                      name: 'Company resources',
+                      status: '',
+                      buttonText: 'enable',
+                      onTap: () {},
+                    ),
+                    const Gap(32),
+                    PublishCard(
+                      name: 'Self researching',
+                      status: '',
+                      buttonText: 'disable',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(

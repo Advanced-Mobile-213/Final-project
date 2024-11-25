@@ -1,11 +1,15 @@
 import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
 import './sub_views/my_prompt_view.dart';
 import './sub_views/public_prompt_view.dart';
 import './sub_views/favorites_prompt_view.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/widgets/category_button.dart';
+import '../../constants/enums.dart';
+import '../../constants/prompt_category.dart';
+import '../../constants/app_colors.dart';
 
 class PromptListView extends StatefulWidget {
   const PromptListView({super.key});
@@ -21,11 +25,10 @@ class _PromptListViewState extends State<PromptListView> {
 
   void onAddPromptDialog(BuildContext context) {
     showDialog(
-      context: context, 
-      builder: (BuildContext context) {
-        return AddPromptPopUpDialog();
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AddPromptPopUpDialog();
+        });
   }
 
   void onSearch(String value) {
@@ -56,7 +59,6 @@ class _PromptListViewState extends State<PromptListView> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          Gap(spacing[2]),
           CategoryButton(
             label: 'My prompts',
             onPressed: () => onViewModeSelected(PromptViewMode.private),
@@ -93,7 +95,7 @@ class _PromptListViewState extends State<PromptListView> {
     }
 
     return Scaffold(
-      body:  Screen(
+      body: Screen(
         title: 'Prompt Library',
         // titleButton: WideButton(
         //   width: 100,
@@ -102,10 +104,8 @@ class _PromptListViewState extends State<PromptListView> {
         //     onAddPromptDialog(context)
         //   },
         // ),
-        titleButton:  FloatingActionButton(
-          onPressed: () => {
-            onAddPromptDialog(context)
-          },
+        titleButton: FloatingActionButton(
+          onPressed: () => {onAddPromptDialog(context)},
           //_createNewThreadDialog(context),
           backgroundColor: AppColors.secondaryBackground,
           child: const Icon(

@@ -1,12 +1,10 @@
 import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/constants/constants.dart';
-import 'package:chatbot_agents/models/models.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_list.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
 
 class FavoritesPromptView extends StatefulWidget {
   const FavoritesPromptView({Key? key}) : super(key: key);

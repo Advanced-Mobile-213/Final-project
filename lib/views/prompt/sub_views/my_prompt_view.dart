@@ -1,14 +1,10 @@
-import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:gap/gap.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_list.dart';
 
 // class MyPromptView extends StatelessWidget {
 //   MyPromptView({Key? key}) : super(key: key);

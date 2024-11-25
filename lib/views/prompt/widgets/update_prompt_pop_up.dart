@@ -1,11 +1,7 @@
-import 'dart:ffi';
-
 import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:chatbot_agents/models/models.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/models/prompt/prompt.dart';
+import 'package:chatbot_agents/constants/prompt_category.dart';
 import 'package:chatbot_agents/constants/enum_language.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/view_models/prompt_view_model.dart';

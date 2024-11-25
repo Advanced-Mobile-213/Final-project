@@ -1,12 +1,12 @@
 import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
 import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
-
-import '../../../constants/app_colors.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
 import 'package:gap/gap.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
+import 'package:chatbot_agents/views/prompt/widgets/prompt_list.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import '../../../constants/prompt_category.dart';
+import '../widgets/category_filter.dart';
 
 class PublicPromptView extends StatefulWidget {
   const PublicPromptView({super.key});
@@ -19,21 +19,21 @@ class _PublicPromptViewState extends State<PublicPromptView> {
   PromptCategory selectedCategory = PromptCategory.business;
   String query = '';
 
-  void _showConfirmDeletePromptDialog(BuildContext context, int index) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return ConfirmDeletePromptPopUpDialog(index: index);
-        });
-  }
+  // void _showConfirmDeletePromptDialog(BuildContext context, int index) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return ConfirmDeletePromptPopUpDialog(index: index);
+  //       });
+  // }
 
-  void _showAddPromptDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AddPromptPopUpDialog();
-        });
-  }
+  // void _showAddPromptDialog(BuildContext context) {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AddPromptPopUpDialog();
+  //       });
+  // }
 
   // void _showDetailPromptDialog(BuildContext context, int index) {
   //   showDialog(
@@ -128,24 +128,14 @@ class _PublicPromptViewState extends State<PublicPromptView> {
     return Expanded(
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: PromptCategorySelector(
-                  category: selectedCategory,
-                  onChanged: onCategorySelected,
-                  hasAllCategory: true,
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: SearchInput(
-                  hintText: 'Keyword',
-                  onChanged: onSearchChanged,
-                ),
-              ),
-            ],
+          SearchInput(
+            hintText: 'Keyword',
+            onChanged: onSearchChanged,
+          ),
+          Gap(spacing[3]),
+          CategoryFilter(
+            selectedCategory: selectedCategory,
+            onCategorySelected: onCategorySelected,
           ),
           Gap(spacing[3]),
           PromptList(
