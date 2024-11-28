@@ -52,15 +52,15 @@ class AuthService {
 
 
       // TODO: DON'T ERASE THIS COMMENT, FIX THIS LATER
-      // log("--> Login Knowledge... ");
-      // final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
-      //     "kb-core/v1/auth/external-sign-in",
-      //     data: {"token": jarvisAccessToken});
-      // final String knowledgeAccessToken =
-      // knowledgeResponse.data["token"]["accessToken"]!.toString();
-      // final String knowledgeRefreshToken =
-      // knowledgeResponse.data["token"]["refreshToken"]!.toString();
-      // knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
+      log("--> Login Knowledge... ");
+      final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
+          "kb-core/v1/auth/external-sign-in",
+          data: {"token": jarvisAccessToken});
+      final String knowledgeAccessToken =
+      knowledgeResponse.data["token"]["accessToken"]!.toString();
+      final String knowledgeRefreshToken =
+      knowledgeResponse.data["token"]["refreshToken"]!.toString();
+      knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
 
       // Save tokens to shared preferences
       // await SharedPreferencesUtil.saveTokens(accessToken, refreshToken);
@@ -80,16 +80,16 @@ class AuthService {
 
   Future<String?> googleLogin() async {
     try {
-      if (await _googleSignIn.isSignedIn()) {
-        _googleSignIn.signOut();
-      }
+      // if (await _googleSignIn.isSignedIn()) {
+      //   _googleSignIn.signOut();
+      // }
       GoogleSignInAccount? account = await _googleSignIn.signIn();
       log("--> Login Google in Jarvis... ");
       if (account == null) {
         return "Internal server error, please try again";
       }
       GoogleSignInAuthentication authentication = await account.authentication;
-      String? token = authentication.accessToken;
+      String? token = authentication.idToken;
       if (token == null ) {
         return "Internal server error, please try again";
       }
@@ -103,15 +103,6 @@ class AuthService {
       jarvisApiClient.setToken(jarvisAccessToken, jarvisRefreshToken);
 
       // TODO: DON'T ERASE THIS COMMENT, FIX THIS LATER
-      // log("--> Login Knowledge... ");
-      // final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
-      //     "kb-core/v1/auth/external-sign-in",
-      //     data: {"token": jarvisAccessToken});
-      // final String knowledgeAccessToken =
-      // knowledgeResponse.data["token"]["accessToken"]!.toString();
-      // final String knowledgeRefreshToken =
-      // knowledgeResponse.data["token"]["refreshToken"]!.toString();
-      // knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
       log("--> Login Knowledge... ");
       final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
           "kb-core/v1/auth/external-sign-in",

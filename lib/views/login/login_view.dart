@@ -22,10 +22,11 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController(text: '');//tien123@gmail.com //tien.hcmus.569@gmail.com
+  // final emailController = TextEditingController();//tien123@gmail.com //tien.hcmus.569@gmail.com
+  final emailController = TextEditingController(text: "hoangquoc2106@gmail.com");//tien123@gmail.com //tien.hcmus.569@gmail.com
   //hoangquoc2106@gmail.com
   // final emailController = TextEditingController();
-  final passwordController = TextEditingController(text: '');//Adv@ncedMobile213
+  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');//Adv@ncedMobile213
   // final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state
@@ -205,7 +206,6 @@ class _LoginViewState extends State<LoginView> {
     }
   }
   Future<void> _handleGoogleLogin(BuildContext context) async {
-    if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true); // Start loading
 
       final authProvider = context.read<AuthProvider>();
@@ -224,7 +224,6 @@ class _LoginViewState extends State<LoginView> {
           arguments: {'selectedTab': AppTab.chat},
         );
       }
-    }
   }
 
   void _showDialog(BuildContext context, String message) {
