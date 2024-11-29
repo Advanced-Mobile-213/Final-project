@@ -22,6 +22,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
+import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 
 // For dependency injection
 void setup() {
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ListConversationsViewModel()),
         ChangeNotifierProvider(create: (_) => ConversationViewModel()),
         ChangeNotifierProvider(create: (_) => PromptViewModel()),
+        ChangeNotifierProvider(create: (_) => AiBotViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
