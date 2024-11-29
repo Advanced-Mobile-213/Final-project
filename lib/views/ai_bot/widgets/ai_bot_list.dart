@@ -47,8 +47,10 @@ class _AiBotListState extends State<AiBotList> with WidgetsBindingObserver {
   }
 
   Future<void> _fetchAssistants() async {
-    final aiBotViewModel = context.read<AiBotViewModel>();
-    await aiBotViewModel.getAssistants(q: widget.searchingText);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final aiBotViewModel = context.read<AiBotViewModel>();
+      await aiBotViewModel.getAssistants(q: widget.searchingText);
+    });
   }
 
   void onDeleteAiBotPressed(String id) async {

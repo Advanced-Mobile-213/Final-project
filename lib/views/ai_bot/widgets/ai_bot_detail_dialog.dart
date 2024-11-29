@@ -16,9 +16,11 @@ class AiBotDetailDialog extends StatefulWidget {
 }
 
 class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _instructionController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController(text: '');
+  final TextEditingController _instructionController =
+      TextEditingController(text: '');
+  final TextEditingController _descriptionController =
+      TextEditingController(text: '');
   late String _title;
 
   @override
