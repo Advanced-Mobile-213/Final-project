@@ -63,7 +63,8 @@ class AiBotListItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
-                  if (aiBot.description != null)
+                  if (aiBot.description != null &&
+                      aiBot.description!.isNotEmpty)
                     Text(
                       aiBot.description!,
                       style: _descriptionTextStyle,

@@ -4,6 +4,8 @@ import '../../../widgets/custom_dialog.dart';
 import '../../../widgets/text_input.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
+import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
+import 'package:provider/provider.dart';
 
 class AiBotDetailDialog extends StatefulWidget {
   final AiBot? updatingAiBot;
@@ -14,11 +16,12 @@ class AiBotDetailDialog extends StatefulWidget {
 }
 
 class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _instructionController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController(text: '');
+  final TextEditingController _instructionController =
+      TextEditingController(text: '');
+  final TextEditingController _descriptionController =
+      TextEditingController(text: '');
   late String _title;
-  late void Function() _onConfirm;
 
   @override
   void initState() {
@@ -28,26 +31,35 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
       _instructionController.text = widget.updatingAiBot!.instructions ?? '';
       _descriptionController.text = widget.updatingAiBot!.description ?? '';
       _title = 'Update AI Bot';
-      _onConfirm = onUpdateAiBot;
     } else {
       _title = 'New AI Bot';
-      _onConfirm = onAddAiBot;
     }
-  }
-
-  void onAddAiBot() {
-    print('--> AI Bot added');
-  }
-
-  void onUpdateAiBot() {
-    print('--> AI Bot updated');
   }
 
   @override
   Widget build(BuildContext context) {
+    final aiBotViewModel = context.read<AiBotViewModel>();
+
+    void onAddAiBot() async {
+      await aiBotViewModel.createAssistant(
+        assistantName: _nameController.text,
+        instructions: _instructionController.text,
+        description: _descriptionController.text,
+      );
+    }
+
+    void onUpdateAiBot() async {
+      await aiBotViewModel.updateAssistant(
+        assistantId: widget.updatingAiBot!.id,
+        assistantName: _nameController.text,
+        instructions: _instructionController.text,
+        description: _descriptionController.text,
+      );
+    }
+
     return CustomDialog(
       title: _title,
-      onConfirm: _onConfirm,
+      onConfirm: widget.updatingAiBot != null ? onUpdateAiBot : onAddAiBot,
       children: [
         TextInput(
           label: 'Name',
@@ -58,7 +70,7 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
         TextInput(
           label: 'Instruction',
           hintText: 'Enter chat bot instruction',
-          controller: _descriptionController,
+          controller: _instructionController,
           lineNumbers: 3,
         ),
         Gap(spacing[2]),
@@ -73,7 +85,10 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
   }
 }
 
-void showAiBotDetailDialog(BuildContext context, {AiBot? updatingAiBot}) {
+void showAiBotDetailDialog(BuildContext context,
+    {AiBot? updatingAiBot,
+    Function(String)? onAddUpdateSuccess,
+    Function(String)? onAddUpdateFailed}) {
   showDialog(
     context: context,
     builder: (BuildContext context) => AiBotDetailDialog(

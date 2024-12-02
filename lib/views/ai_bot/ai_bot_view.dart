@@ -6,8 +6,6 @@ import 'package:chatbot_agents/views/ai_bot/widgets/ai_bot_list.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'widgets/ai_bot_detail_dialog.dart';
-import 'package:gap/gap.dart';
-import './widgets/ai_bot_filter.dart';
 import '../../constants/enum_ai_bot_view_mode.dart';
 
 class AiBotView extends StatefulWidget {

@@ -31,7 +31,7 @@ class AiBot {
           : null,
       createdBy: json['createdBy'],
       updatedBy: json['updatedBy'],
-      id: json['_id'],
+      id: json['id'],
       assistantName: json['assistantName'],
       openAiAssistantId: json['openAiAssistantId'],
       instructions: json['instructions'],
