@@ -41,12 +41,12 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
         backgroundColor: AppColors.primaryBackground,
         surfaceTintColor: Colors.white,
         bottom: const TabBar(
-          labelStyle: TextStyle(color: Colors.white, fontSize: 16),
+          labelStyle: TextStyle(color: Colors.white, fontSize: 12),
           indicatorColor: Colors.white,
           tabs: [
             Tab(text: 'Preview'),
             Tab(text: 'Knowledge'),
-            Tab(text: 'Prompts'),
+            Tab(text: 'Persona & Prompt'),
           ],
         ),
         actions: [
