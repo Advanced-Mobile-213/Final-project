@@ -1,10 +1,11 @@
+import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'package:chatbot_agents/service/ai_bot_service.dart';
 import 'dart:developer';
 
 class AiBotViewModel extends ChangeNotifier {
-  final AiBotService _aiBotService = AiBotService();
+  final AiBotService _aiBotService = GetItInstance.getIt<AiBotService>();
 
   List<AiBot> aiBots = [];
   bool isLoading = false;
@@ -24,7 +25,7 @@ class AiBotViewModel extends ChangeNotifier {
         instructions: instructions,
         description: description,
       );
-  
+
       isLoading = false;
       if (response != null) {
         aiBots.add(response);
