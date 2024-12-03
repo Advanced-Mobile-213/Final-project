@@ -6,8 +6,8 @@ import '../service/auth_service.dart';
 import '../service/user_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  late final AuthService authService = GetItInstance.getIt<AuthService>();
-  late final UserService userService = GetItInstance.getIt<UserService>();
+  late final AuthService _authService = GetItInstance.getIt<AuthService>();
+  late final UserService _userService = GetItInstance.getIt<UserService>();
 
   bool _isAuthenticated = false;
   User? _user;
@@ -17,14 +17,14 @@ class AuthProvider with ChangeNotifier {
 
   // Register user
   Future<String?> register(String email, String password, String username) {
-    return authService.register(email, password, username);
+    return _authService.register(email, password, username);
   }
 
   // Login user and fetch their data
   Future<String?> login(String email, String password) async {
-    final error = await authService.login(email, password);
+    final error = await _authService.login(email, password);
     if (error == null) {
-      _user = await userService.fetchCurrentUser();
+      _user = await _userService.fetchCurrentUser();
       if (_user != null ) {
         _isAuthenticated = true;
       }
@@ -34,9 +34,9 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<String?> googleLogin() async {
-    final error = await authService.googleLogin();
+    final error = await _authService.googleLogin();
     if (error == null) {
-      _user = await userService.fetchCurrentUser();
+      _user = await _userService.fetchCurrentUser();
       if (_user != null ) {
         _isAuthenticated = true;
       }
@@ -47,7 +47,7 @@ class AuthProvider with ChangeNotifier {
 
   // Logout user
   Future<void> logout() async {
-    await authService.logout();
+    await _authService.logout();
     _isAuthenticated = false;
     _user = null; // Clear user data
     notifyListeners();

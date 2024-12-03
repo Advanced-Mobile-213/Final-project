@@ -1,32 +1,44 @@
 class Knowledge {
-  final DateTime createdAt;
-  final DateTime? updatedAt;
+  final String? createdAt;
+  final String? updatedAt;
   final String? createdBy;
   final String? updatedBy;
-  final String userId;
-  String knowledgeName;
-  String description;
+  final String? deletedAt;
+  final String id;
+  final String knowledgeName;
+  final String description;
+  final String? userId;
+  final int? numUnits;
+  final int? totalSize;
 
   Knowledge({
     required this.createdAt,
     this.updatedAt,
     this.createdBy,
     this.updatedBy,
-    required this.userId,
+    this.deletedAt,
+    required this.id,
     required this.knowledgeName,
     required this.description,
+    this.userId,
+    this.numUnits,
+    this.totalSize
   });
 
   factory Knowledge.fromJson(Map<String, dynamic> json) {
     return Knowledge(
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      createdBy: json['createdBy'],
-      updatedBy: json['updatedBy'],
-      userId: json['userId'],
-      knowledgeName: json['knowledgeName'],
-      description: json['description'],
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']).toString() : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']).toString() : null,
+      createdBy: json['createdBy'] ?? null,
+      updatedBy: json['updatedBy'] ?? null,
+      deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']).toString() : null,
+      id: json['id'],
+      knowledgeName: json['knowledgeName'] ?? "",
+      description: json['description'] ?? "",
+      userId: json['userId'] ?? null,
+      numUnits: json['numUnits'] != null ? json['numUnits'] as int : null,
+      totalSize: json['totalSize'] != null ? json['totalSize'] as int : null,
     );
   }
+
 }

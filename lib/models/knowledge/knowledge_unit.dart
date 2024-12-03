@@ -1,6 +1,6 @@
 class KnowledgeUnit {
-  final DateTime createdAt;
-  final DateTime? updatedAt;
+  final String createdAt;
+  final String? updatedAt;
   final String? createdBy;
   final String? updatedBy;
   final String id;
@@ -23,14 +23,13 @@ class KnowledgeUnit {
 
   factory KnowledgeUnit.fromJson(Map<String, dynamic> json) {
     return KnowledgeUnit(
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      createdBy: json['createdBy'],
-      updatedBy: json['updatedBy'],
+      createdAt: json['createdAt'] ?? DateTime.parse(json['createdAt']).toString(),
+      updatedAt: json['updatedAt'] ?? DateTime.parse(json['updatedAt']) .toString(),
+      createdBy: json['createdBy'] ?? "",
+      updatedBy: json['updatedBy'] ?? "",
       id: json['id'],
       name: json['name'],
-      status: json['status'],
+      status: json['status'] ?? false,
       userId: json['userId'],
       knowledgeId: json['knowledgeId'],
     );
