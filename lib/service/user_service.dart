@@ -3,11 +3,11 @@ import 'package:chatbot_agents/models/user.dart';
 import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 
 class UserService {
-  final jarvisApiClient = GetItInstance.getIt<JarvisApiClient>();
+  final _jarvisApiClient = GetItInstance.getIt<JarvisApiClient>();
   // Fetch the current user's data
   Future<User?> fetchCurrentUser() async {
     try {
-      final response = await jarvisApiClient
+      final response = await _jarvisApiClient
           .authenticatedDio
           .get("api/v1/auth/me");
       return User.fromJson(response.data);
