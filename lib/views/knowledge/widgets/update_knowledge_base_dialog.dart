@@ -5,13 +5,18 @@ import 'package:provider/provider.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../widgets/text_input.dart';
+import '../../../models/knowledge/knowledge.dart';
 
-class CreateNewKnowledgeBaseDialog extends StatefulWidget {
+class UpdateKnowledgeBaseDialog extends StatefulWidget {
+  final Knowledge knowledge; // Pass the knowledge object to the dialog
+
+  const UpdateKnowledgeBaseDialog({Key? key, required this.knowledge}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => _CreateNewKnowledgeBaseDialogState();
+  State<StatefulWidget> createState() => _UpdateKnowledgeBaseDialogState();
 }
 
-class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDialog> {
+class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
   late final TextEditingController _nameInputFieldController;
   late final TextEditingController _descriptionInputFieldController;
   late final KnowledgeViewModel readKnowledgeViewModel;
@@ -20,10 +25,10 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
   @override
   void initState() {
     super.initState();
-    _nameInputFieldController = TextEditingController();
-    _descriptionInputFieldController = TextEditingController();
+    _nameInputFieldController = TextEditingController(text: widget.knowledge.knowledgeName); // Set initial value from Knowledge object
+    _descriptionInputFieldController = TextEditingController(text: widget.knowledge.description); // Set initial value from Knowledge object
     readKnowledgeViewModel = context.read<KnowledgeViewModel>();
-     _formKey = GlobalKey<FormState>();
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
@@ -36,7 +41,7 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
         children: [
           const Expanded( // Ensure title text doesn't overflow
             child: Text(
-              'Create Knowledge Base',
+              'Update Knowledge Base',
               maxLines: 2,
               style: TextStyle(
                 fontSize: 20,
@@ -97,7 +102,12 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
               _formKey.currentState!.save();
               final name = _nameInputFieldController.text;
               final description = _descriptionInputFieldController.text;
-              readKnowledgeViewModel.createKnowledge(knowledgeName: name, description: description);
+              // Call the update method instead of create (assuming an update method exists)
+              readKnowledgeViewModel.updateKnowledge(
+                id: widget.knowledge.id, // Pass the ID of the knowledge to update
+                knowledgeName: name,
+                description: description,
+              );
               Navigator.of(context).pop();
             }
           },

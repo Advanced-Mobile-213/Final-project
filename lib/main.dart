@@ -2,6 +2,8 @@ import 'package:chatbot_agents/config/api_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
+import 'package:chatbot_agents/service/ai_bot_service.dart';
+import 'package:chatbot_agents/service/knowledge_service.dart';
 import 'package:chatbot_agents/service/token_service.dart';
 import 'package:chatbot_agents/service/auth_service.dart';
 import 'package:chatbot_agents/service/user_service.dart';
@@ -9,6 +11,7 @@ import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:chatbot_agents/service/conversation_service.dart';
 import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
+import 'package:chatbot_agents/view_models/knowledge_view_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/email_reply/email_reply_view.dart';
 import 'package:chatbot_agents/views/forgot_password/enter_email_view.dart';
@@ -37,6 +40,8 @@ void setup() {
   GetItInstance.getIt.registerSingleton<AuthService>(AuthService());
   GetItInstance.getIt.registerSingleton<UserService>(UserService());
   GetItInstance.getIt.registerSingleton<PromptService>(PromptService());
+  GetItInstance.getIt.registerSingleton<AiBotService>(AiBotService());
+  GetItInstance.getIt.registerSingleton<KnowledgeService>(KnowledgeService());
 }
 
 void main() async {
@@ -66,6 +71,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ConversationViewModel()),
         ChangeNotifierProvider(create: (_) => PromptViewModel()),
         ChangeNotifierProvider(create: (_) => AiBotViewModel()),
+        ChangeNotifierProvider(create: (_) => KnowledgeViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
