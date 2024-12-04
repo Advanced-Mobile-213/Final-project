@@ -3,6 +3,7 @@ import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'dart:developer';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 
 class AiBotService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
@@ -120,5 +121,64 @@ class AiBotService {
       log("--> An error occurs in deleteAssistant of AiBot Service: $e");
     }
     return false;
+  }
+
+  Future<bool> importKnowledgeToAssistant(
+      {required String assistantId, required String knowledgeId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/ai-assistant/$assistantId/knowledges/$knowledgeId',
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        final result = response.data == 'true' ? true : false;
+        return result;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in importKnowledgeToAssistant of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in importKnowledgeToAssistant of AiBot Service: $e");
+    }
+    return false;
+  }
+
+  Future<bool> removeKnowledgeFromAssistant(
+      {required String assistantId, required String knowledgeId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.delete(
+        '/kb-core/v1/ai-assistant/$assistantId/knowledges/$knowledgeId',
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        final result = response.data == 'true' ? true : false;
+        return result;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in removeKnowledgeFromAssistant of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in removeKnowledgeFromAssistant of AiBot Service: $e");
+    }
+    return false;
+  }
+
+  Future<List<Knowledge>?> getImportedKnowledgeInAssistant(
+      {required String assistantId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.get(
+        '/kb-core/v1/ai-assistant/$assistantId/knowledges',
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        if (response.data != null && response.data['data'] != null) {
+          final List<dynamic> data = response.data['data'];
+          return data.map((e) => Knowledge.fromJson(e)).toList();
+        }
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in getImportedKnowledgeInAssistant of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in getImportedKnowledgeInAssistant of AiBot Service: $e");
+    }
+    return null;
   }
 }

@@ -26,7 +26,6 @@ import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
-import 'package:chatbot_agents/service/ai_bot_service.dart';
 
 // For dependency injection
 void setup() {

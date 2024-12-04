@@ -3,30 +3,31 @@ import '../../../widgets/custom_dialog.dart';
 import './knowledge_list.dart';
 
 class AddKnowledgeDialog extends StatefulWidget {
-  const AddKnowledgeDialog({super.key});
+  final String assistantId;
+  const AddKnowledgeDialog(this.assistantId, {super.key});
 
   @override
   State<AddKnowledgeDialog> createState() => _AddKnowledgeDialogState();
 }
 
 class _AddKnowledgeDialogState extends State<AddKnowledgeDialog> {
-  void _onAddKnowledgePress() {
-    print('--> Add Knowledge Pressed');
-  }
+  void _onAddKnowledgePress() {}
 
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
-      title: 'Add Knowledge',
+      title: 'Import Knowledge',
       onConfirm: _onAddKnowledgePress,
-      children: const [KnowledgeList()],
+      children: [
+        KnowledgeList(assistantId: widget.assistantId, isImported: false),
+      ],
     );
   }
 }
 
-void showAddKnowledgeDialog(BuildContext context) {
+void showAddKnowledgeDialog(BuildContext context, String assistantId) {
   showDialog(
     context: context,
-    builder: (context) => const AddKnowledgeDialog(),
+    builder: (context) => AddKnowledgeDialog(assistantId),
   );
 }
