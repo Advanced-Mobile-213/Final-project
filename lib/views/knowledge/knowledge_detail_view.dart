@@ -38,7 +38,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
     if (_isLoading) {
       content = const Center(
         child: CircularProgressIndicator(),) ;
-    } else if (readKnowledgeUnitViewModel.knowledgeUnits.isEmpty) {
+    } else if (watchKnowledgeUnitViewModel.knowledgeUnits.isEmpty) {
       content = const Center(
           child: Text('No Knowledge Units Found', style: _emptyTextStyle));
     } else {
@@ -176,7 +176,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          _showCreateNewUnitDialog();
+          _showCreateNewUnitDialog(widget.knowledge);
         },
         backgroundColor: AppColors.secondaryBackground,
         child: const Icon(Icons.add,
@@ -195,11 +195,11 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
     }
   }
 
-  void _showCreateNewUnitDialog() {
+  void _showCreateNewUnitDialog(Knowledge knowledge) {
     showDialog(
       context: context,
       builder: (context) {
-        return CreateNewUnitDialog();
+        return CreateNewUnitDialog(knowledge: knowledge,);
       },
     );
   }

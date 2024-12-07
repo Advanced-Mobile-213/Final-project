@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 import 'package:chatbot_agents/view_models/knowledge_unit_view_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 class KnowledgeNewUnitFromLocalFileView extends StatefulWidget {
-  const KnowledgeNewUnitFromLocalFileView({super.key});
+  final Knowledge knowledge;
+  const KnowledgeNewUnitFromLocalFileView({super.key, required this.knowledge});
 
   @override
   State<StatefulWidget> createState() => _KnowledgeNewUnitFromLocalFileViewState();
@@ -147,7 +149,7 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
       if (file.existsSync()) {
         _showSnackBar('File selected: ${file.path}');
         // You can now use the file, parse its contents, or pass it to another part of the app
-        // await readKnowledgeUnitViewModel.uploadFile(knowledgeId: widget.knowledge.id, file: file);
+        await readKnowledgeUnitViewModel.uploadFile(knowledgeId: widget.knowledge.id, file: file);
 
       } else {
         _showSnackBar('File does not exist');

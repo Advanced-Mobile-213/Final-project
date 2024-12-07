@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -11,19 +12,32 @@ class KnowledgeDataSourceService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
   GetItInstance.getIt<KnowledgeBaseApiClient>();
 
-  Future<KnowledgeUnit?> uploadLocalFile({required String knowledgeId, required File file}) async {
+
+
+// Upload File Using Dio with Correct Key Mapping & FormData
+
+
+  Future<KnowledgeUnit?> uploadLocalFile({
+    required String knowledgeId,
+    required File file,
+  }) async {
+    // Create the FormData with the correct key name "File"
     final formData = FormData.fromMap({
       'file': await MultipartFile.fromFile(
         file.path,
-        filename: file.path.split('/').last, // Extract the file name
+        filename: file.uri.pathSegments.last,
       ),
     });
-
     try {
+      // Send the POST request
       final response = await knowledgeBaseApiClient.authenticatedDio.post(
         'kb-core/v1/knowledge/$knowledgeId/local-file',
         data: formData,
       );
+
+      log("Request URL: ${response.requestOptions.path}");
+      log("Request Headers: ${response.requestOptions.headers}");
+      log("Response Data: ${response.data}");
 
       if (response.statusCode != null &&
           response.statusCode! >= 200 &&
@@ -40,4 +54,8 @@ class KnowledgeDataSourceService {
 
     return null;
   }
+
+
+
+
 }

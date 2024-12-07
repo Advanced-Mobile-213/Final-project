@@ -3,8 +3,8 @@ import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
 import 'package:flutter/material.dart';
 
 class UnitListTile extends StatefulWidget {
-  KnowledgeUnit knowledgeUnit;
-  UnitListTile({Key? key, required this.knowledgeUnit}) : super(key: key);
+  final KnowledgeUnit knowledgeUnit;
+  const UnitListTile({super.key, required this.knowledgeUnit});
 
   @override
   State<UnitListTile> createState() => _UnitListTileState();
