@@ -106,7 +106,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Text(
-                      knowledge.description,
+                      knowledge.description.isEmpty ? "No description"  : knowledge.description,
                       style: const TextStyle(
                         color: AppColors.quaternaryText,
                         fontSize: 16,
@@ -178,9 +178,9 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
         onPressed: (){
           _showCreateNewUnitDialog();
         },
-        backgroundColor: AppColors.quaternaryBackground,
+        backgroundColor: AppColors.secondaryBackground,
         child: const Icon(Icons.add,
-          color: AppColors.primaryText,
+          color: AppColors.quaternaryText,
         ),
       ),
     );

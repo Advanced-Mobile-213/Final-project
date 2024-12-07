@@ -106,13 +106,13 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
             //Navigator.of(context).pop();
             _switchToCreateNewUnitView();
           },
-          child: Text('Next'),
           style: ElevatedButton.styleFrom(
             foregroundColor: AppColors.quaternaryText,
             backgroundColor: AppColors.tertiaryBackground, // Text color
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
-            textStyle: TextStyle(fontSize: 16), // Text style
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
+            textStyle: const TextStyle(fontSize: 16), // Text style
           ),
+          child: const Text('Next'),
         ),
       ],
     );

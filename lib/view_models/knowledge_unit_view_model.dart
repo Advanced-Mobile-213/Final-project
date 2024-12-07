@@ -1,6 +1,7 @@
 
 
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
 import 'package:chatbot_agents/service/knowledge_data_source_service.dart';
@@ -37,6 +38,26 @@ class KnowledgeUnitViewModel extends ChangeNotifier {
       } else {
         knowledgeUnits = [];
       }
+      notifyListeners();
+    } catch (e) {
+      log('--> Error in getKnowledges of KnowledgeViewModel: $e');
+    }
+  }
+
+  Future<void> uploadFile({
+    required String knowledgeId,
+    required File file,
+  }) async {
+    try {
+      final response = await _knowledgeDataSourceService.uploadLocalFile(
+        knowledgeId: knowledgeId,
+        file: file,
+      );
+      if (response != null) {
+        knowledgeUnits.add(response);
+      }
+      notifyListeners();
+
     } catch (e) {
       log('--> Error in getKnowledges of KnowledgeViewModel: $e');
     }

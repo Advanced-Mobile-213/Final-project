@@ -11,7 +11,7 @@ class KnowledgeDataSourceService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
   GetItInstance.getIt<KnowledgeBaseApiClient>();
 
-  Future<List<KnowledgeUnit>?> uploadLocalFile(String knowledgeId, File file) async {
+  Future<KnowledgeUnit?> uploadLocalFile({required String knowledgeId, required File file}) async {
     final formData = FormData.fromMap({
       'file': await MultipartFile.fromFile(
         file.path,
@@ -29,8 +29,7 @@ class KnowledgeDataSourceService {
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
         if (response.data != null && response.data['data'] != null) {
-          final List<dynamic> data = response.data['data'];
-          return data.map((e) => KnowledgeUnit.fromJson(e)).toList();
+          return KnowledgeUnit.fromJson(response.data);
         }
       }
     } on DioException catch (e) {
