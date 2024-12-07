@@ -127,24 +127,24 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
                       child: ElevatedButton(
                         onPressed: () async {
                           Navigator.pop(context);
-                          // result = await FilePicker.platform.pickFiles(allowMultiple: false);
-                          // if (result == null) {
-                          //   print("No file selected");
-                          // } else {
-                          //   print(result!.files.first.name);
-                          //   setState(() {
-                          //     _fileName = (result!.files.single.path!);
-                          //   });
-                          //   //file = File(result!.files.single.path!);
-                          // }
+                          result = await FilePicker.platform.pickFiles(allowMultiple: false);
+                          if (result == null) {
+                            print("No file selected");
+                          } else {
+                            print(result!.files.first.name);
+                            setState(() {
+                              _fileName = (result!.files.single.path!);
+                            });
+                            var file = File(result!.files.single.path!);
+                          }
                         },
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
+                        ),
                         child: const Text('Connect',
                           style: TextStyle(
                             color: AppColors.quaternaryText,
                           ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
                         ),
                       ),
                     ),

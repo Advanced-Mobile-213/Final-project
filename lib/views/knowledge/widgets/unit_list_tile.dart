@@ -1,9 +1,10 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
 import 'package:flutter/material.dart';
 
 class UnitListTile extends StatefulWidget {
-  int index;
-  UnitListTile({Key? key, required this.index}) : super(key: key);
+  KnowledgeUnit knowledgeUnit;
+  UnitListTile({Key? key, required this.knowledgeUnit}) : super(key: key);
 
   @override
   State<UnitListTile> createState() => _UnitListTileState();
@@ -14,7 +15,7 @@ class _UnitListTileState extends State<UnitListTile> {
 
   @override
   Widget build(BuildContext context) {
-    int index = widget.index;
+    final knowledgeUnit = widget.knowledgeUnit;
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: 10.0,
@@ -34,7 +35,7 @@ class _UnitListTileState extends State<UnitListTile> {
           // _navigateToKnowledgeDetail();
         },
         title: Text(
-          'Unit Name $index',
+          knowledgeUnit.name,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: const TextStyle(
@@ -44,7 +45,7 @@ class _UnitListTileState extends State<UnitListTile> {
           ),
         ),
         subtitle: Text(
-          'Source: $index',
+          knowledgeUnit.knowledgeId,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: const TextStyle(

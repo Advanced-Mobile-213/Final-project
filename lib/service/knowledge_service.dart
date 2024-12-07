@@ -45,7 +45,7 @@ class KnowledgeService {
   }
 
   Future<List<KnowledgeUnit>?> getKnowledgeUnits({
-    required String id,
+    required String knowledgeId,
     String? q,
     String? order,
     String? orderField,
@@ -61,7 +61,7 @@ class KnowledgeService {
     };
     try {
       final response = await knowledgeBaseApiClient.authenticatedDio.get(
-        '/kb-core/v1/knowledge/$id/units',
+        '/kb-core/v1/knowledge/$knowledgeId/units',
         queryParameters: queryParams,
       );
       if (response.statusCode! < 300 && response.statusCode! >= 200) {
