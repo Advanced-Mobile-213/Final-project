@@ -52,7 +52,10 @@ class _AddPromptDialogState extends State<AddPromptDialog> {
     return SingleChildScrollView(
       child: CustomDialog(
         title: 'Add prompt',
-        onConfirm: onConfirm,
+        onConfirm: () {
+          onConfirm();
+          Navigator.of(context).pop();
+        },
         children: [
           TextInput(
             label: 'Title',

@@ -17,7 +17,10 @@ class _AddKnowledgeDialogState extends State<AddKnowledgeDialog> {
   Widget build(BuildContext context) {
     return CustomDialog(
       title: 'Import Knowledge',
-      onConfirm: _onAddKnowledgePress,
+      onConfirm: (){
+        _onAddKnowledgePress();
+        Navigator.of(context).pop();
+      },
       children: [
         KnowledgeList(assistantId: widget.assistantId, isImported: false),
       ],

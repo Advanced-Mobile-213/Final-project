@@ -62,7 +62,7 @@ class CustomDialog extends StatelessWidget {
                   style: _confirmButtonStyle,
                   onPressed: () {
                     onConfirm();
-                    Navigator.of(context).pop();
+                    //Navigator.of(context).pop();
                   },
                   child: const Text('Confirm', style: _textButtonStyle),
                 ),

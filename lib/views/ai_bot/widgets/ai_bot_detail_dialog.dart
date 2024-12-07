@@ -54,7 +54,10 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
 
     return CustomDialog(
       title: _title,
-      onConfirm: widget.updatingAiBot != null ? onUpdateAiBot : onAddAiBot,
+      onConfirm: () {
+        widget.updatingAiBot != null ? onUpdateAiBot() : onAddAiBot();
+        Navigator.of(context).pop();
+      },
       children: [
         TextInput(
           label: 'Name',
