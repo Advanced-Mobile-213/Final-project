@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'knowledge_list_item.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:provider/provider.dart';
-import 'dart:developer';
 import 'package:chatbot_agents/utils/snack_bar_util.dart';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
