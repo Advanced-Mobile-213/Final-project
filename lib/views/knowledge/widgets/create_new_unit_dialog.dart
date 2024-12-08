@@ -145,7 +145,7 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => KnowledgeNewUnitFromWebsiteView(),
+            builder: (context) => KnowledgeNewUnitFromWebsiteView(knowledge: knowledge,),
           ),
         );
         break;
@@ -161,7 +161,7 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => KnowledgeNewUnitFromSlackView(),
+            builder: (context) => KnowledgeNewUnitFromSlackView(knowledge: knowledge,),
           ),
         );
         break;
@@ -169,7 +169,7 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => KnowledgeNewUnitFromConfluenceView(),
+            builder: (context) => KnowledgeNewUnitFromConfluenceView(knowledge: knowledge,),
           ),
         );
         break;

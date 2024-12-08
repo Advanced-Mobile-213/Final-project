@@ -1,15 +1,15 @@
 class Knowledge {
   final String? createdAt;
-  final String? updatedAt;
-  final String? createdBy;
-  final String? updatedBy;
-  final String? deletedAt;
+  String? updatedAt;
+  String? createdBy;
+  String? updatedBy;
+  String? deletedAt;
   final String id;
-  final String knowledgeName;
-  final String description;
+  String knowledgeName;
+  String description;
   final String? userId;
-  final int? numUnits;
-  final int? totalSize;
+  int? numUnits;
+  int? totalSize;
 
   Knowledge({
     required this.createdAt,
