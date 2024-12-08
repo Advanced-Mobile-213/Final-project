@@ -4,7 +4,6 @@ import 'package:chatbot_agents/models/get_conversations/list_thread_chat_model.d
 import 'package:chatbot_agents/models/send_message/list_message_model.dart';
 import 'package:chatbot_agents/dto/send_message/message_response.dart';
 import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
-import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
 import 'package:chatbot_agents/utils/network/jarvis_api_client.dart';
 import 'package:dio/dio.dart';
 

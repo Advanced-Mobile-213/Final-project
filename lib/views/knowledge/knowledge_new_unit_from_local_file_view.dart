@@ -2,35 +2,38 @@ import 'dart:io';
 
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/utils/snack_bar_util.dart';
 import 'package:chatbot_agents/view_models/knowledge_unit_view_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 class KnowledgeNewUnitFromLocalFileView extends StatefulWidget {
   final Knowledge knowledge;
   const KnowledgeNewUnitFromLocalFileView({super.key, required this.knowledge});
 
   @override
-  State<StatefulWidget> createState() => _KnowledgeNewUnitFromLocalFileViewState();
+  State<StatefulWidget> createState() =>
+      _KnowledgeNewUnitFromLocalFileViewState();
 }
 
-class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFromLocalFileView> {
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+class _KnowledgeNewUnitFromLocalFileViewState
+    extends State<KnowledgeNewUnitFromLocalFileView> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   FilePickerResult? _result;
   String? _filePath;
   String? _fileName;
-  late final bool _isLoading;
+  bool _isLoading = false;
+  late final SnackBarUtil snackBarUtil;
   late final KnowledgeUnitViewModel readKnowledgeUnitViewModel;
-
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _isLoading = false;
     readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
-
+    snackBarUtil = SnackBarUtil(context);
   }
 
   @override
@@ -46,7 +49,8 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
             Navigator.pop(context);
           },
         ),
-        title: const Text('Add Unit From Local File', style: TextStyle(color: AppColors.quaternaryText)),
+        title: const Text('Add Unit From Local File',
+            style: TextStyle(color: AppColors.quaternaryText)),
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -72,11 +76,12 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
 
             // Choose file
             ElevatedButton(
-              onPressed: () => _selectFile(),
+              onPressed: _isLoading ? null : () => _selectFile(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.secondaryBackground,
               ),
-              child: const Text('Choose File', style: TextStyle(color: AppColors.quaternaryText)),
+              child: const Text('Choose File',
+                  style: TextStyle(color: AppColors.quaternaryText)),
             ),
 
             const SizedBox(height: 10),
@@ -92,20 +97,27 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
                 child: Text(
                   _fileName!,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.quaternaryText, fontSize: 16),
+                  style: const TextStyle(
+                      color: AppColors.quaternaryText, fontSize: 16),
                 ),
               ),
 
             const SizedBox(height: 20),
 
-            // Connect button
-            ElevatedButton(
-              onPressed: () => _onConnect(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondaryBackground,
-              ),
-              child: const Text('Connect', style: TextStyle(color: AppColors.quaternaryText)),
-            ),
+            // Connect button or CircularProgressIndicator
+            _isLoading
+                ? const CircularProgressIndicator(
+                    color: AppColors.secondaryBackground)
+                : ElevatedButton(
+                    onPressed: () async {
+                      await _onConnect();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBackground,
+                    ),
+                    child: const Text('Connect',
+                        style: TextStyle(color: AppColors.quaternaryText)),
+                  ),
           ],
         ),
       ),
@@ -118,54 +130,58 @@ class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFrom
       _result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
-        allowedExtensions: ['txt', 'json'], // Restrict file types if needed
       );
 
       if (_result != null && _result!.files.isNotEmpty) {
         setState(() {
           _filePath = _result!.files.single.path; // Store selected file path
-          _fileName = _result!.files.single.name; // Store file name for UI display
+          _fileName =
+              _result!.files.single.name; // Store file name for UI display
         });
       } else {
-        _showSnackBar('No file selected');
+        snackBarUtil.showDefault('No file selected');
       }
     } on PlatformException catch (e) {
-      _showSnackBar('Platform Exception: $e');
+      snackBarUtil.showDefault('Platform Exception: $e');
     } catch (e) {
-      _showSnackBar('Error: $e');
+      snackBarUtil.showDefault('Error: $e');
     }
   }
 
-  /// Function to handle file connection logic
-  void _onConnect() async {
+  Future<bool> _onConnect() async {
     if (_filePath == null) {
-      _showSnackBar('Please select a file first');
-      return;
+      snackBarUtil.showDefault('Please select a file first');
+      return false;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final file = File(_filePath!);
 
       if (file.existsSync()) {
-        _showSnackBar('File selected: ${file.path}');
-        // You can now use the file, parse its contents, or pass it to another part of the app
-        await readKnowledgeUnitViewModel.uploadFile(knowledgeId: widget.knowledge.id, file: file);
-
+        final errorMessage = await readKnowledgeUnitViewModel
+            .uploadFileFromLocal(knowledgeId: widget.knowledge.id, file: file);
+        if (errorMessage != null) {
+          snackBarUtil.showDefault('Error: $errorMessage');
+          return false;
+        } else {
+          snackBarUtil.showDefault('File uploaded successfully!');
+          return true;
+        }
       } else {
-        _showSnackBar('File does not exist');
+        snackBarUtil.showDefault('File does not exist');
+        return false;
       }
     } catch (e) {
-      _showSnackBar('Error accessing file: $e');
+      snackBarUtil.showDefault('Error accessing file: $e');
+      return false;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-  }
-
-  /// Function to show a snack bar on screen
-  void _showSnackBar(String message) {
-    _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
-    _scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-      ),
-    );
   }
 }

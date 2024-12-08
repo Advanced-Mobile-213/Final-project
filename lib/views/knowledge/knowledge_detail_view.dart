@@ -205,11 +205,18 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
   }
 
   void _showUpdateKnowledgeBaseDialog(Knowledge knowledge) {
-    showDialog(
+    showDialog<Knowledge>(
       context: context,
       builder: (context) {
         return UpdateKnowledgeBaseDialog(knowledge: knowledge,);
       },
-    );
+    ).then((updatedKnowledge){
+      if (updatedKnowledge != null) {
+       setState(() {
+         widget.knowledge.knowledgeName = updatedKnowledge.knowledgeName;
+         widget.knowledge.description = updatedKnowledge.description;
+       });
+      }
+    });
   }
 }

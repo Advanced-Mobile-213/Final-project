@@ -17,13 +17,15 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
   late final KnowledgeViewModel readKnowledgeViewModel;
   late final _formKey;
 
+  bool _isLoading = false; // Manage loading state
+
   @override
   void initState() {
     super.initState();
     _nameInputFieldController = TextEditingController();
     _descriptionInputFieldController = TextEditingController();
     readKnowledgeViewModel = context.read<KnowledgeViewModel>();
-     _formKey = GlobalKey<FormState>();
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
@@ -34,7 +36,7 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Expanded( // Ensure title text doesn't overflow
+          const Expanded(
             child: Text(
               'Create Knowledge Base',
               maxLines: 2,
@@ -55,7 +57,7 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
       ),
       content: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400), // Set a max width to prevent overflow
+          constraints: const BoxConstraints(maxWidth: 400),
           child: Form(
             key: _formKey,
             child: Column(
@@ -92,13 +94,39 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
           ),
         ),
         ElevatedButton(
-          onPressed: () {
+          onPressed: _isLoading
+              ? null
+              : () async {
             if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              final name = _nameInputFieldController.text;
-              final description = _descriptionInputFieldController.text;
-              readKnowledgeViewModel.createKnowledge(knowledgeName: name, description: description);
-              Navigator.of(context).pop();
+              setState(() {
+                _isLoading = true; // Set loading true before save
+              });
+              try {
+                _formKey.currentState!.save();
+                final name = _nameInputFieldController.text;
+                final description = _descriptionInputFieldController.text;
+
+                // Call ViewModel's createKnowledge
+                await readKnowledgeViewModel.createKnowledge(
+                  knowledgeName: name,
+                  description: description,
+                );
+                if (!context.mounted) {
+                  return;
+                }
+                Navigator.of(context).pop();
+              } catch (e) {
+                // Handle errors here, optionally show a snackbar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error occurred: $e'),
+                  ),
+                );
+              } finally {
+                setState(() {
+                  _isLoading = false; // Reset loading state after save
+                });
+              }
             }
           },
           style: ElevatedButton.styleFrom(
@@ -106,7 +134,16 @@ class _CreateNewKnowledgeBaseDialogState extends State<CreateNewKnowledgeBaseDia
             backgroundColor: AppColors.tertiaryBackground,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           ),
-          child: const Text('Save', style: TextStyle(fontSize: 16)),
+          child: _isLoading
+              ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          )
+              : const Text('Save', style: TextStyle(fontSize: 16)),
         ),
       ],
     );

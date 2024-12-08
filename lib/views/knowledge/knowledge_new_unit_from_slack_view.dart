@@ -1,17 +1,36 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/knowledge/knowledge.dart';
+import '../../utils/snack_bar_util.dart';
+import '../../view_models/knowledge_unit_view_model.dart';
 
 class KnowledgeNewUnitFromSlackView extends StatefulWidget{
+  final Knowledge knowledge;
+  const KnowledgeNewUnitFromSlackView({super.key, required this.knowledge});
+
   @override
   State<KnowledgeNewUnitFromSlackView> createState() => KnowledgeNewUnitFromSlackViewState();
 }
 
 class KnowledgeNewUnitFromSlackViewState extends State<KnowledgeNewUnitFromSlackView>{
-  TextEditingController _nameInputFieldController = TextEditingController();
-  TextEditingController _workspaceInputFieldController = TextEditingController();
-  TextEditingController _botTokenInputFieldController = TextEditingController();
-  
+  final TextEditingController _nameInputFieldController = TextEditingController();
+  final TextEditingController _workspaceInputFieldController = TextEditingController();
+  final TextEditingController _botTokenInputFieldController = TextEditingController();
+  late final SnackBarUtil snackBarUtil;
+  late final KnowledgeUnitViewModel readKnowledgeUnitViewModel;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
+    snackBarUtil = SnackBarUtil(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -34,238 +53,118 @@ class KnowledgeNewUnitFromSlackViewState extends State<KnowledgeNewUnitFromSlack
             )
         ),
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(FontAwesomeIcons.slack,
-                            color: AppColors.quaternaryText,
-                          ),
-                          const SizedBox(width: 10.0),
-                          Text('Slack', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Name', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        enabled: true,
-                        controller: _nameInputFieldController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Enter name',
-                          hintStyle: TextStyle(
-                            color: AppColors.greyText,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
+      body: SingleChildScrollView(
+        child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FontAwesomeIcons.slack,
+                                color: AppColors.quaternaryText,
+                              ),
+                              const SizedBox(width: 10.0),
+                              Text('Slack',
+                                style: TextStyle(
+                                  color: AppColors.quaternaryText,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter name';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Slack Workspace', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        enabled: true,
-                        controller: _workspaceInputFieldController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Enter Slack Workspace',
-                          hintStyle: TextStyle(
-                            color: AppColors.greyText,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          errorStyle: TextStyle(
-                            color: Colors.red,
-                          ),
+                        Container(
+                            margin: const EdgeInsets.all(10.0),
+                            child: TextInput(keyboardType: TextInputType.multiline, label: "Name", controller: _nameInputFieldController, hintText: "Enter name", isRequired: true,)
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Slack Workspace';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Slack Bot Token', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        enabled: true,
-                        controller: _botTokenInputFieldController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Enter Slack Bot Token',
-                          hintStyle: TextStyle(
-                            color: AppColors.greyText,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          errorStyle: TextStyle(
-                            color: Colors.red,
-                          ),
+
+                        Container(
+                            margin: const EdgeInsets.all(10.0),
+                            child: TextInput(keyboardType: TextInputType.multiline, label: "Slack Workspace", controller: _workspaceInputFieldController, hintText: "Enter Slack Workspace", isRequired: true,)
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Slack Bot Token';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(25.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: const Text('Connect',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
+                        Container(
+                            margin: EdgeInsets.all(10.0),
+                            child: TextInput(keyboardType: TextInputType.multiline, label: "Slack Bot Token", controller: _botTokenInputFieldController, hintText: "Enter Slack Bot Token", isRequired: true,)
+
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(25.0),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(color: AppColors.secondaryBackground) :
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                await _onConnect();
+                              }
+                            },
+                            style: const ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
+                            ),
+                            child: const Text('Connect',
+                              style: TextStyle(
+                                color: AppColors.quaternaryText,
+                              ),
+                            ),
                           ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
-                        ),
-                      ),
-                    )
-                  ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
-        )
+              ],
+            )
+        ),
       )
+
     );
   }
+  Future<bool> _onConnect() async {
+    final name = _nameInputFieldController.text;
+    if (name.isEmpty) {
+      return false;
+    }
+    final botToken = _botTokenInputFieldController.text;
+    if (botToken.isEmpty) {
+      return false;
+    }
+    final workspace = _workspaceInputFieldController.text;
+    if (workspace.isEmpty) {
+      return false;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final errorMessage = await readKnowledgeUnitViewModel.uploadFromSlack(knowledgeId: widget.knowledge.id, unitName: name, slackWorkspace: workspace, slackBotToken: botToken );
+      if (errorMessage != null) {
+        snackBarUtil.showDefault('Error: $errorMessage');
+        return false;
+      } else {
+        snackBarUtil.showDefault('Slack uploaded successfully!');
+        return true;
+      }
+    } catch (e) {
+      snackBarUtil.showDefault('Error : $e');
+      return false;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
 }
