@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../models/knowledge/knowledge.dart';
-import '../../../models/knowledge/knowledge_unit.dart';
 
 class CreateNewUnitDialog extends StatefulWidget {
   final Knowledge knowledge ;

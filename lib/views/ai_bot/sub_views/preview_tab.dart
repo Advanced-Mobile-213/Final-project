@@ -10,7 +10,6 @@ import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
 import 'package:chatbot_agents/widgets/text_input.dart' as CustomizedTextInput;
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
