@@ -8,13 +8,18 @@ import 'package:chatbot_agents/views/knowledge/widgets/data_source_list_tile.dar
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../models/knowledge/knowledge.dart';
+import '../../../models/knowledge/knowledge_unit.dart';
+
 class CreateNewUnitDialog extends StatefulWidget {
+  final Knowledge knowledge ;
+  const CreateNewUnitDialog({super.key, required this.knowledge});
   @override
   State<CreateNewUnitDialog> createState() => _CreateNewUnitDialogState();
 }
 
 class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
-  int _currentSelection = 4;
+  int _currentSelection = 1;
 
   
   @override
@@ -104,15 +109,15 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
           onPressed: () {
             // Define the action to be performed when the button is pressed
             //Navigator.of(context).pop();
-            _switchToCreateNewUnitView();
+            _switchToCreateNewUnitView(widget.knowledge);
           },
-          child: Text('Next'),
           style: ElevatedButton.styleFrom(
             foregroundColor: AppColors.quaternaryText,
             backgroundColor: AppColors.tertiaryBackground, // Text color
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
-            textStyle: TextStyle(fontSize: 16), // Text style
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Padding
+            textStyle: const TextStyle(fontSize: 16), // Text style
           ),
+          child: const Text('Next'),
         ),
       ],
     );
@@ -125,14 +130,14 @@ class _CreateNewUnitDialogState extends State<CreateNewUnitDialog> {
     });
   }
 
-  void _switchToCreateNewUnitView() {
+  void _switchToCreateNewUnitView(Knowledge knowledge) {
     Navigator.of(context).pop();
     switch(_currentSelection) {
       case 1:
          Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => KnowledgeNewUnitFromLocalFileView(),
+            builder: (context) => KnowledgeNewUnitFromLocalFileView(knowledge: knowledge,),
           ),
         );
         break;

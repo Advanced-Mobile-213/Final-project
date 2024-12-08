@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/search_input.dart';
+import 'knowledge_detail_view.dart';
 
-
+// TODO: move to app properties
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
 
@@ -22,7 +23,6 @@ class KnowledgeListView extends StatefulWidget {
 
 class _KnowledgeListViewState extends State<KnowledgeListView> {
   late final KnowledgeViewModel readKnowledgeViewModel;
-  late final KnowledgeViewModel watchKnowledgeViewModel;
   late bool _isLoading;
   @override
   void initState() {
@@ -62,7 +62,7 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
               ),
               child: ListTile(
                   onTap: () {
-                    _navigateToKnowledgeDetail();
+                    _navigateToKnowledgeDetail(watchKnowledgeViewModel.knowledges[index]);
                   },
                   title: Text(
                     watchKnowledgeViewModel.knowledges[index].knowledgeName,
@@ -126,9 +126,11 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
 
   Future<void> _fetchKnowledges() async {
     await readKnowledgeViewModel.getKnowledges();
-    setState(() {
-      _isLoading = false; // Set loading state to false when data is fetched
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false; // Set loading state to false when data is fetched
+      });
+    }
   }
 
   void _showCreateNewKnowledgeBaseDialog() {
@@ -158,8 +160,13 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
     );
   }
 
-  void _navigateToKnowledgeDetail() {
-    Navigator.pushNamed(context, '/knowledge-detail');
+  void _navigateToKnowledgeDetail(Knowledge selectedKnowledge) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => KnowledgeDetailView(knowledge: selectedKnowledge),
+      ),
+    );
   }
 
 }

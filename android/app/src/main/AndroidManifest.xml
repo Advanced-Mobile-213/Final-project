@@ -5,6 +5,9 @@
         android:label="chatbot_agents"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+                android:name="com.google.android.gms.client_id"
+                android:value="599361404647-e74vpq6s2ab8q6r275s12sdhr36enq5l.apps.googleusercontent.com" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -10,7 +10,7 @@ import '../../../models/knowledge/knowledge.dart';
 class UpdateKnowledgeBaseDialog extends StatefulWidget {
   final Knowledge knowledge; // Pass the knowledge object to the dialog
 
-  const UpdateKnowledgeBaseDialog({Key? key, required this.knowledge}) : super(key: key);
+  const UpdateKnowledgeBaseDialog({super.key, required this.knowledge});
 
   @override
   State<StatefulWidget> createState() => _UpdateKnowledgeBaseDialogState();
