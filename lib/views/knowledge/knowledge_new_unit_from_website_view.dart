@@ -2,19 +2,38 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/knowledge/knowledge.dart';
+import '../../utils/snack_bar_util.dart';
+import '../../view_models/knowledge_unit_view_model.dart';
 
 class KnowledgeNewUnitFromWebsiteView extends StatefulWidget {
+  final Knowledge knowledge;
+  const KnowledgeNewUnitFromWebsiteView({super.key, required this.knowledge});
+
   @override
   State<KnowledgeNewUnitFromWebsiteView> createState()=> _KnowledgeNewUnitFromWebsiteViewState();
 }
 
 class _KnowledgeNewUnitFromWebsiteViewState extends State<KnowledgeNewUnitFromWebsiteView> {
-  TextEditingController _nameInputFieldController = TextEditingController();
-  TextEditingController _urlInputFieldController = TextEditingController();
+  final TextEditingController _nameInputFieldController = TextEditingController();
+  final TextEditingController _urlInputFieldController = TextEditingController();
+  late final SnackBarUtil snackBarUtil;
+  late final KnowledgeUnitViewModel readKnowledgeUnitViewModel;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
+    snackBarUtil = SnackBarUtil(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
@@ -35,187 +54,107 @@ class _KnowledgeNewUnitFromWebsiteViewState extends State<KnowledgeNewUnitFromWe
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(FontAwesomeIcons.globe,
-                            color: AppColors.quaternaryText,
-                          ),
-                          const SizedBox(width: 10.0),
-                          Text('Website', 
-                            style: TextStyle(
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView( // Wrap with SingleChildScrollView
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 20),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(FontAwesomeIcons.globe,
                               color: AppColors.quaternaryText,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 10.0),
+                            Text('Website',
+                              style: TextStyle(
+                                color: AppColors.quaternaryText,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Name', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
+                      Container(
+                          margin: const EdgeInsets.all(10.0),
+                          child: TextInput(controller: _nameInputFieldController, label: 'Name', isRequired: true, hintText: 'Enter website name',)
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        enabled: true,
-                        controller: _nameInputFieldController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Enter website name',
-                          hintStyle: TextStyle(
-                            color: AppColors.greyText,
+                      Container(
+                          margin: const EdgeInsets.all(10.0),
+                          child: TextInput(controller: _urlInputFieldController, label: 'Web URL', isRequired: true, hintText:'Enter website url',)
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(25.0),
+                        child:  _isLoading
+                            ? const CircularProgressIndicator(color: AppColors.secondaryBackground) :
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              await _onConnect();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondaryBackground,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                          child: const Text('Connect',
+                            style: TextStyle(
                               color: AppColors.quaternaryText,
                             ),
                           ),
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter name of website';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Web URL', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: TextFormField(
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        enabled: true,
-                        controller: _urlInputFieldController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          contentPadding: const EdgeInsets.all(10),
-                          hintText: 'Enter website url',
-                          hintStyle: TextStyle(
-                            color: AppColors.greyText,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.quaternaryText,
-                            ),
-                          ),
-                          errorStyle: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter url of website';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(25.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            Navigator.of(context).pop();
-                          }
-                          // result = await FilePicker.platform.pickFiles(allowMultiple: false);
-                          // if (result == null) {
-                          //   print("No file selected");
-                          // } else {
-                          //   print(result!.files.first.name);
-                          //   setState(() {
-                          //     _fileName = (result!.files.single.path!);
-                          //   });
-                          //   //file = File(result!.files.single.path!);
-                          // }
-                        },
-                        child: const Text('Connect',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
-                        ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        )
-      )
+            ],
+          ),
+        ),
+      ),
+
     );
+  }
+
+  Future<bool> _onConnect() async {
+    final websiteUrl = _urlInputFieldController.text;
+    if (websiteUrl.isEmpty) {
+      return false;
+    }
+    final name = _nameInputFieldController.text;
+    if (name.isEmpty) {
+      return false;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final errorMessage = await readKnowledgeUnitViewModel.uploadFromWebsite(knowledgeId: widget.knowledge.id, unitName: name, webUrl: websiteUrl);
+      if (errorMessage != null) {
+        snackBarUtil.showDefault('Error: $errorMessage');
+        return false;
+      } else {
+        snackBarUtil.showDefault('Website URL uploaded successfully!');
+        return true;
+      }
+    } catch (e) {
+      snackBarUtil.showDefault('Error : $e');
+      return false;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }

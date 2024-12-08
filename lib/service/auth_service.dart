@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:chatbot_agents/config/app_config.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
 import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
@@ -14,8 +15,8 @@ const List<String> scopes = <String>[
 ];
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
+  clientId: AppConfig.GoogleOauthClientId,
   scopes: scopes,
-  forceCodeForRefreshToken: true,
 );
 
 class AuthService {
@@ -80,9 +81,9 @@ class AuthService {
 
   Future<String?> googleLogin() async {
     try {
-      // if (await _googleSignIn.isSignedIn()) {
-      //   _googleSignIn.signOut();
-      // }
+      if (await _googleSignIn.isSignedIn()) {
+        _googleSignIn.signOut();
+      }
       GoogleSignInAccount? account = await _googleSignIn.signIn();
       log("--> Login Google in Jarvis... ");
       if (account == null) {

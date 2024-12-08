@@ -53,7 +53,7 @@ class KnowledgeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateKnowledge({
+  Future<Knowledge?> updateKnowledge({
     required id,
     required String knowledgeName,
     String? description,
@@ -71,10 +71,12 @@ class KnowledgeViewModel extends ChangeNotifier {
           knowledges[index] = response;
         }
         notifyListeners();
+        return response;
       }
     } catch (e) {
       log('--> Error in updateKnowledge of KnowledgeViewModel: $e');
     }
+    return null;
   }
 
   Future<void> deleteKnowledge({

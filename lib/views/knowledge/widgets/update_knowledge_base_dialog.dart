@@ -10,7 +10,7 @@ import '../../../models/knowledge/knowledge.dart';
 class UpdateKnowledgeBaseDialog extends StatefulWidget {
   final Knowledge knowledge; // Pass the knowledge object to the dialog
 
-  const UpdateKnowledgeBaseDialog({Key? key, required this.knowledge}) : super(key: key);
+  const UpdateKnowledgeBaseDialog({super.key, required this.knowledge});
 
   @override
   State<StatefulWidget> createState() => _UpdateKnowledgeBaseDialogState();
@@ -20,13 +20,14 @@ class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
   late final TextEditingController _nameInputFieldController;
   late final TextEditingController _descriptionInputFieldController;
   late final KnowledgeViewModel readKnowledgeViewModel;
-  late final _formKey;
+  late final GlobalKey<FormState> _formKey;
+  bool _isLoading = false; // Manage loading state
 
   @override
   void initState() {
     super.initState();
-    _nameInputFieldController = TextEditingController(text: widget.knowledge.knowledgeName); // Set initial value from Knowledge object
-    _descriptionInputFieldController = TextEditingController(text: widget.knowledge.description); // Set initial value from Knowledge object
+    _nameInputFieldController = TextEditingController(text: widget.knowledge.knowledgeName);
+    _descriptionInputFieldController = TextEditingController(text: widget.knowledge.description);
     readKnowledgeViewModel = context.read<KnowledgeViewModel>();
     _formKey = GlobalKey<FormState>();
   }
@@ -39,7 +40,7 @@ class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Expanded( // Ensure title text doesn't overflow
+          const Expanded(
             child: Text(
               'Update Knowledge Base',
               maxLines: 2,
@@ -60,7 +61,7 @@ class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
       ),
       content: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400), // Set a max width to prevent overflow
+          constraints: const BoxConstraints(maxWidth: 400),
           child: Form(
             key: _formKey,
             child: Column(
@@ -88,27 +89,44 @@ class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
           child: const Text(
             'Cancel',
             style: TextStyle(color: AppColors.tertiaryText),
           ),
         ),
         ElevatedButton(
-          onPressed: () {
+          onPressed: _isLoading
+              ? null
+              : () async {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              final name = _nameInputFieldController.text;
-              final description = _descriptionInputFieldController.text;
-              // Call the update method instead of create (assuming an update method exists)
-              readKnowledgeViewModel.updateKnowledge(
-                id: widget.knowledge.id, // Pass the ID of the knowledge to update
-                knowledgeName: name,
-                description: description,
-              );
-              Navigator.of(context).pop();
+              setState(() {
+                _isLoading = true;
+              });
+              try {
+                final updatedKnowledge = await readKnowledgeViewModel.updateKnowledge(
+                  id: widget.knowledge.id,
+                  knowledgeName: _nameInputFieldController.text,
+                  description: _descriptionInputFieldController.text,
+                );
+                if (!context.mounted) {
+                  return;
+                }
+                Navigator.of(context).pop(
+                    updatedKnowledge
+                ); // Close dialog on success
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error updating knowledge base: $e'),
+                  ),
+                );
+              } finally {
+                setState(() {
+                  _isLoading = false;
+                });
+              }
             }
           },
           style: ElevatedButton.styleFrom(
@@ -116,7 +134,16 @@ class _UpdateKnowledgeBaseDialogState extends State<UpdateKnowledgeBaseDialog> {
             backgroundColor: AppColors.tertiaryBackground,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           ),
-          child: const Text('Save', style: TextStyle(fontSize: 16)),
+          child: _isLoading
+              ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 2,
+            ),
+          )
+              : const Text('Save', style: TextStyle(fontSize: 16)),
         ),
       ],
     );

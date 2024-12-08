@@ -3,7 +3,6 @@ import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/mapper/message_mapper.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
 import 'package:chatbot_agents/utils/function/prompt_util.dart';
-import 'package:chatbot_agents/utils/string_utils.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
 import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';

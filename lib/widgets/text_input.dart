@@ -13,6 +13,7 @@ class TextInput extends StatelessWidget {
       validator; // Validator function for form validation
   final int lineNumbers;
   final int? maxLength;
+  final TextInputType? keyboardType;
 
   const TextInput({
     super.key,
@@ -21,6 +22,7 @@ class TextInput extends StatelessWidget {
     required this.hintText,
     this.obscureText = false,
     this.isRequired = false,
+    this.keyboardType,
     this.onChanged,
     this.controller,
     this.validator,
@@ -33,6 +35,7 @@ class TextInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextFormField(
+          keyboardType: keyboardType,
           style: const TextStyle(color: Colors.white),
           onChanged: onChanged,
           controller: controller,

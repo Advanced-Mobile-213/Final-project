@@ -1,18 +1,56 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/view_models/knowledge_unit_view_model.dart';
 import 'package:chatbot_agents/views/knowledge/widgets/create_new_unit_dialog.dart';
 import 'package:chatbot_agents/views/knowledge/widgets/unit_list_tile.dart';
+import 'package:chatbot_agents/views/knowledge/widgets/update_knowledge_base_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+
+const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
+
 
 class KnowledgeDetailView extends StatefulWidget{
+  final Knowledge knowledge;
+  const KnowledgeDetailView({super.key, required this.knowledge});
+
   @override
   State<KnowledgeDetailView> createState() => _KnowledgeDetailViewState();
 }
 
 class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
-  final int units = 15;
-
+  late final KnowledgeUnitViewModel readKnowledgeUnitViewModel;
+  late bool _isLoading;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
+    _fetchKnowledgeUnits(widget.knowledge.id);
+    _isLoading = true;
+  }
   @override
   Widget build(BuildContext context) {
+    final watchKnowledgeUnitViewModel = context.watch<KnowledgeUnitViewModel>();
+    Knowledge knowledge = widget.knowledge;
+    Widget content;
+    if (_isLoading) {
+      content = const Center(
+        child: CircularProgressIndicator(),) ;
+    } else if (watchKnowledgeUnitViewModel.knowledgeUnits.isEmpty) {
+      content = const Center(
+          child: Text('No Knowledge Units Found', style: _emptyTextStyle));
+    } else {
+      content = ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: watchKnowledgeUnitViewModel.knowledgeUnits.length,
+          itemBuilder: (context, index) {
+            return UnitListTile(knowledgeUnit: watchKnowledgeUnitViewModel.knowledgeUnits[index],);
+          }
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
@@ -25,7 +63,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
             Navigator.pop(context);
           },
         ),
-        title: const Text('Knowledge Detail',
+        title: const Text("Knowledge Detail",
             style: TextStyle(
                 color: AppColors.quaternaryText
             )
@@ -41,13 +79,14 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 //mainAxisSize: MainAxisSize.min,
                 children: [
+
                   Container(
-                    padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
+                    padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Knowledge 1', 
-                          style: TextStyle(
+                         Text(knowledge.knowledgeName,
+                          style: const TextStyle(
                             color: AppColors.quaternaryText,
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -57,17 +96,30 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                           icon: const Icon(Icons.edit,
                             color: AppColors.quaternaryText,
                           ),
-                          onPressed: (){},
+                          onPressed: (){
+                            _showUpdateKnowledgeBaseDialog(knowledge);
+                          },
                         ),
                       ],
                     )
                   ),
                   Container(
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Text(
+                      knowledge.description.isEmpty ? "No description"  : knowledge.description,
+                      style: const TextStyle(
+                        color: AppColors.quaternaryText,
+                        fontSize: 16,
+                      ),
+                      maxLines: 3, // Limit number of visible lines for better UI
+                      overflow: TextOverflow.ellipsis, // Handle overflow gracefully
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                      
                         Container(
                           padding: const EdgeInsets.all(3),
                           margin: const EdgeInsets.all(5),
@@ -79,8 +131,8 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                               width: 1,
                             ),
                           ),
-                          child: Text('$units Units', 
-                            style: TextStyle(
+                          child: Text('${knowledge.numUnits ?? 0} Units',
+                            style: const TextStyle(
                               color: AppColors.quaternaryText,
                               fontSize: 15,
                               
@@ -98,8 +150,8 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                               width: 1,
                             ),
                           ),
-                          child: Text('$units Bytes', 
-                            style: TextStyle(
+                          child: Text('${knowledge.totalSize ?? 0} Bytes',
+                            style: const TextStyle(
                               color: AppColors.quaternaryText,
                               fontSize: 15,
                               
@@ -110,16 +162,11 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                       ],
                     )
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: units,
-                      itemBuilder: (context, index) {
-                        return UnitListTile(index: index);
-                      }
-                    ),
-                  ),
+                  // Show the knowledge description
 
+                  Expanded(
+                    child: content
+                  ),
                 ],
 
               ),
@@ -129,22 +176,47 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          _showCreateNewUnitDialog();
+          _showCreateNewUnitDialog(widget.knowledge);
         },
+        backgroundColor: AppColors.secondaryBackground,
         child: const Icon(Icons.add,
-          color: AppColors.primaryText,
+          color: AppColors.quaternaryText,
         ),
-        backgroundColor: AppColors.quaternaryBackground,
       ),
     );
   }
 
-  void _showCreateNewUnitDialog() {
+  Future<void> _fetchKnowledgeUnits(String knowledgeId) async {
+    await readKnowledgeUnitViewModel.getKnowledgeUnits(knowledgeId: knowledgeId);
+    if (mounted) {
+      setState(() {
+        _isLoading = false; // Set loading state to false when data is fetched
+      });
+    }
+  }
+
+  void _showCreateNewUnitDialog(Knowledge knowledge) {
     showDialog(
       context: context,
       builder: (context) {
-        return CreateNewUnitDialog();
+        return CreateNewUnitDialog(knowledge: knowledge,);
       },
     );
+  }
+
+  void _showUpdateKnowledgeBaseDialog(Knowledge knowledge) {
+    showDialog<Knowledge>(
+      context: context,
+      builder: (context) {
+        return UpdateKnowledgeBaseDialog(knowledge: knowledge,);
+      },
+    ).then((updatedKnowledge){
+      if (updatedKnowledge != null) {
+       setState(() {
+         widget.knowledge.knowledgeName = updatedKnowledge.knowledgeName;
+         widget.knowledge.description = updatedKnowledge.description;
+       });
+      }
+    });
   }
 }

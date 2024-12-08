@@ -1,4 +1,3 @@
-import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/views/chat/chat_thread_view.dart';
 import 'package:flutter/material.dart';
 

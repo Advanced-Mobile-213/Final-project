@@ -1,210 +1,187 @@
 import 'dart:io';
 
-
 import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/utils/snack_bar_util.dart';
+import 'package:chatbot_agents/view_models/knowledge_unit_view_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-class KnowledgeNewUnitFromLocalFileView extends StatefulWidget{
+class KnowledgeNewUnitFromLocalFileView extends StatefulWidget {
+  final Knowledge knowledge;
+  const KnowledgeNewUnitFromLocalFileView({super.key, required this.knowledge});
+
   @override
-  State<StatefulWidget> createState() => _KnowledgeNewUnitFromLocalFileViewState();
+  State<StatefulWidget> createState() =>
+      _KnowledgeNewUnitFromLocalFileViewState();
 }
 
-class _KnowledgeNewUnitFromLocalFileViewState extends State<KnowledgeNewUnitFromLocalFileView> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  FilePickerResult? result;
+class _KnowledgeNewUnitFromLocalFileViewState
+    extends State<KnowledgeNewUnitFromLocalFileView> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+  FilePickerResult? _result;
+  String? _filePath;
   String? _fileName;
   bool _isLoading = false;
-  List<PlatformFile>? _path;
+  late final SnackBarUtil snackBarUtil;
+  late final KnowledgeUnitViewModel readKnowledgeUnitViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
+    snackBarUtil = SnackBarUtil(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldMessengerKey,
       backgroundColor: AppColors.primaryBackground,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-            color: AppColors.quaternaryText,
-          ),
+          icon: const Icon(Icons.arrow_back, color: AppColors.quaternaryText),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: const Text('Add Unit From Local File',
-            style: TextStyle(
-                color: AppColors.quaternaryText
-            )
-        ),
+            style: TextStyle(color: AppColors.quaternaryText)),
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(20),
+        child: Column(
           children: [
-            Expanded(
-              child: Form(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.feed_outlined,
-                            color: AppColors.quaternaryText,
-                          ),
-                          const SizedBox(width: 10.0),
-                          Text('Local File', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(5.0),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Text('Select a file to upload', 
-                            style: TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    (_fileName != null) ? Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.tertiaryBackground,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: EdgeInsets.all(7.0),
-                      margin: EdgeInsets.all(10.0),
-                      child: Text(_fileName ?? "no file selected",
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.quaternaryText,
-                            fontSize: 20,
-                          ),
-                        ) ,
-                    ): Container(),
-                    Container(
-                      margin: EdgeInsets.all(10.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await _pickFiles();
-                        }, 
-                        child: const Text('Choose File',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(25.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          // result = await FilePicker.platform.pickFiles(allowMultiple: false);
-                          // if (result == null) {
-                          //   print("No file selected");
-                          // } else {
-                          //   print(result!.files.first.name);
-                          //   setState(() {
-                          //     _fileName = (result!.files.single.path!);
-                          //   });
-                          //   //file = File(result!.files.single.path!);
-                          // }
-                        },
-                        child: const Text('Connect',
-                          style: TextStyle(
-                            color: AppColors.quaternaryText,
-                          ),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(AppColors.secondaryBackground),
-                        ),
-                      ),
-                    ),
-                  ],
+            // Title Section
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.feed_outlined, color: AppColors.quaternaryText),
+                SizedBox(width: 10.0),
+                Text(
+                  'Local File',
+                  style: TextStyle(
+                    color: AppColors.quaternaryText,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Choose file
+            ElevatedButton(
+              onPressed: _isLoading ? null : () => _selectFile(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.secondaryBackground,
+              ),
+              child: const Text('Choose File',
+                  style: TextStyle(color: AppColors.quaternaryText)),
+            ),
+
+            const SizedBox(height: 10),
+
+            // Display file name after selection
+            if (_fileName != null)
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.tertiaryBackground,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  _fileName!,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: AppColors.quaternaryText, fontSize: 16),
                 ),
               ),
-            ),
+
+            const SizedBox(height: 20),
+
+            // Connect button or CircularProgressIndicator
+            _isLoading
+                ? const CircularProgressIndicator(
+                    color: AppColors.secondaryBackground)
+                : ElevatedButton(
+                    onPressed: () async {
+                      await _onConnect();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondaryBackground,
+                    ),
+                    child: const Text('Connect',
+                        style: TextStyle(color: AppColors.quaternaryText)),
+                  ),
           ],
-        )
-      )
-    );
-  }
-
-  void _resetState() {
-    if (!mounted) {
-      return;
-    }
-    setState(() {
-      _isLoading = true;
-      _fileName = null;
-      _path = null;
-      result = null;
-    });
-  }
-
-  void _logException(String message) {
-    print(message);
-    _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
-    _scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
         ),
       ),
     );
   }
 
-  Future<void> _pickFiles() async {
-    _resetState();
+  /// Function to select a file
+  Future<void> _selectFile() async {
     try {
-      _path = (await FilePicker.platform.pickFiles(
-        compressionQuality: 30,
+      _result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        onFileLoading: (FilePickerStatus status) => print(status),
-        
-      ))
-          ?.files;
+        type: FileType.custom,
+      );
+
+      if (_result != null && _result!.files.isNotEmpty) {
+        setState(() {
+          _filePath = _result!.files.single.path; // Store selected file path
+          _fileName =
+              _result!.files.single.name; // Store file name for UI display
+        });
+      } else {
+        snackBarUtil.showDefault('No file selected');
+      }
     } on PlatformException catch (e) {
-      _logException('Unsupported operation' + e.toString());
+      snackBarUtil.showDefault('Platform Exception: $e');
     } catch (e) {
-      _logException(e.toString());
+      snackBarUtil.showDefault('Error: $e');
     }
-    if (!mounted) return;
+  }
+
+  Future<bool> _onConnect() async {
+    if (_filePath == null) {
+      snackBarUtil.showDefault('Please select a file first');
+      return false;
+    }
+
     setState(() {
-      _isLoading = false;
-      _fileName = _path != null ? _path!.single.path : null;
-      //_userAborted = _paths == null;
+      _isLoading = true;
     });
+
+    try {
+      final file = File(_filePath!);
+
+      if (file.existsSync()) {
+        final errorMessage = await readKnowledgeUnitViewModel
+            .uploadFileFromLocal(knowledgeId: widget.knowledge.id, file: file);
+        if (errorMessage != null) {
+          snackBarUtil.showDefault('Error: $errorMessage');
+          return false;
+        } else {
+          snackBarUtil.showDefault('File uploaded successfully!');
+          return true;
+        }
+      } else {
+        snackBarUtil.showDefault('File does not exist');
+        return false;
+      }
+    } catch (e) {
+      snackBarUtil.showDefault('Error accessing file: $e');
+      return false;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

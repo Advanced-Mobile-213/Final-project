@@ -1,5 +1,3 @@
-import 'package:chatbot_agents/views/prompt/widgets/add_prompt_pop_up.dart';
-import 'package:chatbot_agents/views/prompt/widgets/confirm_delete_prompt_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
