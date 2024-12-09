@@ -18,8 +18,11 @@ class _AddPromptDialogState extends State<AddPromptDialog> {
   Widget build(BuildContext context) {
     return CustomDialog(
         title: 'Add Prompts',
-        onConfirm: _onAddPrompt,
-        children: [const PromptList()]);
+        onConfirm:(){
+          _onAddPrompt();
+          Navigator.of(context).pop();
+        },
+        children: const[PromptList()]);
   }
 }
 

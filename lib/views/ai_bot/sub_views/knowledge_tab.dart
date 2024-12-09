@@ -16,15 +16,18 @@ class KnowledgeTab extends StatefulWidget {
 
 class _KnowledgeTabState extends State<KnowledgeTab> {
   void _onAddKnowledgePress() {
-    showAddKnowledgeDialog(context);
+    showAddKnowledgeDialog(context, widget.aiBot.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      WideButton(text: 'Add Knowledge', onPressed: _onAddKnowledgePress),
-      Gap(spacing[4]),
-      const KnowledgeList()
-    ]);
+    return Column(
+      children: [
+        WideButton(
+            text: 'Import more Knowledge', onPressed: _onAddKnowledgePress),
+        Gap(spacing[4]),
+        KnowledgeList(assistantId: widget.aiBot.id)
+      ],
+    );
   }
 }

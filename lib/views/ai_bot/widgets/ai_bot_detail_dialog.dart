@@ -17,8 +17,6 @@ class AiBotDetailDialog extends StatefulWidget {
 
 class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
   final TextEditingController _nameController = TextEditingController(text: '');
-  final TextEditingController _instructionController =
-      TextEditingController(text: '');
   final TextEditingController _descriptionController =
       TextEditingController(text: '');
   late String _title;
@@ -28,7 +26,6 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
     super.initState();
     if (widget.updatingAiBot != null) {
       _nameController.text = widget.updatingAiBot!.assistantName;
-      _instructionController.text = widget.updatingAiBot!.instructions ?? '';
       _descriptionController.text = widget.updatingAiBot!.description ?? '';
       _title = 'Update AI Bot';
     } else {
@@ -43,7 +40,6 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
     void onAddAiBot() async {
       await aiBotViewModel.createAssistant(
         assistantName: _nameController.text,
-        instructions: _instructionController.text,
         description: _descriptionController.text,
       );
     }
@@ -52,14 +48,16 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
       await aiBotViewModel.updateAssistant(
         assistantId: widget.updatingAiBot!.id,
         assistantName: _nameController.text,
-        instructions: _instructionController.text,
         description: _descriptionController.text,
       );
     }
 
     return CustomDialog(
       title: _title,
-      onConfirm: widget.updatingAiBot != null ? onUpdateAiBot : onAddAiBot,
+      onConfirm: () {
+        widget.updatingAiBot != null ? onUpdateAiBot() : onAddAiBot();
+        Navigator.of(context).pop();
+      },
       children: [
         TextInput(
           label: 'Name',
@@ -68,17 +66,10 @@ class _AiBotDetailDialogState extends State<AiBotDetailDialog> {
         ),
         Gap(spacing[2]),
         TextInput(
-          label: 'Instruction',
-          hintText: 'Enter chat bot instruction',
-          controller: _instructionController,
-          lineNumbers: 3,
-        ),
-        Gap(spacing[2]),
-        TextInput(
           label: 'Description',
           hintText: 'Enter chat bot description',
           controller: _descriptionController,
-          lineNumbers: 3,
+          lineNumbers: 5,
         ),
       ],
     );

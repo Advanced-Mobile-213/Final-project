@@ -28,6 +28,8 @@ import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
+import 'package:chatbot_agents/service/bot_integration_service.dart';
+import 'package:chatbot_agents/view_models/bot_configuration_view_model.dart';
 
 // For dependency injection
 void setup() {
@@ -44,6 +46,8 @@ void setup() {
   GetItInstance.getIt.registerSingleton<PromptService>(PromptService());
   GetItInstance.getIt.registerSingleton<AiBotService>(AiBotService());
   GetItInstance.getIt.registerSingleton<KnowledgeService>(KnowledgeService());
+  GetItInstance.getIt
+      .registerSingleton<BotIntegrationService>(BotIntegrationService());
   GetItInstance.getIt.registerSingleton<KnowledgeDataSourceService>(KnowledgeDataSourceService());
 }
 
@@ -75,6 +79,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PromptViewModel()),
         ChangeNotifierProvider(create: (_) => AiBotViewModel()),
         ChangeNotifierProvider(create: (_) => KnowledgeViewModel()),
+        ChangeNotifierProvider(create: (_) => BotConfigurationViewModel()),
         ChangeNotifierProvider(create: (_) => KnowledgeUnitViewModel()),
       ],
       child: MaterialApp(
