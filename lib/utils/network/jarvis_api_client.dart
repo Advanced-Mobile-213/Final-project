@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 class JarvisApiClient {
@@ -25,9 +27,12 @@ class JarvisApiClient {
     authenticatedDio.interceptors.add(
       QueuedInterceptorsWrapper(
         onRequest: (options, handler) async {
+          log("Request URL: ${options.uri}");
+          log("Headers: ${options.headers}");
+          log("FormData: ${options.data.toString()}");
           if (_accessToken != null) {
             options.headers['Authorization'] = 'Bearer $_accessToken';
-            print("accessToken in interceptor $_accessToken");
+            print("accessToken in JarvisApiClient interceptor $_accessToken");
           }
           return handler.next(options);
         },
