@@ -13,6 +13,15 @@ import 'knowledge_detail_view.dart';
 // TODO: move to app properties
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
+const TextStyle _descriptionTextStyle = TextStyle(
+  color: AppColors.quaternaryText,
+);
+const TextStyle _titleTextStyle = TextStyle(
+  color: AppColors.quaternaryText,
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+);
+
 
 class KnowledgeListView extends StatefulWidget {
   const KnowledgeListView({super.key});
@@ -24,6 +33,8 @@ class KnowledgeListView extends StatefulWidget {
 class _KnowledgeListViewState extends State<KnowledgeListView> {
   late final KnowledgeViewModel readKnowledgeViewModel;
   late bool _isLoading;
+  String _searchQuery = ''; // Track the search query
+  List<Knowledge> _filteredKnowledges = []; // Store filtered knowledges
   @override
   void initState() {
     super.initState();
@@ -34,6 +45,11 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
   @override
   Widget build(BuildContext context) {
     final watchKnowledgeViewModel = context.watch<KnowledgeViewModel>();
+    _filteredKnowledges = watchKnowledgeViewModel.knowledges
+        .where((knowledge) => knowledge.knowledgeName
+        .toLowerCase()
+        .contains(_searchQuery.toLowerCase()))
+        .toList();
     Widget content;
     if (_isLoading) {
       content = const Center(
@@ -44,13 +60,10 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
     } else {
       content = ListView.builder(
           physics: const BouncingScrollPhysics(),
-          itemCount: watchKnowledgeViewModel.knowledges.length,
+          itemCount: _filteredKnowledges.length,
           itemBuilder: (context, index) {
             return Container(
-              margin: const EdgeInsets.symmetric(
-                horizontal: 10.0,
-                vertical: 10.0,
-              ),
+              margin: const EdgeInsets.fromLTRB(0,15.0,0,0),
               padding: const EdgeInsets.all(2.0),
               decoration: BoxDecoration(
                 color: AppColors.secondaryBackground,
@@ -62,26 +75,19 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
               ),
               child: ListTile(
                   onTap: () {
-                    _navigateToKnowledgeDetail(watchKnowledgeViewModel.knowledges[index]);
+                    _navigateToKnowledgeDetail(_filteredKnowledges[index]);
                   },
                   title: Text(
-                    watchKnowledgeViewModel.knowledges[index].knowledgeName,
+                    _filteredKnowledges[index].knowledgeName,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: const TextStyle(
-                      color: AppColors.quaternaryText,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: _titleTextStyle
                   ),
                   subtitle: Text(
-                    watchKnowledgeViewModel.knowledges[index].description,
+                    _filteredKnowledges[index].description,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: const TextStyle(
-                      color: AppColors.quaternaryText,
-                      fontSize: 14,
-                    ),
+                    style: _descriptionTextStyle
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -116,7 +122,11 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
         child: const Icon(Icons.add, color: AppColors.quaternaryText),
       ),
       children: [
-        SearchInput(onChanged: (value) {}),
+        SearchInput(onChanged: (value) {
+          setState(() {
+            _searchQuery= value;
+          });
+        }),
         Expanded(
           child: content,
         ),

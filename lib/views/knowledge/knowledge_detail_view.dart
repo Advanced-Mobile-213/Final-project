@@ -121,13 +121,13 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(5),
                           margin: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBackground,
                             borderRadius: BorderRadius.circular(7),
                             border: Border.all(
-                              color: AppColors.quaternaryText,
+                              color: AppColors.quaternaryBackground,
                               width: 1,
                             ),
                           ),
@@ -140,13 +140,13 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(5),
                           margin: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                             color: AppColors.secondaryBackground,
                             borderRadius: BorderRadius.circular(7),
                             border: Border.all(
-                              color: AppColors.quaternaryText,
+                              color: AppColors.quaternaryBackground,
                               width: 1,
                             ),
                           ),
