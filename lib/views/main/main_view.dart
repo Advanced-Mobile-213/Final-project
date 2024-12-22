@@ -1,9 +1,11 @@
+import 'package:chatbot_agents/view_models/main_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/ai_bot_view.dart';
 import 'package:chatbot_agents/views/chat//chat_history_view.dart';
 import 'package:chatbot_agents/views/profile/profile_view.dart';
 import 'package:chatbot_agents/views/prompt/prompt_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import '../../constants/app_colors.dart';
 import '../knowledge/knowledge_list_view.dart';
 
@@ -40,6 +42,15 @@ class _MainViewState extends State<MainView> {
           Tab(icon: Icon(FontAwesomeIcons.solidUserCircle), text: "Profile"),
         ],
       );
+  
+  late final MainViewModel _mainViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _mainViewModel = context.read<MainViewModel>();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +69,8 @@ class _MainViewState extends State<MainView> {
                   Icons.menu,
                   color: AppColors.quaternaryText,
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await _mainViewModel.getTokenUsage();
                   Scaffold.of(context).openDrawer();
                 },
               );
@@ -98,7 +110,20 @@ class _MainViewState extends State<MainView> {
                   iconColor: AppColors.quaternaryText,
                   leading: const Icon(Icons.local_fire_department),
                   title: const Text('Tokens'),
-                  trailing: Text('30/50'),
+                  trailing: Consumer<MainViewModel>(
+                    builder: (context, MainViewModel mainViewModel, child) {
+                      if (_mainViewModel.isLoading 
+                          || _mainViewModel.tokenUsageResponse == null) {
+                            return  const Text("...");
+                      } else if (_mainViewModel.tokenUsageResponse != null
+                          && _mainViewModel.tokenUsageResponse!.unlimited) {
+                            return const Icon(FontAwesomeIcons.infinity);
+                      } else {
+                        return Text(
+                            '${_mainViewModel.tokenUsageResponse?.availableTokens ?? 0} / ${_mainViewModel.tokenUsageResponse?.totalTokens ?? 0}');
+                      }
+
+                  }),
                   onTap: () {
                     //Navigator.pop(context);
                   },

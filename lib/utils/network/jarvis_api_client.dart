@@ -33,6 +33,7 @@ class JarvisApiClient {
         },
         onError: (error, handler) async {
           if (error.response?.statusCode == 401 && _refreshToken != null) {
+            print('Unauthorized error in jarvis: ${error.response?.statusCode}');
             // Attempt to refresh the token if unauthorized (401) error occurs
             final success = await refreshAccessToken();
             if (success) {

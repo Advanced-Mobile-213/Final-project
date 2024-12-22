@@ -1,9 +1,9 @@
+import 'dart:convert';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/mapper/message_mapper.dart';
 import 'package:chatbot_agents/models/get_conversation_history/message_renderer_model.dart';
 import 'package:chatbot_agents/view_models/conversation_view_model.dart';
-import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/non_text_input_selection_widget.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_bottom_sheet.dart';
 import 'package:chatbot_agents/views/ai_bot/widgets/prompt_selection_widget.dart';
@@ -39,18 +39,26 @@ typedef OnPickImageCallback = void Function(
 
 class _ChatThreadViewState extends State<ChatThreadView> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   List<MessageRendererModel> messages = [];
+
+  // bottom sheet
   bool _showPromptSelection = false;
   bool _showNonTextInputSelection = false;
+
+  //file picker
   List<XFile>? _mediaFileList;
   BuildContext? _bottomSheetContext;
-  final ScrollController _scrollController = ScrollController();
+  File? _image;
+  String? _base64Image;
+
+  //view model
   late final ConversationViewModel _conversationViewModel;
-  late final ListConversationsViewModel _listConversationsViewModel;
+
   // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
   String selectedBot = 'gpt-4o-mini'; // Default bot
-  final List<int> costToken = [1,3,1,5,5,1];
+  final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +90,9 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         actions: [
           // Dropdown button to select bot
           Container(
+            padding: const EdgeInsets.all(1),
             child: DropdownButton<String>(
+              padding: const EdgeInsets.all(0),
               alignment: AlignmentDirectional.centerEnd,
               value: selectedBot,
               icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
@@ -97,9 +107,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 return DropdownMenuItem<String>(
                   value: bot,
                   child: Text('$bot : ${costToken[bots.indexOf(bot)]} tokens', 
-                    style: TextStyle(
+                    
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: 10,
                     ),
                   ),
                 );
@@ -107,7 +118,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(5),
             child: Row(
               children: [
                 const Icon(
@@ -282,6 +293,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         );
         setState(() {
           _setImageFileListFromFile(pickedFile);
+
           if (_bottomSheetContext != null) {
             Navigator.pop(_bottomSheetContext!);
             _bottomSheetContext = null;
@@ -325,6 +337,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                           child:
                               Text('This image type is not supported'));
                     },
+                    width: 50,
+                    height: 50,
                   )
                 : null),
       );
@@ -387,7 +401,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     super.initState();
     _controller.addListener(_onTextChanged);
     _conversationViewModel = context.read<ConversationViewModel>();
-    _listConversationsViewModel = context.read<ListConversationsViewModel>();
     _fetchRemainingToken();
     _fetchConversationHistory();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -411,8 +424,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       );
     }
   }
-
-  
 
   @override
   void dispose() {
@@ -587,9 +598,6 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     );
   }
 
-
-
-
   Widget _buildPromptSelection() {
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -643,15 +651,17 @@ class _ChatThreadViewState extends State<ChatThreadView> {
           ),
         );
 
-        // Simulate chatbot reply based on selected bot
-        // Future.delayed(const Duration(milliseconds: 500), () {
-        //   setState(() {
-        //     messages.insert(messages.length, {
-        //       'content': '[$selectedBot] This is a reply to: ${_controller.text}',
-        //       'isUserMessage': false,
-        //     });
-        //   });
-        // });
+        if (_mediaFileList != null) {
+          // Handle media file upload
+          // Add media file to messages
+          messages.insert(
+              messages.length, 
+              MessageRendererModel(
+                content: 'Media file uploaded', 
+                isUserMessage: true
+              )
+            );
+        }
 
         messages.insert(
           messages.length, 
@@ -667,28 +677,44 @@ class _ChatThreadViewState extends State<ChatThreadView> {
         _scrollToBottomAnimated();
       });
 
-      String searchText = _controller.text;
+      String query = _controller.text;
+
+      // Clear the input field
       _controller.clear();
 
       print('widget.conversationId: ${widget.conversationId}');
 
+      List<String> _base64Images = _mediaFileList != null
+          ? await Future.wait(_mediaFileList!.map((file) async {
+              File _tempFile = File(file.path);
+              final fileMimeType = lookupMimeType(file.path);
+              print('file: ${file!.mimeType}');
+              //print('file: ${_tempFile!.runtimeType}');
+              print('file: ${fileMimeType}');
+              _base64Image = base64Encode(await _tempFile.readAsBytesSync());
+              return "data:$fileMimeType;base64,$_base64Image";
+            }))
+          : [];
+      
+      print('_mediaFileList length: ${_mediaFileList!.length}');
+      // Clear the media file list
+      setState(() {
+        _mediaFileList = null;
+      });
+
+      print('base64Images length: ${_base64Images.length}');
+      //print('base64Images: ${_base64Images[0]}');
+
       await _conversationViewModel.sendMessage(
           assistantModel: EnumAssistantModel.DIFY, 
           assistantId: selectedBot, 
-          content: searchText,
+          content: query,
           conversationId: widget.conversationId,
-          files: _mediaFileList?.map((file) => file.path).toList(),
+          files: _base64Images,
       );
 
       if (_conversationViewModel.messageResponseDto != null) {
-        setState(() {       
-          // messages.insert(messages.length, 
-          //   MessageRendererModel(
-          //     content: _conversationViewModel.messageResponseDto!.message,
-          //     isUserMessage: false
-          //   )
-          // );
-
+        setState(() {    
           messages[messages.length - 1] = MessageRendererModel(
             content: _conversationViewModel.messageResponseDto!.message,
             isUserMessage: false
@@ -699,27 +725,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottomAnimated();
       });
-      // Clear the input field
       
-    }
-
-    if (_mediaFileList != null) {
-      // Handle media file upload
-      // Add media file to messages
-      setState(() {
-        messages.insert(
-          messages.length, 
-          MessageRendererModel(
-            content: 'Media file uploaded', 
-            isUserMessage: true
-          )
-        );
-      });
-
-      // Clear the media file list
-      setState(() {
-        _mediaFileList = null;
-      });
     }
   }
 
@@ -738,6 +744,5 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     }
   }
 }
-
 
 //d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438

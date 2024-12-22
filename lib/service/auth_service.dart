@@ -132,13 +132,14 @@ class AuthService {
       await jarvisApiClient.authenticatedDio.get(
         "/api/v1/auth/sign-out",
       );
+      if (_googleSignIn != null && await _googleSignIn.isSignedIn()) {
+        _googleSignIn.signOut();
+      }
     } on DioException {
       // Handle logout errors
     } finally {
       await SharedPreferencesUtil.clearTokens(); // Clear tokens
-      if (await _googleSignIn.isSignedIn()) {
-        _googleSignIn.signOut();
-      }
+      
       jarvisApiClient.clearToken(); // Reset API client token
       knowledgeBaseApiClient.clearToken();
     }

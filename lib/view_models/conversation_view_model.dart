@@ -1,4 +1,5 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
+import 'package:chatbot_agents/dto/token_usage/token_usage_response.dart';
 import 'package:chatbot_agents/models/get_conversation_history/list_couple_message_model.dart';
 import 'package:chatbot_agents/models/send_message/list_message_model.dart';
 import 'package:chatbot_agents/models/send_message/message_model.dart';
@@ -23,6 +24,11 @@ class ConversationViewModel extends ChangeNotifier {
   MessageResponse? messageResponseDto;
 
   int remainingToken = 0;
+  TokenUsageResponse? tokenUsageResponse=null;
+
+  String? conversationHistoryCursor = null;
+  String? conversationChatCursor = null;
+  final int commonLimit = 10;
 
   Future<void> getConversationHistory({
     required String conversationId,
@@ -238,6 +244,7 @@ class ConversationViewModel extends ChangeNotifier {
 
   void clearContextOfConversation() {
     messages = ListMessageModel(messages: [], id: '');
+    //cursor = null;
     notifyListeners();
   }
 
@@ -255,6 +262,16 @@ class ConversationViewModel extends ChangeNotifier {
       print("An error occurs: ${e}");
       // Handle error
     }
+  }
+
+  Future<void> getTokenUsage() async {
+    try {
+      
+      tokenUsageResponse = await _tokenService.getTokenUsage();
+    } catch (e) {
+      print('--> Error fetching token usage: $e');
+    }
+    notifyListeners();
   }
 
 }

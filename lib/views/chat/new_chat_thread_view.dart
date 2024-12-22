@@ -36,22 +36,29 @@ typedef OnPickImageCallback = void Function(
 
 class _NewChatThreadViewState extends State<NewChatThreadView> {
   final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   List<MessageRendererModel> messages = [];
+
+  // bottom sheet
   bool _showPromptSelection = false;
   bool _showNonTextInputSelection = false;
+
+  //file picker
   List<XFile>? _mediaFileList;
   BuildContext? _bottomSheetContext;
-  final ScrollController _scrollController = ScrollController();
+  File? _image;
+  String? _base64Image;
+
+  //view model
   late final ConversationViewModel _conversationViewModel;
   late final ListConversationsViewModel _listConversationsViewModel;
+
   // List of bots
   final List<String> bots = EnumAssisstantId.getAllAssistantIds();
   String selectedBot = 'gpt-4o-mini'; // Default bot
   final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
   late String _conversationId = '';
-
-
 
   @override
   void didChangeDependencies() {
@@ -719,4 +726,3 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   }
 }
 
-//d5c1b8ce-fff6-4e2e-8553-2d7b7b4e1438
