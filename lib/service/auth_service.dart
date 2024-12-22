@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:chatbot_agents/config/app_config.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/utils/local/shared_preferences_util.dart';
 import 'package:chatbot_agents/utils/network/knowledge_base_api_client.dart';
@@ -14,18 +13,15 @@ const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  clientId: AppConfig.GoogleOauthClientId,
-  scopes: scopes,
-);
 
 class AuthService {
-  late final JarvisApiClient jarvisApiClient = GetItInstance.getIt<JarvisApiClient>();
-  late final KnowledgeBaseApiClient knowledgeBaseApiClient = GetItInstance.getIt<KnowledgeBaseApiClient>();
+  late final JarvisApiClient _jarvisApiClient = GetItInstance.getIt<JarvisApiClient>();
+  late final KnowledgeBaseApiClient _knowledgeBaseApiClient = GetItInstance.getIt<KnowledgeBaseApiClient>();
+  late final GoogleSignIn _googleSignIn = GetItInstance.getIt<GoogleSignIn>();
   // Register a new user
   Future<String?> register(String email, String password, String username) async {
     try {
-      await jarvisApiClient.publicDio.post(
+      await _jarvisApiClient.publicDio.post(
         "api/v1/auth/sign-up",
         data: {"email": email, "password": password, "username": username},
       );
@@ -42,26 +38,26 @@ class AuthService {
   Future<String?> login(String email, String password) async {
     try {
       log("--> Login Jarvis... ");
-      final jarvisResponse = await jarvisApiClient.publicDio.post(
+      final jarvisResponse = await _jarvisApiClient.publicDio.post(
           "api/v1/auth/sign-in",
           data: {"email": email, "password": password});
       final String jarvisAccessToken =
       jarvisResponse.data["token"]["accessToken"]!.toString();
       final String jarvisRefreshToken =
       jarvisResponse.data["token"]["refreshToken"]!.toString();
-      jarvisApiClient.setToken(jarvisAccessToken, jarvisRefreshToken);
+      _jarvisApiClient.setToken(jarvisAccessToken, jarvisRefreshToken);
 
 
       // TODO: DON'T ERASE THIS COMMENT, FIX THIS LATER
       log("--> Login Knowledge... ");
-      final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
+      final knowledgeResponse = await _knowledgeBaseApiClient.publicDio.post(
           "kb-core/v1/auth/external-sign-in",
           data: {"token": jarvisAccessToken});
       final String knowledgeAccessToken =
       knowledgeResponse.data["token"]["accessToken"]!.toString();
       final String knowledgeRefreshToken =
       knowledgeResponse.data["token"]["refreshToken"]!.toString();
-      knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
+      _knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
 
       // Save tokens to shared preferences
       // await SharedPreferencesUtil.saveTokens(accessToken, refreshToken);
@@ -81,9 +77,9 @@ class AuthService {
 
   Future<String?> googleLogin() async {
     try {
-      if (await _googleSignIn.isSignedIn()) {
-        _googleSignIn.signOut();
-      }
+      // if (await _googleSignIn.isSignedIn()) {
+      //   _googleSignIn.signOut();
+      // }
       GoogleSignInAccount? account = await _googleSignIn.signIn();
       log("--> Login Google in Jarvis... ");
       if (account == null) {
@@ -94,25 +90,25 @@ class AuthService {
       if (token == null ) {
         return "Internal server error, please try again";
       }
-      final jarvisResponse = await jarvisApiClient.publicDio.post(
+      final jarvisResponse = await _jarvisApiClient.publicDio.post(
           "api/v1/auth/google-sign-in",
           data: {"token": token});
       final String jarvisAccessToken =
       jarvisResponse.data["token"]["accessToken"]!.toString();
       final String jarvisRefreshToken =
       jarvisResponse.data["token"]["refreshToken"]!.toString();
-      jarvisApiClient.setToken(jarvisAccessToken, jarvisRefreshToken);
+      _jarvisApiClient.setToken(jarvisAccessToken, jarvisRefreshToken);
 
       // TODO: DON'T ERASE THIS COMMENT, FIX THIS LATER
       log("--> Login Knowledge... ");
-      final knowledgeResponse = await knowledgeBaseApiClient.publicDio.post(
+      final knowledgeResponse = await _knowledgeBaseApiClient.publicDio.post(
           "kb-core/v1/auth/external-sign-in",
           data: {"token": jarvisAccessToken});
       final String knowledgeAccessToken =
       knowledgeResponse.data["token"]["accessToken"]!.toString();
       final String knowledgeRefreshToken =
       knowledgeResponse.data["token"]["refreshToken"]!.toString();
-      knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
+      _knowledgeBaseApiClient.setToken(knowledgeAccessToken, knowledgeRefreshToken);
 
       // Save tokens to shared preferences
       // await SharedPreferencesUtil.saveTokens(accessToken, refreshToken);
@@ -129,7 +125,7 @@ class AuthService {
   }
   Future<void> logout() async {
     try {
-      await jarvisApiClient.authenticatedDio.get(
+      await _jarvisApiClient.authenticatedDio.get(
         "/api/v1/auth/sign-out",
       );
     } on DioException {
@@ -139,8 +135,8 @@ class AuthService {
       if (await _googleSignIn.isSignedIn()) {
         _googleSignIn.signOut();
       }
-      jarvisApiClient.clearToken(); // Reset API client token
-      knowledgeBaseApiClient.clearToken();
+      _jarvisApiClient.clearToken(); // Reset API client token
+      _knowledgeBaseApiClient.clearToken();
     }
   }
 }
