@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "240732976002",
+    "project_id": "chatbot-agents-c0813",
+    "storage_bucket": "chatbot-agents-c0813.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:240732976002:android:72f04ac50fbac052a7159b",
+        "android_client_info": {
+          "package_name": "com.example.chatbot_agents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "240732976002-f21tbtv2tnnrfnfs2i1gur8uk4utlcs4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatbot_agents",
+            "certificate_hash": "be6d789f463606ab1b7fddd82db004d02a7fe860"
+          }
+        },
+        {
+          "client_id": "240732976002-k0oau0m67vro1rqaocgv01cd92t9onfi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqHVl4_5YpX8VTbdklrSRHyyblQxaMKMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "240732976002-k0oau0m67vro1rqaocgv01cd92t9onfi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "240732976002-akra10emuvjmn08eidh33po72nfdg7l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatbotAgents"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
