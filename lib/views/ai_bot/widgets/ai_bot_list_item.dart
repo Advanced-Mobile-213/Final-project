@@ -33,7 +33,9 @@ class AiBotListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     void onAiBotPressed(BuildContext context, AiBot aiBot) {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => AiBotDetailView(aiBot: aiBot)),
+        MaterialPageRoute(
+          builder: (context) => AiBotDetailView(assistantId: aiBot.id),
+        ),
       );
     }
 
