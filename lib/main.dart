@@ -1,4 +1,5 @@
 import 'package:chatbot_agents/config/api_config.dart';
+import 'package:chatbot_agents/config/app_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
@@ -28,6 +29,7 @@ import 'package:chatbot_agents/views/register/register_view.dart';
 import 'package:chatbot_agents/views/subscription/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
@@ -41,6 +43,12 @@ void setup() {
       JarvisApiClient.init(ApiConfig.jarvisUrl));
   GetItInstance.getIt.registerSingleton<KnowledgeBaseApiClient>(
       KnowledgeBaseApiClient.init(ApiConfig.knowledgeUrl));
+  GetItInstance.getIt.registerSingleton<GoogleSignIn>(GoogleSignIn(
+    clientId: AppConfig.GoogleOauthClientId,
+    scopes: <String>[
+      'email',
+    ],
+  ));
   //GetItInstance.getIt.registerSingleton<SharedPreferencesUtil>(SharedPreferencesUtil());
   GetItInstance.getIt
       .registerSingleton<ConversationService>(ConversationService());
@@ -60,7 +68,7 @@ void main() async {
   await dotenv.load();
   setup();
   WidgetsFlutterBinding.ensureInitialized();
-
+  
   // final accessToken = await SharedPreferencesUtil.getAccessToken();
   // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 

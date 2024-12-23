@@ -19,7 +19,16 @@ final BoxDecoration _containerDecoration = BoxDecoration(
 
 class AiBotSuccessPublishView extends StatelessWidget {
   final String assistantId;
-  const AiBotSuccessPublishView(this.assistantId, {super.key});
+  final bool slack;
+  final bool telegram;
+  final bool messenger;
+  const AiBotSuccessPublishView({
+    super.key,
+    required this.assistantId,
+    required this.slack,
+    required this.telegram,
+    required this.messenger,
+  });
 
   Widget get successPublishBlock {
     return Container(
@@ -40,7 +49,12 @@ class AiBotSuccessPublishView extends StatelessWidget {
       children: [
         successPublishBlock,
         Gap(spacing[4]),
-        PublishedTypeList(assistantId),
+        PublishedTypeList(
+          assistantId: assistantId,
+          slack: slack,
+          telegram: telegram,
+          messenger: messenger,
+        ),
       ],
     );
   }

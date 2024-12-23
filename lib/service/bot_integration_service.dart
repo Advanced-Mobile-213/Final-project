@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'dart:developer';
 import 'package:chatbot_agents/models/ai_bot/bot_configuration.dart';
 import 'package:chatbot_agents/models/ai_bot/bot_configure_verify_response.dart';
+import 'dart:developer';
 
 class BotIntegrationService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
@@ -93,6 +94,117 @@ class BotIntegrationService {
       log("--> An DioException occurs in publishTelegramBot of BotIntegration Service: $e");
     } catch (e) {
       log("--> An error occurs in publishTelegramBot of BotIntegration Service: $e");
+    }
+    return null;
+  }
+
+  Future<bool?> verifySlackBotConfigure({
+    required String botToken,
+    required String clientId,
+    required String clientSecret,
+    required String signingSecret,
+  }) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/bot-integration/slack/validation',
+        data: {
+          'botToken': botToken,
+          'clientId': clientId,
+          'clientSecret': clientSecret,
+          'signingSecret': signingSecret,
+        },
+      );
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        // the response is empty, so we just return true
+        return true;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in verifySlackBotConfigure of BotIntegration Service: $e");
+    } catch (e) {
+      log("--> An error occurs in verifySlackBotConfigure of BotIntegration Service: $e");
+    }
+    return null;
+  }
+
+  Future<String?> publishSlackBot({
+    required String assistantId,
+    required String botToken,
+    required String clientId,
+    required String clientSecret,
+    required String signingSecret,
+  }) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/bot-integration/slack/publish/$assistantId',
+        data: {
+          'botToken': botToken,
+          'clientId': clientId,
+          'clientSecret': clientSecret,
+          'signingSecret': signingSecret,
+        },
+      );
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        final redirectLink = response.data['redirect'];
+        return redirectLink;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in publishSlackBot of BotIntegration Service: $e");
+    } catch (e) {
+      log("--> An error occurs in publishSlackBot of BotIntegration Service: $e");
+    }
+    return null;
+  }
+
+  Future<bool?> verifyMessengerBotConfigure({
+    required String botToken,
+    required String pageId,
+    required String appSecret,
+  }) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/bot-integration/messenger/validation',
+        data: {
+          'botToken': botToken,
+          'pageId': pageId,
+          'appSecret': appSecret,
+        },
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        // the response is empty, so we just return true
+        return true;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in verifyMessengerBotConfigure of BotIntegration Service: $e");
+    } catch (e) {
+      log("--> An error occurs in verifyMessengerBotConfigure of BotIntegration Service: $e");
+    }
+    return null;
+  }
+
+  Future<String?> publishMessengerBot({
+    required String assistantId,
+    required String botToken,
+    required String pageId,
+    required String appSecret,
+  }) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/bot-integration/messenger/publish/$assistantId',
+        data: {
+          'botToken': botToken,
+          'pageId': pageId,
+          'appSecret': appSecret,
+        },
+      );
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        final redirectLink = response.data['redirect'];
+        return redirectLink;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in publishMessengerBot of BotIntegration Service: $e");
+    } catch (e) {
+      log("--> An error occurs in publishMessengerBot of BotIntegration Service: $e");
     }
     return null;
   }

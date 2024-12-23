@@ -188,8 +188,8 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ),
                                 ),
-                                const ListTile(
-                                  leading: Text(
+                                ListTile(
+                                  leading: const Text(
                                     'Tokens',
                                     style: TextStyle(
                                       fontSize: 20,
@@ -197,8 +197,8 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ),
                                   trailing: Text(
-                                    '30/50',
-                                    style: TextStyle(
+                                    '${profileViewModel.tokenUsageResponse!.availableTokens}/${profileViewModel.tokenUsageResponse!.totalTokens}',
+                                    style: const TextStyle(
                                       fontSize: 20,
                                       color: AppColors.primaryText,
                                     ),

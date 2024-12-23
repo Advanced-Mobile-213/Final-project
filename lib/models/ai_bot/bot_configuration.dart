@@ -28,7 +28,7 @@ BotType botTypeFromString(String type) {
   }
 }
 
-String botImage(String type){
+String botImage(String type) {
   switch (type) {
     case 'messenger':
       return 'assets/images/messenger.png';
@@ -42,21 +42,43 @@ String botImage(String type){
 }
 
 class MetaData {
-  final String botName;
-  final String botToken;
+  // Common
   final String redirect;
+  final String botToken;
+
+  // Telegram
+  final String? botName;
+
+  //Slack
+  final String? clientId;
+  final String? clientSecret;
+  final String? signingSecret;
+
+  //Messenger
+  final String? pageId;
+  final String? appSecret;
 
   MetaData({
-    required this.botName,
-    required this.botToken,
     required this.redirect,
+    required this.botToken,
+    this.botName,
+    this.clientId,
+    this.clientSecret,
+    this.signingSecret,
+    this.pageId,
+    this.appSecret,
   });
 
   factory MetaData.fromJson(Map<String, dynamic> json) {
     return MetaData(
-      botName: json['botName'],
-      botToken: json['botToken'],
       redirect: json['redirect'],
+      botToken: json['botToken'],
+      botName: json['botName'],
+      clientId: json['clientId'],
+      clientSecret: json['clientSecret'],
+      signingSecret: json['signingSecret'],
+      pageId: json['pageId'],
+      appSecret: json['appSecret'],
     );
   }
 }

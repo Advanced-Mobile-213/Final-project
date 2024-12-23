@@ -26,9 +26,8 @@ class ConversationViewModel extends ChangeNotifier {
   int remainingToken = 0;
   TokenUsageResponse? tokenUsageResponse=null;
 
-  String? conversationHistoryCursor = null;
   String? conversationChatCursor = null;
-  final int commonLimit = 10;
+  final int commonLimit = 5;
 
   Future<void> getConversationHistory({
     required String conversationId,
@@ -42,6 +41,7 @@ class ConversationViewModel extends ChangeNotifier {
       isLoadingConversationHistory = true;
       //notifyListeners();
 
+      listHistoryMessages = null;
       listHistoryMessages = await _conversationService.getConversationHistory(
         conversationId: conversationId,
         assistantModel: assistantModel,
@@ -51,7 +51,7 @@ class ConversationViewModel extends ChangeNotifier {
       );
 
       print('list history Messages: $listHistoryMessages');
-      isLoadingConversationHistory = false;
+      
       //conversations = ListThreadChatModel.fromJson(response.data);
 
       if (listHistoryMessages != null) {
@@ -79,8 +79,11 @@ class ConversationViewModel extends ChangeNotifier {
             ),
           );
         });
+
+        conversationChatCursor = listHistoryMessages!.cursor;
       }
 
+      isLoadingConversationHistory = false;
       notifyListeners();
     } catch (e) {
       print("An error occurs: ${e}");
@@ -97,9 +100,12 @@ class ConversationViewModel extends ChangeNotifier {
   }) async {
     // Fetch conversation from the server
     try {
+      if (listHistoryMessages!.hasMore == false) {
+        print('No more messages to load');
+        return;
+      }
       isLoadingMoreConversationHistory = true;
       //notifyListeners();
-
       moreMessage =null;
 
       moreMessage = await _conversationService.getConversationHistory(
@@ -122,7 +128,7 @@ class ConversationViewModel extends ChangeNotifier {
       }
 
       print('list history Messages: $listHistoryMessages');
-      isLoadingMoreConversationHistory = false;
+      
       //conversations = ListThreadChatModel.fromJson(response.data);
 
       if (listHistoryMessages != null && moreMessage != null && moreMessage!.items.isNotEmpty) {
@@ -175,6 +181,7 @@ class ConversationViewModel extends ChangeNotifier {
         // });
       }
 
+      isLoadingMoreConversationHistory = false;
       notifyListeners();
     } catch (e) {
       print("An error occurs: ${e}");
@@ -191,6 +198,7 @@ class ConversationViewModel extends ChangeNotifier {
   }) async {
     // Send message to the server
     try {
+      //print('send msg');
       messageResponseDto = null;
       
       if (conversationId!= null) {

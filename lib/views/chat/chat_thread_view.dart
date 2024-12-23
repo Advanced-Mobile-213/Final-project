@@ -60,6 +60,9 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   String selectedBot = 'gpt-4o-mini'; // Default bot
   final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
+  //lazy load
+  int commonLimit = 2;
+
   @override
   Widget build(BuildContext context) {
     // Use MediaQuery to make the layout responsive
@@ -79,12 +82,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             Navigator.pop(context); // Pops the current screen from the navigation stack
           },
         ),
-        // title: IconButton(
-        //   onPressed: () async {
-        //     _fetchMoreConversationHistory();
-        //   }, 
-        //   icon: Icon(Icons.replay_outlined, color: Colors.white)
-        // ),
+       
         centerTitle: true,
         backgroundColor: AppColors.primaryBackground,
         actions: [
@@ -129,16 +127,20 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 // const Text('Tokens: ', 
                 //   style: TextStyle(color: Colors.white),
                 // ),
-                Text(
-                  _conversationViewModel.messageResponseDto?.remainingUsage != null 
-                  ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
-                  : _conversationViewModel.remainingToken != 0 
-                  ? _conversationViewModel.remainingToken.toString()
-                  : '0', 
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
+                Consumer<ConversationViewModel>(
+                  builder: (context, ConversationViewModel conversationViewModel, child) {
+                    return Text(
+                      _conversationViewModel.messageResponseDto?.remainingUsage != null 
+                        ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
+                        : _conversationViewModel.remainingToken != 0 
+                        ? _conversationViewModel.remainingToken.toString()
+                        : '0', 
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    );
+                  }
                 ),
               ],
             ),
@@ -380,8 +382,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                       conversationId: widget.conversationId, 
                       assistantModel: EnumAssistantModel.DIFY, 
                       assistantId: EnumAssisstantId.GPT_4O_MINI,
-                      //limit: 2,
-                      );
+                      limit: commonLimit,
+                    );
                     
     if (_conversationViewModel.listHistoryMessages != null && _conversationViewModel.listHistoryMessages!.items.isNotEmpty) {
       messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
@@ -400,6 +402,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   void initState() {
     super.initState();
     _controller.addListener(_onTextChanged);
+    _scrollController.addListener(_onScroll);
     _conversationViewModel = context.read<ConversationViewModel>();
     _fetchRemainingToken();
     _fetchConversationHistory();
@@ -409,6 +412,13 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
   }
 
+  void _onScroll() {
+    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
+        !_scrollController.position.outOfRange) {
+        print('reach the top');
+      _fetchMoreConversationHistory();
+    }
+  }
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -428,6 +438,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   @override
   void dispose() {
     _controller.removeListener(_onTextChanged);
+    _scrollController.removeListener(_onScroll);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -642,90 +653,93 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   }
 
   void _sendMessage() async {
-    if (_controller.text.isNotEmpty) {
-      setState(() {       
-        messages.insert(messages.length, 
-          MessageRendererModel(
-            content: _controller.text, 
-            isUserMessage: true
-          ),
-        );
+    try {
+      if (_controller.text.isNotEmpty) {
+        setState(() {       
+          messages.insert(messages.length, 
+            MessageRendererModel(
+              content: _controller.text, 
+              isUserMessage: true
+            ),
+          );
 
-        if (_mediaFileList != null) {
-          // Handle media file upload
-          // Add media file to messages
+          if (_mediaFileList != null) {
+            // Handle media file upload
+            // Add media file to messages
+            messages.insert(
+                messages.length, 
+                MessageRendererModel(
+                  content: 'Media file uploaded', 
+                  isUserMessage: true
+                )
+              );
+          }
+
           messages.insert(
-              messages.length, 
-              MessageRendererModel(
-                content: 'Media file uploaded', 
-                isUserMessage: true
-              )
-            );
-        }
-
-        messages.insert(
-          messages.length, 
-          MessageRendererModel(
-            content: '', 
-            isUserMessage: false,
-            icon: FontAwesomeIcons.ellipsisH
-          )
-        );
-      });
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottomAnimated();
-      });
-
-      String query = _controller.text;
-
-      // Clear the input field
-      _controller.clear();
-
-      print('widget.conversationId: ${widget.conversationId}');
-
-      List<String> _base64Images = _mediaFileList != null
-          ? await Future.wait(_mediaFileList!.map((file) async {
-              File _tempFile = File(file.path);
-              final fileMimeType = lookupMimeType(file.path);
-              print('file: ${file!.mimeType}');
-              //print('file: ${_tempFile!.runtimeType}');
-              print('file: ${fileMimeType}');
-              _base64Image = base64Encode(await _tempFile.readAsBytesSync());
-              return "data:$fileMimeType;base64,$_base64Image";
-            }))
-          : [];
-      
-      print('_mediaFileList length: ${_mediaFileList!.length}');
-      // Clear the media file list
-      setState(() {
-        _mediaFileList = null;
-      });
-
-      print('base64Images length: ${_base64Images.length}');
-      //print('base64Images: ${_base64Images[0]}');
-
-      await _conversationViewModel.sendMessage(
-          assistantModel: EnumAssistantModel.DIFY, 
-          assistantId: selectedBot, 
-          content: query,
-          conversationId: widget.conversationId,
-          files: _base64Images,
-      );
-
-      if (_conversationViewModel.messageResponseDto != null) {
-        setState(() {    
-          messages[messages.length - 1] = MessageRendererModel(
-            content: _conversationViewModel.messageResponseDto!.message,
-            isUserMessage: false
+            messages.length, 
+            MessageRendererModel(
+              content: '', 
+              isUserMessage: false,
+              icon: FontAwesomeIcons.ellipsisH
+            )
           );
         });
-      }
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottomAnimated();
-      });
-      
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottomAnimated();
+        });
+
+        String query = _controller.text;
+        //print('controller $_controller');
+        // Clear the input field
+        _controller.clear();
+
+        print('widget.conversationId: ${widget.conversationId}');
+        print('mediaFileList: $_mediaFileList');
+        List<String> _base64Images = _mediaFileList != null
+            ? await Future.wait(_mediaFileList!.map((file) async {
+                File _tempFile = File(file.path);
+                final fileMimeType = lookupMimeType(file.path);
+                print('file: ${file!.mimeType}');
+                //print('file: ${_tempFile!.runtimeType}');
+                print('file: ${fileMimeType}');
+                _base64Image = base64Encode(await _tempFile.readAsBytesSync());
+                return "data:$fileMimeType;base64,$_base64Image";
+              }))
+            : [];
+        
+        // Clear the media file list
+        setState(() {
+          _mediaFileList = null;
+        });
+
+        print('base64Images length: ${_base64Images.length}');
+        //print('base64Images: ${_base64Images[0]}');
+
+        await _conversationViewModel.sendMessage(
+            assistantModel: EnumAssistantModel.DIFY, 
+            assistantId: selectedBot, 
+            content: query,
+            conversationId: widget.conversationId,
+            files: _base64Images,
+        );
+
+        if (_conversationViewModel.messageResponseDto != null) {
+          setState(() {    
+            messages[messages.length - 1] = MessageRendererModel(
+              content: _conversationViewModel.messageResponseDto!.message,
+              isUserMessage: false
+            );
+          });
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottomAnimated();
+        });        
+      }
+     }catch (e) {
+
+      print('An error occurs: ${e}');
     }
   }
 
@@ -734,13 +748,13 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                       conversationId: widget.conversationId, 
                       assistantModel: EnumAssistantModel.DIFY, 
                       assistantId: EnumAssisstantId.GPT_4O_MINI,
-                      limit: 2, 
-                      cursor: _conversationViewModel.listHistoryMessages!.cursor,
+                      limit: commonLimit, 
+                      cursor: _conversationViewModel.conversationChatCursor ?? '',
                     );
                     
     if (_conversationViewModel.moreMessage != null && _conversationViewModel.moreMessage!.items.isNotEmpty) {
-      List<MessageRendererModel> more_messages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
-      messages.insertAll(0, more_messages);
+      List<MessageRendererModel> moreMessages = MessageMapper.toMessageRendererModels(_conversationViewModel.listHistoryMessages!.items);
+      messages.insertAll(0, moreMessages);
     }
   }
 }

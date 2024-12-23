@@ -1,10 +1,10 @@
 import 'package:chatbot_agents/models/get_conversations/thread_chat_model.dart';
 
 class ListThreadChatModel {
-  final String? cursor;
-  final bool hasMore;
-  final int limit;
-  final List<ThreadChatModel> items;
+  String? cursor;
+  bool hasMore;
+  int limit;
+  List<ThreadChatModel> items;
 
   ListThreadChatModel({
     required this.cursor,

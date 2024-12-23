@@ -8,11 +8,34 @@ import 'package:chatbot_agents/view_models/bot_configuration_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/utils/snack_bar_util.dart';
 import '../ai_bot_success_publish_view.dart';
-//import 'dart:developer';
 
 class TelegramConfiguration {
   String? botToken;
   TelegramConfiguration({this.botToken});
+}
+
+class SlackConfiguration {
+  String? botToken;
+  String? clientId;
+  String? clientSecret;
+  String? signingSecret;
+  SlackConfiguration({
+    this.botToken,
+    this.clientId,
+    this.clientSecret,
+    this.signingSecret,
+  });
+}
+
+class MessengerConfiguration {
+  String? botToken;
+  String? pageId;
+  String? appSecret;
+  MessengerConfiguration({
+    this.botToken,
+    this.pageId,
+    this.appSecret,
+  });
 }
 
 class BotConfigurationList extends StatefulWidget {
@@ -35,9 +58,9 @@ class _BotConfigurationListState extends State<BotConfigurationList>
   List<BotConfiguration>? botConfigurations;
   bool isLoading = false;
   final Map<BotType, dynamic> _configurations = {
-    BotType.slack: null,
+    BotType.slack: SlackConfiguration(),
     BotType.telegram: TelegramConfiguration(),
-    BotType.messenger: null,
+    BotType.messenger: MessengerConfiguration(),
   };
 
   @override
@@ -50,6 +73,9 @@ class _BotConfigurationListState extends State<BotConfigurationList>
 
   @override
   void dispose() {
+    _publishItems.forEach((key, value) {
+      _publishItems[key] = false;
+    });
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -78,6 +104,23 @@ class _BotConfigurationListState extends State<BotConfigurationList>
         if (getConfiguration(BotType.telegram) != null) {
           _configurations[BotType.telegram] = TelegramConfiguration(
             botToken: getConfiguration(BotType.telegram)?.metadata.botToken,
+          );
+        }
+        if (getConfiguration(BotType.slack) != null) {
+          _configurations[BotType.slack] = SlackConfiguration(
+            botToken: getConfiguration(BotType.slack)?.metadata.botToken,
+            clientId: getConfiguration(BotType.slack)?.metadata.clientId,
+            clientSecret:
+                getConfiguration(BotType.slack)?.metadata.clientSecret,
+            signingSecret:
+                getConfiguration(BotType.slack)?.metadata.signingSecret,
+          );
+        }
+        if (getConfiguration(BotType.messenger) != null) {
+          _configurations[BotType.messenger] = MessengerConfiguration(
+            botToken: getConfiguration(BotType.messenger)?.metadata.botToken,
+            pageId: getConfiguration(BotType.messenger)?.metadata.pageId,
+            appSecret: getConfiguration(BotType.messenger)?.metadata.appSecret,
           );
         }
       } else {
@@ -111,6 +154,36 @@ class _BotConfigurationListState extends State<BotConfigurationList>
     });
   }
 
+  void onSlackConfigurePress(
+    String botToken,
+    String clientId,
+    String clientSecret,
+    String signingSecret,
+  ) {
+    setState(() {
+      _configurations[BotType.slack] = SlackConfiguration(
+        botToken: botToken,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        signingSecret: signingSecret,
+      );
+    });
+  }
+
+  void onMessengerConfigurePress(
+    String botToken,
+    String pageId,
+    String appSecret,
+  ) {
+    setState(() {
+      _configurations[BotType.messenger] = MessengerConfiguration(
+        botToken: botToken,
+        pageId: pageId,
+        appSecret: appSecret,
+      );
+    });
+  }
+
   void onPublishPress() async {
     if (_publishItems.values.every((element) => !element)) {
       _snackBarUtil.showError('Please select at least one bot to publish');
@@ -128,15 +201,35 @@ class _BotConfigurationListState extends State<BotConfigurationList>
           botToken: _configurations[BotType.telegram].botToken,
         );
       }
+      if (_publishItems[BotType.slack] == true) {
+        result = await botConfigurationViewModel.publishSlackBot(
+          assistantId: widget.assistantId,
+          botToken: _configurations[BotType.slack].botToken,
+          clientId: _configurations[BotType.slack].clientId,
+          clientSecret: _configurations[BotType.slack].clientSecret,
+          signingSecret: _configurations[BotType.slack].signingSecret,
+        );
+      }
+      if (_publishItems[BotType.messenger] == true) {
+        result = await botConfigurationViewModel.publishMessengerBot(
+          assistantId: widget.assistantId,
+          botToken: _configurations[BotType.messenger].botToken,
+          pageId: _configurations[BotType.messenger].pageId,
+          appSecret: _configurations[BotType.messenger].appSecret,
+        );
+      }
       if (result != null) {
         await _fetchConfigurations();
-        _publishItems.forEach((key, value) {
-          _publishItems[key] = false;
-        });
+
         if (mounted) {
-          Navigator.of(context).push(
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => AiBotSuccessPublishView(widget.assistantId),
+              builder: (context) => AiBotSuccessPublishView(
+                assistantId: widget.assistantId,
+                slack: _publishItems[BotType.slack]!,
+                telegram: _publishItems[BotType.telegram]!,
+                messenger: _publishItems[BotType.messenger]!,
+              ),
             ),
           );
         }
@@ -161,7 +254,10 @@ class _BotConfigurationListState extends State<BotConfigurationList>
               onCheckPress: (bool value) => _toggleConfigStatus(BotType.slack),
               configuration: getConfiguration(BotType.slack),
               onTelegramConfigureConfirm: onTelegramConfigurePress,
+              onSlackConfigurationConfirm: onSlackConfigurePress,
+              onMessengerConfigurationConfirm: onMessengerConfigurePress,
               onDisconnectPress: () => _fetchConfigurations(),
+              assistantId: widget.assistantId,
             ),
             Gap(spacing[3]),
             PublishCard(
@@ -171,7 +267,10 @@ class _BotConfigurationListState extends State<BotConfigurationList>
                   _toggleConfigStatus(BotType.telegram),
               configuration: getConfiguration(BotType.telegram),
               onTelegramConfigureConfirm: onTelegramConfigurePress,
+              onSlackConfigurationConfirm: onSlackConfigurePress,
+              onMessengerConfigurationConfirm: onMessengerConfigurePress,
               onDisconnectPress: () => _fetchConfigurations(),
+              assistantId: widget.assistantId,
             ),
             Gap(spacing[3]),
             PublishCard(
@@ -181,7 +280,10 @@ class _BotConfigurationListState extends State<BotConfigurationList>
                   _toggleConfigStatus(BotType.messenger),
               configuration: getConfiguration(BotType.messenger),
               onTelegramConfigureConfirm: onTelegramConfigurePress,
+              onSlackConfigurationConfirm: onSlackConfigurePress,
+              onMessengerConfigurationConfirm: onMessengerConfigurePress,
               onDisconnectPress: () => _fetchConfigurations(),
+              assistantId: widget.assistantId,
             ),
             Gap(spacing[4]),
             if (isLoading)

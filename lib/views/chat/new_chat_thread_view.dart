@@ -83,20 +83,17 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
               color: Colors.white), // Back arrow icon
           onPressed: () {
             _conversationViewModel.clearContextOfConversation();
+            _listConversationsViewModel.isInNewConversation = true;
             _listConversationsViewModel.getConversations(
               assistantModel: EnumAssistantModel.DIFY,
               assistantId: EnumAssisstantId.GPT_4O_MINI,
-            );
+              cursor: null,
+              limit: 5,
+            ); 
             Navigator.pop(
                 context); // Pops the current screen from the navigation stack
           },
         ),
-        // title: IconButton(
-        //   onPressed: () async {
-        //     _fetchMoreConversationHistory();
-        //   },
-        //   icon: Icon(Icons.replay_outlined, color: Colors.white)
-        // ),
         centerTitle: true,
         backgroundColor: AppColors.primaryBackground,
         actions: [
@@ -139,19 +136,20 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
                 // const Text('Tokens: ',
                 //   style: TextStyle(color: Colors.white),
                 // ),
-                Text(
-                  _conversationViewModel.messageResponseDto?.remainingUsage !=
-                          null
-                      ? _conversationViewModel
-                          .messageResponseDto!.remainingUsage
-                          .toString()
-                      : _conversationViewModel.remainingToken != 0
-                          ? _conversationViewModel.remainingToken.toString()
-                          : '0',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
+                Consumer<ConversationViewModel>(
+                  builder: (context, ConversationViewModel conversationViewModel, child) {
+                    return Text(
+                      _conversationViewModel.messageResponseDto?.remainingUsage != null 
+                        ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
+                        : _conversationViewModel.remainingToken != 0 
+                        ? _conversationViewModel.remainingToken.toString()
+                        : '0', 
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    );
+                  }
                 ),
               ],
             ),

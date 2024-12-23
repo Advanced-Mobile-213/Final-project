@@ -9,6 +9,8 @@ import './verity_telegram_configuration_dialog.dart';
 import 'package:chatbot_agents/utils/snack_bar_util.dart';
 import 'package:chatbot_agents/view_models/bot_configuration_view_model.dart';
 import 'package:provider/provider.dart';
+import 'verify_slack_configuration_dialog.dart';
+import 'verify_messenger_configuration_dialog.dart';
 
 // Styles
 const TextStyle _titleTextStyle = TextStyle(
@@ -46,8 +48,20 @@ class PublishCard extends StatefulWidget {
   final bool isChecked;
   final void Function(bool) onCheckPress;
   final BotConfiguration? configuration;
-  final void Function(String) onTelegramConfigureConfirm;
+  final void Function(String botToken) onTelegramConfigureConfirm;
+  final void Function(
+    String botToken,
+    String clientId,
+    String clientSecret,
+    String signingSecret,
+  ) onSlackConfigurationConfirm;
+  final void Function(
+    String botToken,
+    String pageId,
+    String appSecret,
+  ) onMessengerConfigurationConfirm;
   final void Function() onDisconnectPress;
+  final String assistantId;
 
   const PublishCard({
     super.key,
@@ -56,7 +70,10 @@ class PublishCard extends StatefulWidget {
     required this.onCheckPress,
     required this.configuration,
     required this.onTelegramConfigureConfirm,
+    required this.onSlackConfigurationConfirm,
+    required this.onMessengerConfigurationConfirm,
     required this.onDisconnectPress,
+    required this.assistantId,
   });
 
   @override
@@ -99,6 +116,73 @@ class _PublishCardState extends State<PublishCard> {
     }
   }
 
+  void onSlackConfigurationConfirm(
+    String botToken,
+    String clientId,
+    String clientSecret,
+    String signingSecret,
+  ) async {
+    var result = await botConfigurationViewModel.verifySlackBotConfigure(
+      botToken: botToken,
+      clientId: clientId,
+      clientSecret: clientSecret,
+      signingSecret: signingSecret,
+    );
+    if (result != null) {
+      if (result) {
+        widget.onSlackConfigurationConfirm(
+          botToken,
+          clientId,
+          clientSecret,
+          signingSecret,
+        );
+        setState(() {
+          isConfigured = true;
+        });
+        _snackBarUtil.showSuccess(
+          'Bot configured temporarily successfully, please publish the bot to make it permanent',
+        );
+      } else {
+        _snackBarUtil.showError('Failed to configure bot');
+      }
+    } else {
+      _snackBarUtil.showError('Failed to configure bot');
+    }
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  void onMessengerConfigurationConfirm(
+    String botToken,
+    String pageId,
+    String appSecret,
+  ) async {
+    var result = await botConfigurationViewModel.verifyMessengerBotConfigure(
+      botToken: botToken,
+      pageId: pageId,
+      appSecret: appSecret,
+    );
+    if (result != null) {
+      if (result) {
+        widget.onMessengerConfigurationConfirm(botToken, pageId, appSecret);
+        setState(() {
+          isConfigured = true;
+        });
+        _snackBarUtil.showSuccess(
+          'Bot configured temporarily successfully, please publish the bot to make it permanent',
+        );
+      } else {
+        _snackBarUtil.showError('Failed to configure bot');
+      }
+    } else {
+      _snackBarUtil.showError('Failed to configure bot');
+    }
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   void onConfigurePress(BotType type) {
     switch (type) {
       case BotType.telegram:
@@ -107,8 +191,22 @@ class _PublishCardState extends State<PublishCard> {
           onTelegramConfigureConfirm,
         );
         break;
+      case BotType.slack:
+        showVeritySlackConfigurationDialog(
+          context,
+          onSlackConfigurationConfirm,
+          widget.assistantId,
+        );
+        break;
+      case BotType.messenger:
+        showVerityMessengerConfigurationDialog(
+          context,
+          onMessengerConfigurationConfirm,
+          widget.assistantId,
+        );
+        break;
       default:
-        log('--> onConfigurePress: $type');
+        log('--> Bot type not found');
     }
   }
 

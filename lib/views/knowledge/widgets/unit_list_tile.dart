@@ -45,7 +45,7 @@ class _UnitListTileState extends State<UnitListTile> {
           ),
         ),
         subtitle: Text(
-          knowledgeUnit.knowledgeId,
+          knowledgeUnit.updatedAt.toString(),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: const TextStyle(
