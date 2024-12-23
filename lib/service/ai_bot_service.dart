@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'dart:developer';
 import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/models/ai_bot/preview_message.dart';
 
 class AiBotService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
@@ -142,6 +143,22 @@ class AiBotService {
     return false;
   }
 
+  Future<AiBot?> getAssistant({required String assistantId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.get(
+        '/kb-core/v1/ai-assistant/$assistantId',
+      );
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        return AiBot.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in getAssistantById of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in getAssistantById of AiBot Service: $e");
+    }
+    return null;
+  }
+
   Future<bool> removeKnowledgeFromAssistant(
       {required String assistantId, required String knowledgeId}) async {
     try {
@@ -178,6 +195,82 @@ class AiBotService {
       log("--> An DioException occurs in getImportedKnowledgeInAssistant of AiBot Service: $e");
     } catch (e) {
       log("--> An error occurs in getImportedKnowledgeInAssistant of AiBot Service: $e");
+    }
+    return null;
+  }
+
+  Future<String?> updateAssistantWithNewThreadPlayground(
+      {required String assistantId, String? firstMessage}) async {
+    final postData = <String, dynamic>{
+      'assistantId': assistantId,
+      if (firstMessage != null) 'firstMessage': firstMessage,
+    };
+
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/ai-assistant/thread/playground',
+        data: postData,
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        return response.data['openAiThreadIdPlay'] as String;
+      } else {
+        return null;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in updateAssistantWithNewThreadPlayground9 of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in updateAssistantWithNewThreadPlayground9 of AiBot Service: $e");
+    }
+    return null;
+  }
+
+  Future<String?> askAssistant(
+      {required String assistantId,
+      required String message,
+      required openAiThreadId,
+      String? additionalInstruction}) async {
+    final postData = <String, dynamic>{
+      'assistantId': assistantId,
+      'message': message,
+      'openAiThreadId': openAiThreadId,
+      if (additionalInstruction != null)
+        'additionalInstruction': additionalInstruction,
+    };
+
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/ai-assistant/$assistantId/ask',
+        data: postData,
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        return response.data as String;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in askAssistant of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in askAssistant of AiBot Service: $e");
+    }
+    return null;
+  }
+
+  Future<List<PreviewMessage>?> retrieveMessageOfThread(
+      {required String openAiThreadId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.get(
+        '/kb-core/v1/ai-assistant/thread/$openAiThreadId/messages',
+      );
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        if (response.data != null) {
+          final List<dynamic> data = response.data;
+          return data.map((e) => PreviewMessage.fromJson(e)).toList();
+        }
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in retrieveMessageOfThread of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in retrieveMessageOfThread of AiBot Service: $e");
     }
     return null;
   }
