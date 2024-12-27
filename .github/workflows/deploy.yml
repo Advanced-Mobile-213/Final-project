@@ -12,19 +12,31 @@ jobs:
     name: Build & Release android app bundle
     runs-on: windows-latest
     steps:
-      - run: |
-          cat > assets/.env <<EOF
-          FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}
-          FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}
-          FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}
-          FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}
-          FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}
-          GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          JARVIS_URL=${{ secrets.JARVIS_URL }}
-          KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}
-          EOF
+      # - run: |
+      #     cat > assets/.env <<EOF
+      #     FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}
+      #     FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}
+      #     FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}
+      #     FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}
+      #     FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}
+      #     GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+      #     JARVIS_URL=${{ secrets.JARVIS_URL }}
+      #     KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}
+      #     EOF
+      
       # 1. Kiểm tra mã nguồn từ repository
       - uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          echo "FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}" >> assets/.env
+          echo "FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}" >> assets/.env
+          echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> assets/.env
+          echo "JARVIS_URL=${{ secrets.JARVIS_URL }}" >> assets/.env
+          echo "KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}" >> assets/.env
 
       # 2. Cài đặt Java (cho build Android)
       - uses: actions/setup-java@v3
