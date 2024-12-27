@@ -46,6 +46,7 @@ jobs:
           echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> ./.env
           echo "JARVIS_URL=${{ secrets.JARVIS_URL }}" >> ./.env
           echo "KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}" >> ./.env
+          echo "FIREBASE_CONFIG_DEV=${{ secrets.FIREBASE_CONFIG_DEV }}" > ./android/app/google-services.json         
 
       # 2. Cài đặt Java (cho build Android)
       - uses: actions/setup-java@v3
