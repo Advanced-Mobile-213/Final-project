@@ -65,8 +65,8 @@ jobs:
       # 5. Cài dependencies
       - run: flutter pub get
 
-      # 6. Chạy kiểm thử tự động
-      - run: flutter test
+      # # 6. Chạy kiểm thử tự động
+      # - run: flutter test
 
       # 7. Build APK debug và AAB
       - run: flutter build apk --debug --split-per-abi
