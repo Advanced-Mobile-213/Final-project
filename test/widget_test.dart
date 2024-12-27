@@ -27,4 +27,8 @@ void main() {
   //   expect(find.text('0'), findsNothing);
   //   expect(find.text('1'), findsOneWidget);
   // });
+  test('simple test', () {
+    expect(1+1, 2);
+  });
+  
 }
