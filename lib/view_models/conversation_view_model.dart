@@ -29,6 +29,8 @@ class ConversationViewModel extends ChangeNotifier {
   String? conversationChatCursor = null;
   final int commonLimit = 5;
 
+  bool isInLoadingMore = false;
+
   Future<void> getConversationHistory({
     required String conversationId,
     required String assistantModel, 
@@ -39,7 +41,8 @@ class ConversationViewModel extends ChangeNotifier {
     // Fetch conversation from the server
     try {
       isLoadingConversationHistory = true;
-      //notifyListeners();
+      //notifyListeners()
+      isInLoadingMore = false;
 
       listHistoryMessages = null;
       listHistoryMessages = await _conversationService.getConversationHistory(
@@ -107,7 +110,7 @@ class ConversationViewModel extends ChangeNotifier {
       isLoadingMoreConversationHistory = true;
       //notifyListeners();
       moreMessage =null;
-
+      isInLoadingMore = true;
       moreMessage = await _conversationService.getConversationHistory(
         conversationId: conversationId,
         assistantModel: assistantModel,
@@ -200,6 +203,7 @@ class ConversationViewModel extends ChangeNotifier {
     try {
       //print('send msg');
       messageResponseDto = null;
+      isInLoadingMore = false;
       
       if (conversationId!= null) {
         messages?.id = conversationId;

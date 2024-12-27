@@ -1,11 +1,15 @@
+import 'package:chatbot_agents/constants/ad_unit_id.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
 import 'package:chatbot_agents/view_models/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {
+  
+
   @override
   State<ProfileView> createState() => _ProfileViewState();
 }
@@ -15,11 +19,19 @@ class _ProfileViewState extends State<ProfileView> {
   late bool isLoggingOut;
   late final ProfileViewModel _profileViewModel;
 
+  // ads
+  final String adUnitId = AdUnitId.bannerAdUnitId;
+  AdSize adSize = AdSize.banner;
+  
+  /// The banner ad to show. This is `null` until the ad is actually loaded.
+  BannerAd? _bannerAd;
+
   @override void initState() {
     super.initState();
     isLoggingOut = false;
     _profileViewModel = context.read<ProfileViewModel>();
     _fetchTokenUsage();
+    _loadAd();
   }
 
   @override
@@ -45,6 +57,18 @@ class _ProfileViewState extends State<ProfileView> {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: <Widget>[
+
+                    // Ads Section
+                    SizedBox(
+                      width: adSize.width.toDouble(),
+                      height: adSize.height.toDouble(),
+                      child: _bannerAd == null
+                          // Nothing to render yet.
+                          ? const SizedBox()
+                          // The actual ad.
+                          : AdWidget(ad: _bannerAd!),
+                    ),
+
                     // Profile Section
                     Container(
                       margin: const EdgeInsets.only(top: 20),
@@ -82,6 +106,8 @@ class _ProfileViewState extends State<ProfileView> {
                         ],
                       ),
                     ),
+                    
+                    // Subscription Plan Section
                     Consumer<ProfileViewModel>(
                       builder: (context, ProfileViewModel profileViewModel, child) {
                         if (profileViewModel.isLoading == true) {
@@ -173,7 +199,16 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ),
                                   trailing: TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      // log event and send to google analytics
+                                      await profileViewModel.logEvent(
+                                        eventName: 'user_click_upgrade_subscription',
+                                        parameters: {
+                                          'username': context.read<AuthProvider>().user!.username,
+                                          'email': context.read<AuthProvider>().user!.email,
+                                          'available_tokens': profileViewModel.tokenUsageResponse!.availableTokens,
+                                        },
+                                      );
                                       Navigator.pushNamed(context, '/subscription');
                                     },
                                     style: ButtonStyle(
@@ -360,7 +395,43 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
   void _fetchTokenUsage() async {
     await _profileViewModel.checkIsPremiumUser();
   }
+
+  /// Loads a banner ad.
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: adSize,
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
+  }
+  
 }

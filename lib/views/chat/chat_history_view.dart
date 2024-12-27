@@ -174,7 +174,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
       assistantModel: EnumAssistantModel.DIFY, 
       assistantId: EnumAssisstantId.GPT_4O_MINI,
       cursor: null,
-      limit: 5,
+      limit: 7,
     );
   }
 
@@ -194,7 +194,7 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
       assistantModel: EnumAssistantModel.DIFY, 
       assistantId: EnumAssisstantId.GPT_4O_MINI,
       cursor: listConversationsViewModel.listConversationCursor ?? '',
-      limit: 5,
+      limit: 7,
     );
 
     setState(() {

@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:chatbot_agents/config/api_config.dart';
 import 'package:chatbot_agents/config/app_config.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/di/get_it_instance.dart';
+import 'package:chatbot_agents/firebase_options.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
 import 'package:chatbot_agents/service/ai_bot_service.dart';
+import 'package:chatbot_agents/service/analytics_service.dart';
 import 'package:chatbot_agents/service/email_service.dart';
 import 'package:chatbot_agents/service/knowledge_data_source_service.dart';
 import 'package:chatbot_agents/service/knowledge_service.dart';
@@ -27,8 +31,10 @@ import 'package:chatbot_agents/views/main/main_view.dart';
 import 'package:chatbot_agents/views/protected_route.dart';
 import 'package:chatbot_agents/views/register/register_view.dart';
 import 'package:chatbot_agents/views/subscription/subscription.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'view_models/prompt_view_model.dart';
@@ -68,7 +74,15 @@ void main() async {
   await dotenv.load();
   setup();
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    GetItInstance.getIt.registerSingleton<AnalyticsService>(AnalyticsService());
+
+    unawaited(MobileAds.instance.initialize());
+  } catch (e) {
+    print('-->Error occurs when initialized plugin: $e');
+  }
   // final accessToken = await SharedPreferencesUtil.getAccessToken();
   // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
 
@@ -105,6 +119,9 @@ class MyApp extends StatelessWidget {
               ColorScheme.fromSeed(seedColor: AppColors.primaryBackground),
           useMaterial3: true,
         ),
+        navigatorObservers: <NavigatorObserver>[
+          GetItInstance.getIt<AnalyticsService>().getAnalyticsObserver(),
+        ],
         initialRoute: "/login",
         routes: {
           '/login': (context) => const LoginView(),
@@ -113,7 +130,7 @@ class MyApp extends StatelessWidget {
           '/main': (context) => const ProtectedRoute(child: MainView()),
           '/subscription': (context) =>
               const ProtectedRoute(child: SubscriptionView()),
-          '/email-reply': (context) => ProtectedRoute(child: EmailReplyView()),
+          '/email-reply': (context) => const ProtectedRoute(child: EmailReplyView()),
         },
       ),
     );

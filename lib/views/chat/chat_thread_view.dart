@@ -168,15 +168,25 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                     );
                   }
 
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (conversationViewModel.isInLoadingMore == false) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
                     _scrollToBottomAnimated();
                   });
+                  }
+                  
 
                   return ListView.builder(
                     controller: _scrollController,
                     padding: EdgeInsets.all(5.0),
-                    itemCount: messages.length,
+                    itemCount: messages.length, // + (conversationViewModel.isInLoadingMore ? 1 : 0),
                     itemBuilder: (context, index) {
+                      /* if (index == 0 && conversationViewModel.isInLoadingMore) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.quaternaryBackground,
+                          ),
+                        );
+                      } */
                       final message = messages[index];
                       final isUserMessage = message.isUserMessage;
 
@@ -277,6 +287,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
 
   dynamic _pickImageError;
   String? _retrieveDataError;
+  
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _onImageButtonPressed(
@@ -744,6 +755,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   }
 
   void _fetchMoreConversationHistory() async {
+    print('cursor: ${_conversationViewModel.conversationChatCursor}');
     await _conversationViewModel.getMoreConversationHistory(
                       conversationId: widget.conversationId, 
                       assistantModel: EnumAssistantModel.DIFY, 
