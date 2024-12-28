@@ -10,7 +10,7 @@ name: "Build & Release android app bundle"
 jobs:
   build:
     name: Build & Release android app bundle
-    runs-on: windows-latest
+    runs-on: windows-latest #ubuntu-latest #windows-latest
     steps:
       # - run: |
       #     cat > assets/.env <<EOF
@@ -53,12 +53,30 @@ jobs:
       - name: Load Google Service file
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $DATA | base64 -di > ./android/app/google-services.json
+        run: |
+          echo $env:DATA | Out-File -FilePath google-services-base64.txt
+          $base64 = Get-Content google-services-base64.txt
+          [System.Convert]::FromBase64String($base64) | Set-Content -Path ./android/app/google-services.json -Encoding Byte
+          Get-Content ./android/app/google-services.json
+
+      #echo $DATA | base64 -di > ./android/app/google-services.json
+      
       # 2. install Java (for build Android)
       - uses: actions/setup-java@v3
         with:
           java-version: '17.x'
           distribution: 'temurin'
+          cache: gradle
+      
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
        
       # 3. install Flutter
       - uses: subosito/flutter-action@v2
