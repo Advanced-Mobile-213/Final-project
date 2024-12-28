@@ -102,7 +102,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number }}
+          tag: v1.0.${{ github.run_number }}-${{ github.sha }}
           token: ${{ secrets.TOKEN_CICD }}
       
       # 9. Push APK Release and AAB into GitHub Releases
@@ -112,13 +112,14 @@ jobs:
           artifacts: |
             build/app/outputs/apk/release/*.apk
             build/app/outputs/bundle/release/*.aab
-          tag: v1.0.${{ github.run_number }}
+          tag: v1.0.${{ github.run_number }}-${{ github.sha }}
           token: ${{ secrets.TOKEN_CICD }}
         
        # 10. Deploy APK into Firebase App Distribution
       - name: Deploy APK to Firebase
         run: firebase appdistribution:distribute build/app/outputs/apk/debug/app-debug.apk \
              --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} 
+             --release-notes "Release notes for this build - AMD2024"
              
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
