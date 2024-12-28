@@ -100,7 +100,7 @@ jobs:
        # 10. Deploy APK into Firebase App Distribution
       - name: Deploy APK to Firebase
         run: firebase appdistribution:distribute build/app/outputs/apk/debug/app-debug.apk \
-             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} #1:667330785565:android:29b374aac9c0ea8dfcf1f4  # App ID of Firebase
+             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} 
              
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
