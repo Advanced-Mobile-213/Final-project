@@ -24,10 +24,10 @@ jobs:
       #     KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}
       #     EOF
 
-      # 1. Kiểm tra mã nguồn từ repository
+      # 1. checkout source code in repository
       - uses: actions/checkout@v3
 
-      # 2. Tạo file .env
+      # create file .env
       - name: Create .env file
         run: |
           echo "FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}" >> assets/.env
@@ -49,36 +49,37 @@ jobs:
           echo "KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}" >> ./.env
       #echo "FIREBASE_CONFIG_DEV=${{ secrets.FIREBASE_CONFIG_DEV }}" > ./android/app/google-services.json         
 
+      # Load Google Service file
       - name: Load Google Service file
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: echo $DATA | base64 -di > ./android/app/google-services.json
-      # 2. Cài đặt Java (cho build Android)
+      # 2. install Java (for build Android)
       - uses: actions/setup-java@v3
         with:
           java-version: '17.x'
           distribution: 'temurin'
        
-      # 3. Thiết lập Flutter
+      # 3. install Flutter
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.24.3'
 
-      # 4. Cấu hình Flutter và kiểm tra môi trường
+      # 4. config Flutter and check environment
       - run: flutter config --no-analytics
       - run: flutter doctor
 
-      # 5. Cài dependencies
+      # 5. install dependencies
       - run: flutter pub get
 
-      # # 6. Chạy kiểm thử tự động
+      # # 6. run automation testing
       # - run: flutter test
 
-      # 7. Build APK debug và AAB
+      # 7. Build APK debug and AAB
       - run: flutter build apk --debug --split-per-abi
       - run: flutter build appbundle --release
 
-      # 8. Push APK Debug lên GitHub Releases
+      # 8. Push APK Debug into GitHub Releases
       - name: Push to Debug Releases
         uses: ncipollo/release-action@v1
         with:
@@ -86,7 +87,7 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN_CICD }}
       
-      # 9. Push APK Release và AAB lên GitHub Releases
+      # 9. Push APK Release and AAB into GitHub Releases
       - name: Push to Release
         uses: ncipollo/release-action@v1
         with:
@@ -96,10 +97,10 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN_CICD }}
         
-       # 10. Deploy APK lên Firebase App Distribution
+       # 10. Deploy APK into Firebase App Distribution
       - name: Deploy APK to Firebase
         run: firebase appdistribution:distribute build/app/outputs/apk/debug/app-debug.apk \
-             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} #1:667330785565:android:29b374aac9c0ea8dfcf1f4  # App ID của Firebase
+             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} #1:667330785565:android:29b374aac9c0ea8dfcf1f4  # App ID of Firebase
              
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
