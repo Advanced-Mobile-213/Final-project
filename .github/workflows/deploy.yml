@@ -102,7 +102,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number }}-${{ github.sha }}
+          tag: v1.0.${{ github.run_number }}-apk-debug-${{ github.sha }}
           token: ${{ secrets.TOKEN_CICD }}
       
       # 9. Push APK Release and AAB into GitHub Releases
@@ -112,7 +112,7 @@ jobs:
           artifacts: |
             build/app/outputs/apk/release/*.apk
             build/app/outputs/bundle/release/*.aab
-          tag: v1.0.${{ github.run_number }}-${{ github.sha }}
+          tag: v1.0.${{ github.run_number }}-aab-apk-release-${{ github.sha }}
           token: ${{ secrets.TOKEN_CICD }}
         
        # 10. Deploy APK into Firebase App Distribution
