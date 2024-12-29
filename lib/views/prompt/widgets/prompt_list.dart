@@ -9,6 +9,7 @@ import 'package:chatbot_agents/views/prompt/widgets/detail_prompt_pop_up.dart';
 import 'package:chatbot_agents/views/prompt/widgets/update_prompt_pop_up.dart';
 import '../../../constants/spacing.dart';
 import '../../../constants/prompt_category.dart';
+import 'package:chatbot_agents/widgets/custom_dialog.dart';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
@@ -175,10 +176,25 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     }
 
     void onPromptDeleted(Prompt prompt) {
+      Navigator.of(context).pop();
       promptViewModel.deletePrompt(prompt.id!);
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Prompt deleted successfully')),
+      );
+    }
+
+    void onPromptDeletePressed(Prompt prompt) {
+      showCustomDialog(
+        context,
+        'Delete prompt',
+        [
+          const Text(
+            'Are you sure you want to delete this prompt?',
+            style: _emptyTextStyle,
+          ),
+        ],
+        () => onPromptDeleted(prompt),
       );
     }
 
@@ -227,7 +243,7 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
               return PromptListItem(
                 filteredPromptList[index],
                 onPromptTap,
-                onPromptDeleted,
+                onPromptDeletePressed,
                 onPromptFavorite,
                 _showUpdatePromptDialog,
                 onPromptDetail,

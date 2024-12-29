@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'ai_bot_list_item.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:chatbot_agents/widgets/custom_dialog.dart';
 //import 'dart:developer';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
@@ -53,9 +54,23 @@ class _AiBotListState extends State<AiBotList> with WidgetsBindingObserver {
     });
   }
 
-  void onDeleteAiBotPressed(String id) async {
+  void onAiBotDelete(String id) async {
+    Navigator.of(context).pop();
     final aiBotViewModel = context.read<AiBotViewModel>();
     await aiBotViewModel.deleteAssistant(assistantId: id);
+  }
+
+  void onDeleteAiBotPressed(String id) {
+    showCustomDialog(
+        context,
+        "Delete assistant",
+        [
+          const Text(
+            "Are you sure you want to delete this assistant?",
+            style: _emptyTextStyle,
+          ),
+        ],
+        () => onAiBotDelete(id));
   }
 
   @override
