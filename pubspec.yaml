@@ -52,6 +52,7 @@ dependencies:
   google_sign_in: ^6.2.2
   file_picker: ^8.1.4
   hyperlink: ^0.0.5
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

@@ -4,30 +4,31 @@ import 'package:provider/provider.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
-import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/models/ai_bot/chat_thread.dart';
 import '../widgets/user_chat_message.dart';
 import '../widgets/bot_chat_message.dart';
 
 const TextStyle _messageTextStyle = TextStyle(color: Colors.white);
 
-class PreviewTab extends StatefulWidget {
+class ThreadChatView extends StatefulWidget {
+  final ChatThread thread;
   final AiBot aiBot;
-  const PreviewTab(this.aiBot, {super.key});
+  const ThreadChatView({super.key, required this.thread, required this.aiBot});
 
   @override
-  State<PreviewTab> createState() => _PreviewTabState();
+  State<ThreadChatView> createState() => _ThreadChatViewState();
 }
 
-class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
+class _ThreadChatViewState extends State<ThreadChatView>
+    with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
   bool _isFetching = false;
   bool _isSending = false;
-  late String _openAiThreadIdPlay;
 
   @override
   void initState() {
     super.initState();
-    _openAiThreadIdPlay = widget.aiBot.openAiThreadIdPlay!;
     WidgetsBinding.instance.addObserver(this);
     _fetchMessages();
   }
@@ -36,7 +37,6 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
-
     super.dispose();
   }
 
@@ -59,12 +59,61 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
       });
       final aiBotViewModel = context.read<AiBotViewModel>();
       await aiBotViewModel.retrieveMessageOfThread(
-          openAiThreadId: _openAiThreadIdPlay);
+          openAiThreadId: widget.thread.openAiThreadId);
       _scrollToBottom();
       setState(() {
         _isFetching = false;
       });
     });
+  }
+
+  Widget _buildChatInput() {
+    final TextEditingController messageController = TextEditingController();
+    final aiBotViewModel = context.watch<AiBotViewModel>();
+
+    void onSendPress() async {
+      final message = messageController.text;
+      if (message.isNotEmpty) {
+        setState(() {
+          _isSending = true;
+        });
+        await aiBotViewModel.askAssistant(
+          assistantId: widget.aiBot.id,
+          message: message,
+          openAiThreadId: widget.thread.openAiThreadId,
+        );
+        messageController.clear();
+        _scrollToBottom();
+        setState(() {
+          _isSending = false;
+        });
+      }
+    }
+
+    return SizedBox(
+      height: 80,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: TextField(
+              controller: messageController,
+              style: _messageTextStyle,
+              decoration: const InputDecoration(
+                hintText: 'Type a message',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send, color: Colors.white),
+            onPressed: onSendPress,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildChatList() {
@@ -99,84 +148,11 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildChatInput() {
-    final TextEditingController messageController = TextEditingController();
-    final aiBotViewModel = context.watch<AiBotViewModel>();
-
-    void onSendPress() async {
-      final message = messageController.text;
-      if (message.isNotEmpty) {
-        setState(() {
-          _isSending = true;
-        });
-        await aiBotViewModel.askAssistant(
-          assistantId: widget.aiBot.id,
-          message: message,
-          openAiThreadId: _openAiThreadIdPlay,
-        );
-        messageController.clear();
-        _scrollToBottom();
-        setState(() {
-          _isSending = false;
-        });
-      }
-    }
-
-    void onNewPlaygroundPress() async {
-      final aiBotViewModel = context.read<AiBotViewModel>();
-
-      setState(() {
-        _isFetching = true;
-      });
-      String? newPlaygroundID = await aiBotViewModel
-          .updateAssistantWithNewThreadPlayground(assistantId: widget.aiBot.id);
-      if (newPlaygroundID != null) {
-        setState(() {
-          _openAiThreadIdPlay = newPlaygroundID;
-        });
-      }
-      setState(() {
-        _isFetching = false;
-      });
-    }
-
-    return SizedBox(
-      height: 80,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: onNewPlaygroundPress,
-            icon: const Icon(
-              Icons.chat,
-              color: AppColors.quaternaryBackground,
-            ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: messageController,
-              style: _messageTextStyle,
-              decoration: const InputDecoration(
-                hintText: 'Type a message',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send, color: Colors.white),
-            onPressed: onSendPress,
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.max,
+    return Screen(
+      title: widget.thread.threadName,
+      canGoBack: true,
       children: [
         Expanded(
           child: _buildChatList(),

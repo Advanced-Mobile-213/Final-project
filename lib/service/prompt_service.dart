@@ -4,6 +4,7 @@ import '../utils/network/jarvis_api_client.dart';
 import 'package:chatbot_agents/models/prompt/get_prompts_response.dart';
 import 'package:chatbot_agents/models/prompt/prompt.dart';
 import 'package:chatbot_agents/constants/prompt_category.dart';
+import 'dart:developer';
 
 class PromptService {
   late final JarvisApiClient jarvisApiClient =
@@ -27,18 +28,16 @@ class PromptService {
         if (isPublic != null) 'isPublic': isPublic,
       };
 
-
       final response = await jarvisApiClient.authenticatedDio
           .get("/api/v1/prompts", queryParameters: queryParams);
 
-      if (response.statusCode! <300 && response.statusCode! >= 200) {
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
         return GetPromptsResponse.fromJson(response.data);
       }
-   
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
     return null;
   }
@@ -64,14 +63,13 @@ class PromptService {
         },
       );
 
-      if (response.statusCode! <300 && response.statusCode! >= 200) {
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
         return Prompt.fromJson(response.data);
       }
-      
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
     return null;
   }
@@ -98,14 +96,13 @@ class PromptService {
         },
       );
 
-      if (response.statusCode! <300 && response.statusCode! >= 200) {
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
         return true;
       }
-      
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
 
     return false;
@@ -117,14 +114,13 @@ class PromptService {
         "/api/v1/prompts/$id",
       );
 
-      if (response.statusCode! <300 && response.statusCode! >= 200) {
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
         return true;
       }
-      
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
 
     return false;
@@ -132,21 +128,23 @@ class PromptService {
 
   Future<void> addPromptToFavorite(String id) async {
     try {
-      await jarvisApiClient.authenticatedDio.post("/api/v1/prompts/$id/favorite");
+      await jarvisApiClient.authenticatedDio
+          .post("/api/v1/prompts/$id/favorite");
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
   }
 
   Future<void> removePromptFromFavorite(String id) async {
     try {
-      await jarvisApiClient.authenticatedDio.delete("/api/v1/prompts/$id/favorite");
+      await jarvisApiClient.authenticatedDio
+          .delete("/api/v1/prompts/$id/favorite");
     } on DioException catch (e) {
-      print("--> An DioException occurs: ${e}");
+      log("--> An DioException occurs: $e");
     } catch (e) {
-      print("--> An error occurs: ${e}");
+      log("--> An error occurs: $e");
     }
   }
 }
