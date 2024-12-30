@@ -5,6 +5,7 @@ import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'dart:developer';
 import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 import 'package:chatbot_agents/models/ai_bot/preview_message.dart';
+import 'package:chatbot_agents/models/ai_bot/chat_thread.dart';
 
 class AiBotService {
   late final KnowledgeBaseApiClient knowledgeBaseApiClient =
@@ -199,6 +200,34 @@ class AiBotService {
     return null;
   }
 
+  Future<ChatThread?> createThread({
+    required String assistantId,
+    String? firstMessage,
+  }) async {
+    final postData = <String, dynamic>{
+      'assistantId': assistantId,
+      if (firstMessage != null) 'firstMessage': firstMessage,
+    };
+
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/ai-assistant/thread',
+        data: postData,
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        return ChatThread.fromJson(response.data);
+      } else {
+        return null;
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in createThead of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in createThead of AiBot Service: $e");
+    }
+    return null;
+  }
+
   Future<String?> updateAssistantWithNewThreadPlayground(
       {required String assistantId, String? firstMessage}) async {
     final postData = <String, dynamic>{
@@ -271,6 +300,42 @@ class AiBotService {
       log("--> An DioException occurs in retrieveMessageOfThread of AiBot Service: $e");
     } catch (e) {
       log("--> An error occurs in retrieveMessageOfThread of AiBot Service: $e");
+    }
+    return null;
+  }
+
+  Future<List<ChatThread>?> getThreads({
+    required String assistantId,
+    String? q,
+    String? order,
+    String? orderField,
+    int? offset,
+    int? limit,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{
+        if (q != null) 'q': q,
+        if (order != null) 'order': order,
+        if (orderField != null) 'order_field': orderField,
+        if (offset != null) 'offset': offset,
+        if (limit != null) 'limit': limit,
+      };
+
+      final response = await knowledgeBaseApiClient.authenticatedDio.get(
+        '/kb-core/v1/ai-assistant/$assistantId/threads',
+        queryParameters: queryParams,
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        if (response.data != null && response.data['data'] != null) {
+          final List<dynamic> data = response.data['data'];
+          return data.map((e) => ChatThread.fromJson(e)).toList();
+        }
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in getThreads of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in getThreads of AiBot Service: $e");
     }
     return null;
   }

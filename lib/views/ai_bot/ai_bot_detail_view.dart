@@ -9,6 +9,7 @@ import '../../constants/app_colors.dart';
 import './sub_views/knowledge_tab.dart';
 import './sub_views/preview_tab.dart';
 import './sub_views/prompt_tab.dart';
+import './sub_views/thread_tab.dart';
 import '../../constants/spacing.dart';
 import 'package:provider/provider.dart';
 
@@ -67,9 +68,10 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
           labelStyle: TextStyle(color: Colors.white, fontSize: 12),
           indicatorColor: Colors.white,
           tabs: [
+            Tab(text: 'Thread'),
             Tab(text: 'Preview'),
             Tab(text: 'Knowledge'),
-            Tab(text: 'Persona & Prompt'),
+            Tab(text: 'Prompt'),
           ],
         ),
         actions: [
@@ -88,6 +90,7 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
     if (aiBot != null) {
       content = TabBarView(
         children: [
+          ThreadTab(aiBot!),
           PreviewTab(aiBot!),
           KnowledgeTab(aiBot!),
           PromptTab(aiBot!),
@@ -98,7 +101,8 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
     }
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
+      initialIndex: 1, // Preview tab
       child: Screen(
         appBar: aiBot != null ? _tabBarHeader(aiBot!) : null,
         children: [Expanded(child: content)],
