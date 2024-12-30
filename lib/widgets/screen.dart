@@ -42,7 +42,8 @@ class Screen extends StatelessWidget {
           Expanded(
             child: Align(
               alignment: titleAlignment,
-              child: Text(title!, style: _titleTextStyle),
+              child: Text(title!,
+                  style: _titleTextStyle, overflow: TextOverflow.ellipsis),
             ),
           ),
         ],

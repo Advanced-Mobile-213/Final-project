@@ -3,22 +3,10 @@ import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:gap/gap.dart';
 import 'package:chatbot_agents/constants/spacing.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:chatbot_agents/utils/url.dart';
-import 'package:chatbot_agents/utils/snack_bar_util.dart';
-import 'package:chatbot_agents/widgets/text_copy_icon.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
-
-final BoxDecoration _userMessageDecoration = BoxDecoration(
-  color: Colors.blue[400],
-  borderRadius: BorderRadius.circular(15),
-);
-
-final BoxDecoration _assistantMessageDecoration = BoxDecoration(
-  color: Colors.grey[800],
-  borderRadius: BorderRadius.circular(15),
-);
+import '../widgets/user_chat_message.dart';
+import '../widgets/bot_chat_message.dart';
 
 const TextStyle _messageTextStyle = TextStyle(color: Colors.white);
 
@@ -31,7 +19,6 @@ class PreviewTab extends StatefulWidget {
 }
 
 class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
-  late SnackBarUtil snackBarUtil;
   final ScrollController _scrollController = ScrollController();
   bool _isFetching = false;
   bool _isSending = false;
@@ -42,7 +29,6 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
     super.initState();
     _openAiThreadIdPlay = widget.aiBot.openAiThreadIdPlay!;
     WidgetsBinding.instance.addObserver(this);
-    snackBarUtil = SnackBarUtil(context);
     _fetchMessages();
   }
 
@@ -81,69 +67,6 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
     });
   }
 
-  Widget _buildUserMessage(String message) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Flexible(
-          child: Container(
-            padding: EdgeInsets.all(spacing[2]),
-            decoration: _userMessageDecoration,
-            child: Text(
-              message,
-              textDirection: TextDirection.ltr,
-              maxLines: null,
-              style: _messageTextStyle,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAssistantReply(String message, bool canCopy) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const CircleAvatar(
-          backgroundColor: Colors.transparent,
-          child: Icon(Icons.android, color: Colors.white),
-        ),
-        SizedBox(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.8,
-            ),
-            child: Container(
-              padding: EdgeInsets.all(spacing[2]),
-              decoration: _assistantMessageDecoration,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MarkdownBody(
-                    data: message,
-                    onTapLink: (text, href, title) async {
-                      if (href != null) {
-                        await openUrl(href);
-                      }
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                      p: _messageTextStyle,
-                      h1: _messageTextStyle,
-                      h3: _messageTextStyle,
-                      blockquote: _messageTextStyle,
-                    ),
-                  ),
-                  if (canCopy) TextCopyIcon(message),
-                ],
-              ),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
   Widget _buildChatList() {
     final aiBotViewModel = context.watch<AiBotViewModel>();
 
@@ -157,19 +80,21 @@ class _PreviewTabState extends State<PreviewTab> with WidgetsBindingObserver {
 
     return ListView.separated(
       controller: _scrollController,
-      itemCount: aiBotViewModel.previewMessages.length + (_isSending ? 1 : 0),
+      itemCount: aiBotViewModel.messages.length + (_isSending ? 1 : 0),
       separatorBuilder: (context, index) => Gap(spacing[2]),
       itemBuilder: (context, index) {
-        if (index == aiBotViewModel.previewMessages.length) {
-          return _buildAssistantReply('...', false);
-        }
-
-        final message = aiBotViewModel.previewMessages[index];
-        if (message.role == 'assistant') {
-          return _buildAssistantReply(message.message, true);
+        Widget messageWidget;
+        if (index == aiBotViewModel.messages.length) {
+          messageWidget = const BotChatMessage('...', false);
         } else {
-          return _buildUserMessage(message.message);
+          final message = aiBotViewModel.messages[index];
+          if (message.role == 'assistant') {
+            messageWidget = BotChatMessage(message.message, true);
+          } else {
+            messageWidget = UserChatMessage(message.message);
+          }
         }
+        return messageWidget;
       },
     );
   }

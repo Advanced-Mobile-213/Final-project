@@ -53,7 +53,6 @@ class AiBotListItem extends StatelessWidget {
         ),
         decoration: _containerDecoration,
         child: Row(
-
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(

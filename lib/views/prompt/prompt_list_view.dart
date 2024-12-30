@@ -27,7 +27,7 @@ class _PromptListViewState extends State<PromptListView> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return AddPromptPopUpDialog();
+          return const AddPromptPopUpDialog();
         });
   }
 
