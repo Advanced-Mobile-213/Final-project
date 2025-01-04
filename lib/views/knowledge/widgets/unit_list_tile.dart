@@ -1,5 +1,6 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/models/knowledge/knowledge_unit.dart';
+import 'package:chatbot_agents/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
 class UnitListTile extends StatefulWidget {
@@ -45,7 +46,7 @@ class _UnitListTileState extends State<UnitListTile> {
           ),
         ),
         subtitle: Text(
-          knowledgeUnit.updatedAt.toString(),
+          StringUtils.formatDate(knowledgeUnit.updatedAt!),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: const TextStyle(

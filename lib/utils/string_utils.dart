@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class StringUtils {
   static List<String> getAllPlacehoders(String input) {
     RegExp regExp = RegExp(r'\[(.*?)\]');
@@ -19,6 +21,14 @@ class StringUtils {
         return match.group(0)!; // Return the original placeholder if no value is available
       }
     );
+  }
+
+  static String formatDate(String dateString) {
+    // Parse the input string into a DateTime object
+    DateTime dateTime = DateTime.parse(dateString);
+    // Format the DateTime object to a more user-friendly format
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime);
+    return formattedDate;
   }
 
 }

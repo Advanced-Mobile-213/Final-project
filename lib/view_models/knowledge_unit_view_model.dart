@@ -85,6 +85,7 @@ class KnowledgeUnitViewModel extends ChangeNotifier {
       }
     } catch (e) {
       log('--> Error in uploadFromWebsite of KnowledgeUnitViewModel: $e');
+      return "Please try another Web URL";
     }
     return null;
   }
