@@ -1,10 +1,15 @@
+import 'package:chatbot_agents/constants/ad_unit_id.dart';
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/provider/auth_provider.dart';
+import 'package:chatbot_agents/view_models/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {
+  
+
   @override
   State<ProfileView> createState() => _ProfileViewState();
 }
@@ -12,11 +17,21 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> {
 
   late bool isLoggingOut;
+  late final ProfileViewModel _profileViewModel;
+
+  // ads
+  final String adUnitId = AdUnitId.bannerAdUnitId;
+  AdSize adSize = AdSize.banner;
+  
+  /// The banner ad to show. This is `null` until the ad is actually loaded.
+  BannerAd? _bannerAd;
 
   @override void initState() {
     super.initState();
-    // TODO: implement initState
     isLoggingOut = false;
+    _profileViewModel = context.read<ProfileViewModel>();
+    _fetchTokenUsage();
+    _loadAd();
   }
 
   @override
@@ -42,6 +57,18 @@ class _ProfileViewState extends State<ProfileView> {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: <Widget>[
+
+                    // Ads Section
+                    SizedBox(
+                      width: adSize.width.toDouble(),
+                      height: adSize.height.toDouble(),
+                      child: _bannerAd == null
+                          // Nothing to render yet.
+                          ? const SizedBox()
+                          // The actual ad.
+                          : AdWidget(ad: _bannerAd!),
+                    ),
+
                     // Profile Section
                     Container(
                       margin: const EdgeInsets.only(top: 20),
@@ -79,119 +106,155 @@ class _ProfileViewState extends State<ProfileView> {
                         ],
                       ),
                     ),
+                    
                     // Subscription Plan Section
-                    Container(
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.secondaryBackground,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColors.quaternaryBackground,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            leading: const Icon(FontAwesomeIcons.infinity),
-                            title: const Text(
-                              'Premium Plan',
-                              style: TextStyle(
-                                color: AppColors.primaryText,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                    Consumer<ProfileViewModel>(
+                      builder: (context, ProfileViewModel profileViewModel, child) {
+                        if (profileViewModel.isLoading == true) {
+                          return const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.quaternaryBackground,
+                            );
+
+                        } else if (profileViewModel.isPremiumUser == true) {
+                          // Subscription Plan Section
+                          return Container(
+                            margin: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.secondaryBackground,
                               ),
+                              borderRadius: BorderRadius.circular(10),
+                              color: AppColors.quaternaryBackground,
                             ),
-                            trailing: TextButton(
-                              onPressed: () {
-                                // Add your onPressed code here
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
-                              ),
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(
-                                  color: AppColors.quaternaryText,
-                                  fontSize: 20,
+                            child: Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: const Icon(FontAwesomeIcons.infinity),
+                                  title: const Text(
+                                    'Premium Plan',
+                                    style: TextStyle(
+                                      color: AppColors.primaryText,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  trailing: TextButton(
+                                    onPressed: () {
+                                      // Add your onPressed code here
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
+                                    ),
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: AppColors.quaternaryText,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          const ListTile(
-                            leading: Text(
-                              'Tokens',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.primaryText,
-                              ),
-                            ),
-                            trailing: Text(
-                              'Unlimited',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.primaryText,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Free Plan Section
-                    Container(
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: AppColors.secondaryBackground,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColors.quaternaryBackground,
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            leading: const Icon(Icons.lock),
-                            title: const Text(
-                              'Free Plan',
-                              style: TextStyle(
-                                color: AppColors.primaryText,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: TextButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, '/subscription');
-                              },
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
-                              ),
-                              child: const Text(
-                                'Upgrade',
-                                style: TextStyle(
-                                  color: AppColors.quaternaryText,
-                                  fontSize: 20,
+                                const ListTile(
+                                  leading: Text(
+                                    'Tokens',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    'Unlimited',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
                                 ),
+                              ],
+                            ),
+                          );
+                              
+                        } else if (profileViewModel.isPremiumUser == false) {
+                          // Free Plan Section
+                          return Container(
+                            margin: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.secondaryBackground,
                               ),
+                              borderRadius: BorderRadius.circular(10),
+                              color: AppColors.quaternaryBackground,
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: const Icon(Icons.lock),
+                                  title: const Text(
+                                    'Free Plan',
+                                    style: TextStyle(
+                                      color: AppColors.primaryText,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  trailing: TextButton(
+                                    onPressed: () async {
+                                      // log event and send to google analytics
+                                      await profileViewModel.logEvent(
+                                        eventName: 'user_click_upgrade_subscription',
+                                        parameters: {
+                                          'username': context.read<AuthProvider>().user!.username,
+                                          'email': context.read<AuthProvider>().user!.email,
+                                          'available_tokens': profileViewModel.tokenUsageResponse!.availableTokens,
+                                        },
+                                      );
+                                      Navigator.pushNamed(context, '/subscription');
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStateProperty.all(AppColors.primaryBackground),
+                                    ),
+                                    child: const Text(
+                                      'Upgrade',
+                                      style: TextStyle(
+                                        color: AppColors.quaternaryText,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ListTile(
+                                  leading: const Text(
+                                    'Tokens',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  trailing: Text(
+                                    '${profileViewModel.tokenUsageResponse!.availableTokens}/${profileViewModel.tokenUsageResponse!.totalTokens}',
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                    
+                        }
+                        
+                        return Container(
+                          child: Text(
+                            'An error occurred',
+                            style: TextStyle(
+                              color: AppColors.quaternaryText,
+                              fontSize: 20,
                             ),
                           ),
-                          const ListTile(
-                            leading: Text(
-                              'Tokens',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.primaryText,
-                              ),
-                            ),
-                            trailing: Text(
-                              '30/50',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: AppColors.primaryText,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      }
                     ),
                     // General Section
                     Container(
@@ -331,4 +394,44 @@ class _ProfileViewState extends State<ProfileView> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  void _fetchTokenUsage() async {
+    await _profileViewModel.checkIsPremiumUser();
+  }
+
+  /// Loads a banner ad.
+  void _loadAd() {
+    final bannerAd = BannerAd(
+      size: adSize,
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        // Called when an ad is successfully received.
+        onAdLoaded: (ad) {
+          if (!mounted) {
+            ad.dispose();
+            return;
+          }
+          setState(() {
+            _bannerAd = ad as BannerAd;
+          });
+        },
+        // Called when an ad request failed.
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('BannerAd failed to load: $error');
+          ad.dispose();
+        },
+      ),
+    );
+
+    // Start loading.
+    bannerAd.load();
+  }
+  
 }

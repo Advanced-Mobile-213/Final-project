@@ -186,7 +186,7 @@ class ConversationService {
               },
             };
         
-        print('send data: $temp');
+        //print('send data: $temp');
 
         final response = await _jarvisApiClient
           .authenticatedDio

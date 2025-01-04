@@ -2,34 +2,31 @@
     "name": "chatbot_agents",
     "short_name": "chatbot_agents",
     "start_url": ".",
-    "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
+    "permissions": [
+        "activeTab",
+        "storage"
+    ],
     "description": "HCMUS Advanced Mobile Course Final Project",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
-    "icons": [
-        {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
-    ]
+    "version": "1.0.0",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' ; object-src 'self'"
+    },
+    "sidebar_action": {
+        "default_panel": "index.html",
+        "default_icon": "icons/Icon-192.png",
+        "default_title": "Chatbot Sidebar"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "icons/Icon-192.png"
+    },
+    "icons": {
+        "192": "icons/Icon-192.png",
+        "512": "icons/Icon-512.png"
+    },
+    "manifest_version": 3,
+    "display": "standalone",
+    "theme_color": "#0175C2"
 }

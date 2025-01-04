@@ -5,10 +5,15 @@ import 'package:chatbot_agents/service/conversation_service.dart';
 import 'package:flutter/material.dart';
 
 class ListConversationsViewModel extends ChangeNotifier {
+  final ConversationService _conversationService = GetItInstance.getIt<ConversationService>();
+  
   ListThreadChatModel? conversations;
+  ListThreadChatModel? moreConversations;
   MessageResponse? messageResponseDto;
   bool isLoading = false;
-  final ConversationService _conversationService = GetItInstance.getIt<ConversationService>();
+  String? listConversationCursor;
+  bool isLoadingMore = false;
+  bool isInNewConversation = false;
 
   Future<void> getConversations({
     required String assistantModel, 
@@ -19,15 +24,70 @@ class ListConversationsViewModel extends ChangeNotifier {
     // Fetch conversation from the server
     try {
       isLoading = true;
+      if (isInNewConversation) {
+        isInNewConversation = false;
+      } else {
+        listConversationCursor = null;
+      }
+
+      conversations = null;
       conversations = await _conversationService.getConversations(
         assistantModel: assistantModel,
         assistantId: assistantId,
         cursor: cursor,
         limit: limit,
       );
+      
+      if (conversations != null) {
+        listConversationCursor = conversations!.cursor;
+      }
+      
       isLoading = false;
       print('conversations: $conversations');
       //conversations = ListThreadChatModel.fromJson(response.data);
+      notifyListeners();
+    } catch (e) {
+      print("An error occurs: ${e}");
+      // Handle error
+    }
+  }
+
+  Future<void> getMoreConversations({
+    required String assistantModel, 
+    required String assistantId,
+    required String cursor, 
+    int? limit 
+  }) async {
+    // Fetch conversation from the server
+    try {
+      isLoadingMore = true;
+      moreConversations = null;
+
+      moreConversations = await _conversationService.getConversations(
+        assistantModel: assistantModel,
+        assistantId: assistantId,
+        cursor: cursor,
+        limit: limit,
+      );
+
+      
+      print('moreConversations: $moreConversations');
+      if (moreConversations != null && moreConversations!.items.isNotEmpty) {
+        if (conversations == null) {
+          conversations = moreConversations;
+        } else {
+          conversations!.items.addAll(moreConversations!.items);
+        }
+
+        
+          listConversationCursor = moreConversations!.cursor;
+
+          conversations!.cursor = moreConversations!.cursor;
+          conversations!.hasMore = moreConversations!.hasMore;
+          conversations!.limit = moreConversations!.limit;
+
+      }
+      isLoadingMore = false;
       notifyListeners();
     } catch (e) {
       print("An error occurs: ${e}");
