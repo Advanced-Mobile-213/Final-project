@@ -1,6 +1,3 @@
-
-import 'dart:math';
-
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
