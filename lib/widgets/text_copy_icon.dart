@@ -17,7 +17,11 @@ class TextCopyIcon extends StatelessWidget {
     }
 
     return IconButton(
-      icon: const Icon(Icons.copy, color: AppColors.hyperlinkText),
+      icon: const Icon(
+        Icons.copy,
+        size: 20,
+        color: AppColors.hyperlinkText,
+      ),
       onPressed: onCopy,
     );
   }
