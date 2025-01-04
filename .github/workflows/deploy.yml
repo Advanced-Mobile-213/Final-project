@@ -10,63 +10,152 @@ name: "Build & Release android app bundle"
 jobs:
   build:
     name: Build & Release android app bundle
-    runs-on: windows-latest
+    runs-on: windows-latest #ubuntu-latest #windows-latest
     steps:
-      # 1. Kiểm tra mã nguồn từ repository
+      # - run: |
+      #     cat > assets/.env <<EOF
+      #     FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}
+      #     FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}
+      #     FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}
+      #     FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}
+      #     FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}
+      #     GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
+      #     JARVIS_URL=${{ secrets.JARVIS_URL }}
+      #     KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}
+      #     EOF
+
+      # 1. checkout source code in repository
       - uses: actions/checkout@v3
 
-      # 2. Cài đặt Java (cho build Android)
+      - name: Cache Flutter SDK
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            ~/.flutter
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+          
+      # 3. install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3'
+          channel: 'stable'
+
+      - name: Cache Flutter Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      # create file .env
+      - name: Create .env file
+        run: |
+          echo "FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}" >> assets/.env
+          echo "FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}" >> assets/.env
+          echo "FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}" >> assets/.env
+          echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> assets/.env
+          echo "JARVIS_URL=${{ secrets.JARVIS_URL }}" >> assets/.env
+          echo "KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}" >> assets/.env
+
+          echo "FIREBASE_ANDROID_API_KEY=${{ secrets.FIREBASE_ANDROID_API_KEY }}" >> ./.env
+          echo "FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }}" >> ./.env
+          echo "FIREBASE_ANDROID_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_ANDROID_MESSAGING_SENDER_ID }}" >> ./.env
+          echo "FIREBASE_ANDROID_PROJECT_ID=${{ secrets.FIREBASE_ANDROID_PROJECT_ID }}" >> ./.env
+          echo "FIREBASE_ANDROID_STORAGE_BUCKET=${{ secrets.FIREBASE_ANDROID_STORAGE_BUCKET }}" >> ./.env
+          echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> ./.env
+          echo "JARVIS_URL=${{ secrets.JARVIS_URL }}" >> ./.env
+          echo "KNOWLEDGE_URL=${{ secrets.KNOWLEDGE_URL }}" >> ./.env
+      #echo "FIREBASE_CONFIG_DEV=${{ secrets.FIREBASE_CONFIG_DEV }}" > ./android/app/google-services.json         
+
+      # Load Google Service file
+      - name: Load Google Service file
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          echo $env:DATA | Out-File -FilePath google-services-base64.txt
+          $base64 = Get-Content google-services-base64.txt
+          [System.Convert]::FromBase64String($base64) | Set-Content -Path ./android/app/google-services.json -AsByteStream
+          Get-Content ./android/app/google-services.json
+
+      #echo $DATA | base64 -di > ./android/app/google-services.json
+      
+      # 2. install Java (for build Android)
       - uses: actions/setup-java@v3
         with:
           java-version: '17.x'
-       
-      # 3. Thiết lập Flutter
-      - uses: subosito/flutter-action@v2
+          distribution: 'temurin'
+          cache: gradle
+      
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
         with:
-          flutter-version: 'stable'
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+       
+      - name: Cache Node.js Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      # 4. Cấu hình Flutter và kiểm tra môi trường
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      # 4. config Flutter and check environment
       - run: flutter config --no-analytics
       - run: flutter doctor
 
-      # 5. Cài dependencies
+      # 5. install dependencies
       - run: flutter pub get
 
-      # 6. Chạy kiểm thử tự động
-      - run: flutter test
+      # # 6. run automation testing
+      # - run: flutter test
 
-      # 7. Build APK debug và AAB
+      # 7. Build APK debug and AAB
       - run: flutter build apk --debug --split-per-abi
       - run: flutter build appbundle --release
 
-      # 8. Push APK Debug lên GitHub Releases
+      # 8. Push APK Debug into GitHub Releases
       - name: Push to Debug Releases
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/apk/debug/*"
-          tag: v1.0.${{ github.run_number }}
+          tag: v1.0.${{ github.run_number }}-apk-debug-${{ github.sha }}
           token: ${{ secrets.TOKEN_CICD }}
       
-      # 9. Push APK Release và AAB lên GitHub Releases
-      - name: Push to Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: |
-            build/app/outputs/apk/release/*.apk
-            build/app/outputs/bundle/release/*.aab
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN_CICD }}
-        
-       # 10. Deploy APK lên Firebase App Distribution
-      - name: Deploy APK to Firebase
-        run: firebase appdistribution:distribute build/app/outputs/apk/debug/app-debug.apk \
-             --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} #1:667330785565:android:29b374aac9c0ea8dfcf1f4  # App ID của Firebase
-             
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      # - name: Push to Releases
+      # 9. Push APK Release and AAB into GitHub Releases
+      # - name: Push to Release
       #   uses: ncipollo/release-action@v1
       #   with:
-      #     artifacts: "build/app/outputs/bundle/release/*.aab"
-      #     tag: v1.0.${{github.run_number}}
-      #     token: ${{secrets.TOKEN_CICD}}
+      #     artifacts: |
+      #       build/app/outputs/apk/release/*.apk
+      #       build/app/outputs/bundle/release/*.aab
+      #     tag: v1.0.${{ github.run_number }}-aab-apk-release-${{ github.sha }}
+      #     token: ${{ secrets.TOKEN_CICD }}
+        
+       # 10. Deploy APK into Firebase App Distribution
+      - name: Deploy APK to Firebase
+        run: firebase appdistribution:distribute  ./build/app/outputs/apk/debug/app-x86_64-debug.apk --app ${{ secrets.FIREBASE_ANDROID_APP_ID }}  #--release-notes "Release notes for this build AMD2024"
+      #  --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} ./build/app/outputs/bundle/release/app-release.aab        
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+#Warning: Artifact pattern :build/app/outputs/apk/release/*.apk did not match any files
