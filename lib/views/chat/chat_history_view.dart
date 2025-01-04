@@ -17,11 +17,16 @@ class ChatHistoryView extends StatefulWidget {
 
 class _ChatHistoryViewState extends State<ChatHistoryView> {
   late final ListConversationsViewModel listConversationsViewModel;
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+
   bool _isCreatingThread = false;
+  
   
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     listConversationsViewModel = context.read<ListConversationsViewModel>();
     _fetchListConversations();
   }
@@ -31,114 +36,109 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
     // Get the screen height
     final screenHeight = MediaQuery.of(context).size.height;
     final iconSize = screenHeight * 0.05; // Adjust icon size based on screen height
-
+/*SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: */
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
-                            children: [
-                              const Text(
-                                'Chat History',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
+      body: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          
+          children: [
+            Expanded(
+              child: Center(
+                child: Container(
+                  height: screenHeight,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
+                          children: [
+                            const Text(
+                              'Chat History',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
                               ),
-                              const SizedBox(width: 5), // Space between title and number of threads
-                              Consumer<ListConversationsViewModel>(
-                                builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
-                                return Text(
-                                  '(${listConversationsViewModel.conversations?.items.length ?? 0})', // Number of chat threads
-                                  style: TextStyle(
-                                    color: Colors.grey[400], // Lighter text for the count
-                                    fontSize: 16,
-                                  ),
-                                );
-                              }),
-                              
-                            ],
-                          ),
-                        ),
-
-                        // Search Bar
-                        SearchInput(onChanged: (value) {}),
-                        const SizedBox(height: 16),
-
-                        // Chat Threads
-                        Expanded(
-                          child: Container(
-                            //scrollDirection: Axis.vertical,
-                            child: Consumer<ListConversationsViewModel>(
+                            ),
+                            const SizedBox(width: 5), // Space between title and number of threads
+                            Consumer<ListConversationsViewModel>(
                               builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
-                                if (listConversationsViewModel.isLoading==true) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (listConversationsViewModel.isLoading==false 
-                                && (listConversationsViewModel.conversations == null 
-                                || (listConversationsViewModel.conversations?.items.isEmpty ?? true))) {
-                                  return const Center(
-                                    child: Text(
-                                      'No chat threads found',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return ListView.builder(
-                                  itemCount: listConversationsViewModel.conversations?.items.length ?? 0,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final conversation = listConversationsViewModel.conversations?.items[index];
-                                    return ThreadChat(
-                                      conversationTitle: conversation?.title ?? '',
-                                      createdAt: conversation?.createdAt ?? 0,
-                                      conversationId: conversation?.id ?? '',
-                                    );
-                                  }
-                                );
+                              return Text(
+                                '(${listConversationsViewModel.conversations?.items.length ?? 0})', // Number of chat threads
+                                style: TextStyle(
+                                  color: Colors.grey[400], // Lighter text for the count
+                                  fontSize: 16,
+                                ),
+                              );
                             }),
-                          ),
+                            
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+
+                      // Search Bar
+                      SearchInput(onChanged: (value) {}),
+                      const SizedBox(height: 16),
+
+                       // Chat Threads
+                      Expanded(
+                        child: Consumer<ListConversationsViewModel>(
+                          builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
+                            if (listConversationsViewModel.isLoading==true) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (listConversationsViewModel.isLoading==false 
+                            && (listConversationsViewModel.conversations == null 
+                            || (listConversationsViewModel.conversations?.items.isEmpty ?? true))) {
+                              return const Center(
+                                child: Text(
+                                  'No chat threads found',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                            return ListView.builder(
+                              controller: _scrollController,
+                              itemCount: listConversationsViewModel.conversations?.items.length ?? 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                final conversation = listConversationsViewModel.conversations?.items[index];
+                                //return Container();
+                                return ThreadChat(
+                                  conversationTitle: conversation?.title ?? '',
+                                  createdAt: conversation?.createdAt ?? 0,
+                                  conversationId: conversation?.id ?? '',
+                                );
+                              }
+                            );
+                          }
+                        ),
+                      ),
+                      
+                      if (_isLoadingMore)
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          if (_isCreatingThread)
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: const ModalBarrier(
-                dismissible: false, 
-                color: Colors.black
-              ),
+              ),                 
             ),
-
-          if (_isCreatingThread)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
+          ],
       ),
+
       backgroundColor: AppColors.primaryBackground,
       // Floating Action Button to create new chat thread
       floatingActionButton: FloatingActionButton(
@@ -157,14 +157,49 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
           color: AppColors.quaternaryText,
         ),
       ),
+      
     );
   }
 
- void _fetchListConversations() async {
+  @override
+  void dispose() {
+
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _fetchListConversations() async {
     await listConversationsViewModel.getConversations(
       assistantModel: EnumAssistantModel.DIFY, 
-      assistantId: EnumAssisstantId.GPT_4O_MINI
+      assistantId: EnumAssisstantId.GPT_4O_MINI,
+      cursor: null,
+      limit: 7,
     );
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+      print('Reached the end of the list'); 
+      _fetchMoreConversations();
+    }
+  }
+
+  void _fetchMoreConversations() async {
+     setState(() {
+      _isLoadingMore = true;
+    });
+
+    await listConversationsViewModel.getMoreConversations(
+      assistantModel: EnumAssistantModel.DIFY, 
+      assistantId: EnumAssisstantId.GPT_4O_MINI,
+      cursor: listConversationsViewModel.listConversationCursor ?? '',
+      limit: 7,
+    );
+
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
   
   void _createNewThreadDialog(BuildContext context) {
@@ -244,3 +279,4 @@ class _ChatHistoryViewState extends State<ChatHistoryView> {
   }
   
 }
+                    

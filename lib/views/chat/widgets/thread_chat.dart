@@ -75,22 +75,22 @@ class _ThreadChatState extends State<ThreadChat> {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    onPressed: () {
+              // Row(
+              //   children: [
+              //     IconButton(
+              //       icon: const Icon(Icons.edit, color: Colors.white),
+              //       onPressed: () {
 
-                     }
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed:  () {
+              //        }
+              //     ),
+              //     IconButton(
+              //       icon: const Icon(Icons.delete, color: Colors.red),
+              //       onPressed:  () {
                         
-                    },
-                  ),
-                ],
-              ),
+              //       },
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),

@@ -25,7 +25,16 @@ final BoxDecoration _containerDecoration = BoxDecoration(
 
 class PublishedTypeList extends StatefulWidget {
   final String assistantId;
-  const PublishedTypeList(this.assistantId, {super.key});
+  final bool slack;
+  final bool telegram;
+  final bool messenger;
+  const PublishedTypeList({
+    super.key,
+    required this.assistantId,
+    required this.slack,
+    required this.telegram,
+    required this.messenger,
+  });
 
   @override
   State<PublishedTypeList> createState() => _PublishedTypeListState();
@@ -74,7 +83,21 @@ class _PublishedTypeListState extends State<PublishedTypeList>
     }
   }
 
-  Widget publishPlatform(BotConfiguration configuration) {
+  Widget renderPublishPlatform(BotConfiguration configuration) {
+    String getText(BotType type) {
+      String result = '';
+      switch (type) {
+        case BotType.slack:
+          result = 'Authorize';
+          break;
+        case BotType.telegram:
+        case BotType.messenger:
+          result = 'Open';
+          break;
+      }
+      return result;
+    }
+
     return (Container(
       decoration: _containerDecoration,
       padding: EdgeInsets.all(spacing[2]),
@@ -92,11 +115,19 @@ class _PublishedTypeListState extends State<PublishedTypeList>
           const Spacer(),
           TouchableOpacity(
             onTap: () => openUrl(configuration.metadata.redirect),
-            child: const Text('Open', style: _titleTextStyle),
+            child: Text(getText(configuration.type), style: _titleTextStyle),
           ),
         ],
       ),
     ));
+  }
+
+  BotConfiguration? getConfiguration(BotType way) {
+    if (botConfigurations == null) return null;
+    final result = botConfigurations!.where(
+      (element) => element.type == way,
+    );
+    return result.isNotEmpty ? result.first : null;
   }
 
   @override
@@ -113,13 +144,18 @@ class _PublishedTypeListState extends State<PublishedTypeList>
         if (isLoading)
           const Center(child: CircularProgressIndicator())
         else if (botConfigurations != null)
-          for (var configuration in botConfigurations!)
-            Column(
-              children: [
-                publishPlatform(configuration),
-                Gap(spacing[2]),
-              ],
-            ),
+          Column(
+            children: [
+              if (widget.slack)
+                renderPublishPlatform(getConfiguration(BotType.slack)!),
+              Gap(spacing[2]),
+              if (widget.telegram)
+                renderPublishPlatform(getConfiguration(BotType.telegram)!),
+              Gap(spacing[2]),
+              if (widget.messenger)
+                renderPublishPlatform(getConfiguration(BotType.messenger)!),
+            ],
+          ),
       ],
     );
   }

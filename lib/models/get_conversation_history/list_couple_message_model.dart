@@ -15,7 +15,7 @@ class ListCoupleMessageModel {
 
   factory ListCoupleMessageModel.fromJson(Map<String, dynamic> json) {
     return ListCoupleMessageModel(
-      cursor: json['cursor'],
+      cursor: json['cursor'] ?? '',
       hasMore: json['has_more'],
       limit: json['limit'],
       items: (json['items'] as List)

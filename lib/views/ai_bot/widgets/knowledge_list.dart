@@ -6,6 +6,7 @@ import 'knowledge_list_item.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:chatbot_agents/utils/snack_bar_util.dart';
+import 'package:chatbot_agents/widgets/custom_dialog.dart';
 
 const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
@@ -74,7 +75,8 @@ class _KnowledgeListState extends State<KnowledgeList>
     }
   }
 
-  void onDeleteKnowledgePress(Knowledge deletingKnowledge) async {
+  void onKnowledgeDelete(Knowledge deletingKnowledge) async {
+    Navigator.of(context).pop();
     final aiBotViewModel = context.read<AiBotViewModel>();
     await aiBotViewModel.removeKnowledgeFromAssistant(
       assistantId: widget.assistantId,
@@ -83,6 +85,20 @@ class _KnowledgeListState extends State<KnowledgeList>
     if (aiBotViewModel.success == true) {
       snackBarUtil.showSuccess('Knowledge removed successfully');
     }
+  }
+
+  void onDeleteKnowledgePress(Knowledge deletingKnowledge) {
+    showCustomDialog(
+      context,
+      "Remove knowledge",
+      [
+        const Text(
+          "Are you sure you want to remove this knowledge?",
+          style: _emptyTextStyle,
+        )
+      ],
+      () => onKnowledgeDelete(deletingKnowledge),
+    );
   }
 
   @override

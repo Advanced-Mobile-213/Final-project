@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/utils/app_utils.dart';
 import 'package:chatbot_agents/utils/validator_utils.dart';
@@ -22,15 +23,14 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  // final emailController = TextEditingController();//tien123@gmail.com //tien.hcmus.569@gmail.com
-  final emailController = TextEditingController(text: "hoangquoc2106@gmail.com");//tien123@gmail.com //tien.hcmus.569@gmail.com
+  // final emailController = TextEditingController();//tien123@gmail.com //tien.hcmus.569@gmail.com //tien.hcmus.569@gmail.com
+  final emailController = TextEditingController(text: "hoangquoc2106@gmail.com");// //tien.hcmus.569@gmail.com
   //hoangquoc2106@gmail.com
   // final emailController = TextEditingController();
   final passwordController = TextEditingController(text: 'Adv@ncedMobile213');//Adv@ncedMobile213
   // final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
               padding: const EdgeInsets.all(16.0),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  bool isWindows = Platform.isWindows;
+                  bool isWindows = !kIsWeb && Platform.isWindows;
                   double containerWidth = isWindows ? 400 : double.infinity;
 
                   return SizedBox(

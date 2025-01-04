@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:flutter/material.dart';
 import '../../models/ai_bot/ai_bot.dart';
 import 'package:gap/gap.dart';
@@ -8,30 +9,53 @@ import '../../constants/app_colors.dart';
 import './sub_views/knowledge_tab.dart';
 import './sub_views/preview_tab.dart';
 import './sub_views/prompt_tab.dart';
+import './sub_views/thread_tab.dart';
 import '../../constants/spacing.dart';
+import 'package:provider/provider.dart';
 
 class AiBotDetailView extends StatefulWidget {
-  final AiBot aiBot;
-  const AiBotDetailView({super.key, required this.aiBot});
+  final String assistantId;
+  const AiBotDetailView({super.key, required this.assistantId});
 
   @override
   State<AiBotDetailView> createState() => _AiBotDetailViewState();
 }
 
 class _AiBotDetailViewState extends State<AiBotDetailView> {
-  void onPublishBotPressed() {
+  AiBot? aiBot;
+
+  void getAssistant() async {
+    var aiBotViewModel = context.read<AiBotViewModel>();
+    var getAiBot = await aiBotViewModel.getAssistant(
+      assistantId: widget.assistantId,
+    );
+
+    if (getAiBot != null) {
+      setState(() {
+        aiBot = getAiBot;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAssistant();
+  }
+
+  void onPublishBotPressed(AiBot aiBot) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => AiBotPublishView(widget.aiBot)),
+      MaterialPageRoute(builder: (context) => AiBotPublishView(aiBot)),
     );
   }
 
-  PreferredSizeWidget get _tabBarHeader => AppBar(
+  PreferredSizeWidget _tabBarHeader(AiBot aiBot) => AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          widget.aiBot.assistantName,
+          aiBot.assistantName,
           style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -44,16 +68,17 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
           labelStyle: TextStyle(color: Colors.white, fontSize: 12),
           indicatorColor: Colors.white,
           tabs: [
+            Tab(text: 'Thread'),
             Tab(text: 'Preview'),
             Tab(text: 'Knowledge'),
-            Tab(text: 'Persona & Prompt'),
+            Tab(text: 'Prompt'),
           ],
         ),
         actions: [
           WideButton(
             text: 'Publish',
             width: 100,
-            onPressed: onPublishBotPressed,
+            onPressed: () => onPublishBotPressed(aiBot),
           ),
           Gap(spacing[2]),
         ],
@@ -61,21 +86,26 @@ class _AiBotDetailViewState extends State<AiBotDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Screen(
-        appBar: _tabBarHeader,
+    Widget content;
+    if (aiBot != null) {
+      content = TabBarView(
         children: [
-          Expanded(
-            child: TabBarView(
-              children: [
-                PreviewTab(widget.aiBot),
-                KnowledgeTab(widget.aiBot),
-                PromptTab(widget.aiBot),
-              ],
-            ),
-          )
+          ThreadTab(aiBot!),
+          PreviewTab(aiBot!),
+          KnowledgeTab(aiBot!),
+          PromptTab(aiBot!),
         ],
+      );
+    } else {
+      content = const Center(child: CircularProgressIndicator());
+    }
+
+    return DefaultTabController(
+      length: 4,
+      initialIndex: 1, // Preview tab
+      child: Screen(
+        appBar: aiBot != null ? _tabBarHeader(aiBot!) : null,
+        children: [Expanded(child: content)],
       ),
     );
   }

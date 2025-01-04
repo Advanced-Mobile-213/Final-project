@@ -1,10 +1,18 @@
 import 'package:chatbot_agents/di/get_it_instance.dart';
+import 'package:chatbot_agents/models/ai_bot/chat_thread.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_agents/models/ai_bot/ai_bot.dart';
 import 'package:chatbot_agents/service/ai_bot_service.dart';
 import 'dart:developer';
 import 'package:chatbot_agents/models/knowledge/knowledge.dart';
 import 'package:chatbot_agents/service/knowledge_service.dart';
+
+class Message {
+  final String role;
+  final String message;
+
+  Message({required this.role, required this.message});
+}
 
 class AiBotViewModel extends ChangeNotifier {
   final AiBotService _aiBotService = GetItInstance.getIt<AiBotService>();
@@ -16,6 +24,8 @@ class AiBotViewModel extends ChangeNotifier {
   bool success = false;
   List<Knowledge> importedKnowledges = [];
   List<Knowledge> unImportedKnowledges = [];
+  List<Message> messages = [];
+  List<ChatThread> threads = [];
 
   Future<void> createAssistant({
     required String assistantName,
@@ -51,7 +61,7 @@ class AiBotViewModel extends ChangeNotifier {
   Future<void> getAssistants({
     String? q,
     String? order,
-    String? order_field,
+    String? orderField,
     int? offset,
     int? limit,
     bool? isFavorite,
@@ -64,7 +74,7 @@ class AiBotViewModel extends ChangeNotifier {
       final response = await _aiBotService.getAssistants(
         q: q,
         order: order,
-        orderField: order_field,
+        orderField: orderField,
         offset: offset,
         limit: limit,
         isFavorite: isFavorite,
@@ -145,6 +155,33 @@ class AiBotViewModel extends ChangeNotifier {
       success = false;
       log('--> Error in deleteAssistant of AiBotViewModel: $e');
       notifyListeners();
+    }
+  }
+
+  Future<AiBot?> getAssistant({
+    required String assistantId,
+  }) async {
+    try {
+      isLoading = true;
+      success = false;
+      notifyListeners();
+      final response = await _aiBotService.getAssistant(
+        assistantId: assistantId,
+      );
+      isLoading = false;
+      if (response != null) {
+        success = true;
+      } else {
+        success = false;
+      }
+      notifyListeners();
+      return response;
+    } catch (e) {
+      isLoading = false;
+      success = false;
+      log('--> Error in getAssistant of AiBotViewModel: $e');
+      notifyListeners();
+      return null;
     }
   }
 
@@ -269,6 +306,176 @@ class AiBotViewModel extends ChangeNotifier {
       success = false;
       unImportedKnowledges = [];
       log('--> Error in getUnImportedKnowledgeInAssistant of AiBotViewModel: $e');
+      notifyListeners();
+    }
+  }
+
+  Future<ChatThread?> createThread({
+    required String assistantId,
+    String? firstMessage,
+  }) async {
+    try {
+      isLoading = true;
+      success = false;
+      notifyListeners();
+      final response = await _aiBotService.createThread(
+        assistantId: assistantId,
+        firstMessage: firstMessage,
+      );
+      isLoading = false;
+      if (response != null) {
+        success = true;
+        notifyListeners();
+        return response;
+      } else {
+        success = false;
+        notifyListeners();
+        return null;
+      }
+    } catch (e) {
+      isLoading = false;
+      success = false;
+      log('--> Error in createThead of AiBotViewModel: $e');
+      notifyListeners();
+    }
+    return null;
+  }
+
+  Future<String?> updateAssistantWithNewThreadPlayground(
+      {required String assistantId, String? firstMessage}) async {
+    try {
+      isLoading = true;
+      success = false;
+      notifyListeners();
+      final response =
+          await _aiBotService.updateAssistantWithNewThreadPlayground(
+        assistantId: assistantId,
+        firstMessage: firstMessage,
+      );
+      isLoading = false;
+      if (response != null) {
+        success = true;
+        await getAssistant(assistantId: assistantId);
+        messages = [];
+      } else {
+        success = false;
+      }
+      notifyListeners();
+      return response;
+    } catch (e) {
+      isLoading = false;
+      success = false;
+      log('--> Error in updateAssistantWithNewThreadPlayground of AiBotViewModel: $e');
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<void> askAssistant(
+      {required String assistantId,
+      required String message,
+      required openAiThreadId,
+      String? additionalInstruction}) async {
+    try {
+      log('--> Ask assistant: $assistantId, $message, $openAiThreadId');
+
+      isLoading = true;
+      success = false;
+      messages.add(Message(role: 'user', message: message));
+      notifyListeners();
+      final response = await _aiBotService.askAssistant(
+        assistantId: assistantId,
+        message: message,
+        openAiThreadId: openAiThreadId,
+        additionalInstruction: additionalInstruction,
+      );
+      isLoading = false;
+      if (response != null) {
+        success = true;
+        messages.add(Message(role: 'assistant', message: response));
+      } else {
+        success = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      success = false;
+
+      log('--> Error in askAssistant of AiBotViewModel: $e');
+      notifyListeners();
+    }
+  }
+
+  Future<void> retrieveMessageOfThread({
+    required String openAiThreadId,
+  }) async {
+    try {
+      isLoading = true;
+      success = false;
+      messages = [];
+      notifyListeners();
+      final response = await _aiBotService.retrieveMessageOfThread(
+        openAiThreadId: openAiThreadId,
+      );
+      isLoading = false;
+      if (response != null) {
+        success = true;
+        for (var element in response) {
+          messages.insert(
+            0,
+            Message(
+              role: element.role,
+              message: element.content[0].text.value,
+            ),
+          );
+        }
+      } else {
+        success = false;
+        messages = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      success = false;
+      messages = [];
+      log('--> Error in getPreviewMessages of AiBotViewModel: $e');
+      notifyListeners();
+    }
+  }
+
+  Future<void> getThreads({
+    required String assistantId,
+    String? q,
+    String? order,
+    String? orderField,
+    int? offset,
+    int? limit,
+  }) async {
+    try {
+      isLoading = true;
+      success = false;
+      notifyListeners();
+      final response = await _aiBotService.getThreads(
+        assistantId: assistantId,
+        q: q,
+        order: order,
+        orderField: orderField,
+        offset: offset,
+        limit: limit,
+      );
+      isLoading = false;
+      if (response != null) {
+        threads = response;
+        success = true;
+      } else {
+        success = false;
+      }
+      success = true;
+      notifyListeners();
+    } catch (e) {
+      isLoading = false;
+      success = false;
+      log('--> Error in getThreads of AiBotViewModel: $e');
       notifyListeners();
     }
   }
