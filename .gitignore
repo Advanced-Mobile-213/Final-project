@@ -350,3 +350,4 @@ ios/Runner/Info.plist
 /android/app/upload-keystore.jks
 firebase.json
 *.env
+data-demo.txt

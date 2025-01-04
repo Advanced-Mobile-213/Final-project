@@ -129,7 +129,7 @@ class _KnowledgeNewUnitFromLocalFileViewState
     try {
       _result = await FilePicker.platform.pickFiles(
         allowMultiple: false,
-        type: FileType.custom,
+        type: FileType.any,
       );
 
       if (_result != null && _result!.files.isNotEmpty) {
