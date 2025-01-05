@@ -19,9 +19,11 @@
 #### Hỏi đáp trên ảnh (8)
 #### Soạn email (9)
 #### Các chức năng nâng cao (10)
-- Link GitHub (branch advance-feature): 
-- Link demo: 
-## Link web: https://jarvis-amd.vercel.app/?fbclid=IwZXh0bgNhZW0CMTAAAR13uevcmO1TBpWS05kYuQ3CSS1GVtSyHsycgrWzAqlGNxjNAcx2r6jXIoI_aem_idwxMO3j7adqYUVIrniT-w#/login
+- Link GitHub (branch advance-feature): https://github.com/Advanced-Mobile-213/Final-project/tree/advance-feature
+- Link demo: https://youtu.be/B6Glk-zBQZU
+- Link file báo cáo: https://studenthcmusedu-my.sharepoint.com/:w:/g/personal/21120542_student_hcmus_edu_vn/EUk4XK1wxHRJvJm4ec10E_0BK9LQNhwOvonuI8xu3MR-YA?e=QfaEbK 
+- Link file phiếu tự chấm điểm & chia thành phần điểm: https://studenthcmusedu-my.sharepoint.com/:w:/g/personal/21120542_student_hcmus_edu_vn/EUGYgoY0KbpFrBGlFVPG-MEByh_PwjKAPozrhc4l9Z36BQ?e=ACud3i
+## Link web: https://jarvis-amd.vercel.app
 ## Cấu trúc Project
 
 ```
