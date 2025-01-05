@@ -24,10 +24,10 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   // final emailController = TextEditingController();//tien123@gmail.com //tien.hcmus.569@gmail.com //tien.hcmus.569@gmail.com
-  final emailController = TextEditingController(text: "hoangquoc2106@gmail.com");// //tien.hcmus.569@gmail.com
-  //hoangquoc2106@gmail.com
+  final emailController = TextEditingController(text: "tien.hcmus.569@gmail.com");// //tien.hcmus.569@gmail.com
+  //hoangquoc2106@gmail.com //tien1234 //taobilag123@gmail.com
   // final emailController = TextEditingController();
-  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');//Adv@ncedMobile213
+  final passwordController = TextEditingController(text: 'Adv@ncedMobile213');//Adv@ncedMobile213 
   // final passwordController = TextEditingController();
   bool isPasswordHidden = true;
   bool _isLoading = false; // Loading state

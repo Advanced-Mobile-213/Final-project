@@ -6,6 +6,7 @@ import 'package:chatbot_agents/views/email_reply/widget/email_input_text_field.d
 import 'package:chatbot_agents/widgets/category_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class EmailReplyView extends StatefulWidget {
@@ -136,15 +137,25 @@ class _EmailReplyViewState extends State<EmailReplyView> {
                 // const Text('Tokens: ', 
                 //   style: TextStyle(color: Colors.white),
                 // ),
-                Text(
-                  _emailReplyViewModel.remainingToken != 0 
-                  ? _emailReplyViewModel.remainingToken.toString()
-                  : '0', 
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                  ),
+                Consumer<EmailReplyViewModel>(
+                  builder: (context, EmailReplyViewModel emailReplyViewModel, child) {
+                    if (emailReplyViewModel.tokenUsageResponse!=null
+                      && emailReplyViewModel.tokenUsageResponse!.unlimited) {
+                      return const Icon(FontAwesomeIcons.infinity);
+                    }
+              
+                    return Text(
+                      _emailReplyViewModel.remainingToken != 0 
+                      ? _emailReplyViewModel.remainingToken.toString()
+                      : '0', 
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    );
+                  },
                 ),
+                
               ],
             ),
           ),
@@ -604,6 +615,7 @@ class _EmailReplyViewState extends State<EmailReplyView> {
   }
   
    void _fetchRemainingToken() async {
+    await _emailReplyViewModel.getTokenUsage();
     await _emailReplyViewModel.getRemainingToken();
   }
 
@@ -633,6 +645,8 @@ class _EmailReplyViewState extends State<EmailReplyView> {
         _selectedIdea = _emailReplyViewModel.ideasResponse!.ideas[0];
       });
     }
+
+     await _emailReplyViewModel.getTokenUsage();
   }
 
   void _replyEmail() async {
@@ -659,6 +673,7 @@ class _EmailReplyViewState extends State<EmailReplyView> {
       assistantId: selectedBot
     );
 
+    await _emailReplyViewModel.getTokenUsage();
   }
 }
 
