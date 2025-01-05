@@ -3,6 +3,9 @@
 - 21120542: Lâm Hoàng Quốc
 - 21120569: Phạm Đình Tiến
 - 21120589: Trương Anh Tuấn
+## Lưu ý:
+- Có một số file chứa thông tin cần bảo mật nên nhóm đã ignore đi
+- Nếu các thầy muốn tự chạy source code thì nhóm sẵn sàng cung cấp các file trên ạ
 ## Milestone-1: Xây dựng mock-ui cho toàn bộ các màn hình trong đô án cuối kì
 - Link GitHub (branch mock-ui): https://github.com/Advanced-Mobile-213/Final-project/tree/mock-ui
 - Link demo: https://www.youtube.com/watch?v=K1GLePm-LF8&ab_channel=TuanTruong
