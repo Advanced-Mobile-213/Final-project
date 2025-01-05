@@ -55,8 +55,8 @@ class AiBotService {
         if (orderField != null) 'order_field': orderField,
         if (offset != null) 'offset': offset,
         if (limit != null) 'limit': limit,
-        if (isFavorite != null) 'isFavorite': isFavorite,
-        if (isPublic != null) 'isPublic': isPublic,
+        if (isFavorite != null) 'is_favorite': isFavorite,
+        if (isPublic != null) 'is_published': isPublic,
       };
 
       final response = await knowledgeBaseApiClient.authenticatedDio.get(
@@ -336,6 +336,23 @@ class AiBotService {
       log("--> An DioException occurs in getThreads of AiBot Service: $e");
     } catch (e) {
       log("--> An error occurs in getThreads of AiBot Service: $e");
+    }
+    return null;
+  }
+
+  Future<AiBot?> favoriteAssistant({required String assistantId}) async {
+    try {
+      final response = await knowledgeBaseApiClient.authenticatedDio.post(
+        '/kb-core/v1/ai-assistant/$assistantId/favorite',
+      );
+
+      if (response.statusCode! < 300 && response.statusCode! >= 200) {
+        return AiBot.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      log("--> An DioException occurs in favoriteAssistant of AiBot Service: $e");
+    } catch (e) {
+      log("--> An error occurs in favoriteAssistant of AiBot Service: $e");
     }
     return null;
   }

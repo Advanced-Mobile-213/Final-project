@@ -9,6 +9,8 @@ class AiBot {
   final String? instructions;
   final String? description;
   final String? openAiThreadIdPlay;
+  final bool isDefault;
+  bool isFavorite;
 
   AiBot({
     required this.createdAt,
@@ -21,14 +23,15 @@ class AiBot {
     this.instructions,
     this.description,
     this.openAiThreadIdPlay,
+    required this.isDefault,
+    required this.isFavorite,
   });
 
   factory AiBot.fromJson(Map<String, dynamic> json) {
     return AiBot(
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       createdBy: json['createdBy'],
       updatedBy: json['updatedBy'],
       id: json['id'],
@@ -37,6 +40,8 @@ class AiBot {
       instructions: json['instructions'],
       description: json['description'],
       openAiThreadIdPlay: json['openAiThreadIdPlay'],
+      isDefault: json['isDefault'],
+      isFavorite: json['isFavorite'],
     );
   }
 }

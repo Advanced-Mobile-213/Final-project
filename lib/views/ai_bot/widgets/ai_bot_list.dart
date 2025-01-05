@@ -11,8 +11,15 @@ const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
 class AiBotList extends StatefulWidget {
   final String searchingText;
+  final bool? isFavorite;
+  final bool? isPublished;
 
-  const AiBotList(this.searchingText, {super.key});
+  const AiBotList({
+    super.key,
+    required this.searchingText,
+    this.isFavorite,
+    this.isPublished,
+  });
 
   @override
   State<AiBotList> createState() => _AiBotListState();
@@ -42,7 +49,9 @@ class _AiBotListState extends State<AiBotList> with WidgetsBindingObserver {
   @override
   void didUpdateWidget(AiBotList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.searchingText != widget.searchingText) {
+    if (oldWidget.searchingText != widget.searchingText ||
+        oldWidget.isFavorite != widget.isFavorite ||
+        oldWidget.isPublished != widget.isPublished) {
       _fetchAssistants();
     }
   }
@@ -50,7 +59,11 @@ class _AiBotListState extends State<AiBotList> with WidgetsBindingObserver {
   Future<void> _fetchAssistants() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final aiBotViewModel = context.read<AiBotViewModel>();
-      await aiBotViewModel.getAssistants(q: widget.searchingText);
+      await aiBotViewModel.getAssistants(
+        q: widget.searchingText,
+        isFavorite: widget.isFavorite,
+        isPublic: widget.isPublished,
+      );
     });
   }
 
@@ -92,6 +105,7 @@ class _AiBotListState extends State<AiBotList> with WidgetsBindingObserver {
           itemBuilder: (context, index) => AiBotListItem(
             filteredAIBots[index],
             (aibot) => onDeleteAiBotPressed(aibot.id),
+            _fetchAssistants,
           ),
         );
       }
