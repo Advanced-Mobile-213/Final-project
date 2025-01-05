@@ -34,6 +34,7 @@ class KnowledgeViewModel extends ChangeNotifier {
       log('--> Error in getKnowledges of KnowledgeViewModel: $e');
     }
   }
+
   Future<void> createKnowledge({
     required String knowledgeName,
     String? description,

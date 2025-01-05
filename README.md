@@ -12,6 +12,16 @@
 #### Quản lý và sử dụng prompt (6)
 - Link GitHub (branch basic-feature): https://github.com/Advanced-Mobile-213/Final-project/tree/basic-feature
 - Link demo: https://youtu.be/Qa5Pa3BLvnU
+## Milestone 3: Xây dựng hoàn thiện tất cả các tính năng còn lại trong đô án cuối kì:
+#### Tạo và quản lý AI BOT (4)
+#### Tạo bộ dữ liệu tri thức (5)
+#### Monetization (Subscription + Ads) (7)
+#### Hỏi đáp trên ảnh (8)
+#### Soạn email (9)
+#### Các chức năng nâng cao (10)
+- Link GitHub (branch advance-feature): 
+- Link demo: 
+## Link web: https://jarvis-amd.vercel.app/?fbclid=IwZXh0bgNhZW0CMTAAAR13uevcmO1TBpWS05kYuQ3CSS1GVtSyHsycgrWzAqlGNxjNAcx2r6jXIoI_aem_idwxMO3j7adqYUVIrniT-w#/login
 ## Cấu trúc Project
 
 ```

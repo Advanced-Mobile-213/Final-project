@@ -74,7 +74,7 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
               ),
               child: ListTile(
                   onTap: () {
-                    _navigateToKnowledgeDetail(_filteredKnowledges[index]);
+                    _navigateToKnowledgeDetail(_filteredKnowledges[index].id);
                   },
                   title: Text(
                     _filteredKnowledges[index].knowledgeName,
@@ -169,11 +169,11 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
     );
   }
 
-  void _navigateToKnowledgeDetail(Knowledge selectedKnowledge) {
+  void _navigateToKnowledgeDetail(String selectedKnowledgeId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => KnowledgeDetailView(knowledge: selectedKnowledge),
+        builder: (context) => KnowledgeDetailView(knowledgeId: selectedKnowledgeId),
       ),
     );
   }
