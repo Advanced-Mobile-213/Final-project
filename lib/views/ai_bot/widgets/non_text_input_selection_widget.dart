@@ -1,10 +1,7 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
-import 'package:flutter/foundation.dart';
 import 'dart:async';
-import 'dart:io';
 
 
 typedef OnImageCallback = Future<void> Function(ImageSource, {required BuildContext context}); 

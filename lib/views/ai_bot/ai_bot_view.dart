@@ -1,76 +1,107 @@
-import 'package:chatbot_agents/constants/app_colors.dart';
-import 'package:chatbot_agents/widgets/chatbot_radius_card.dart';
-import 'package:chatbot_agents/widgets/search_input.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:chatbot_agents/widgets/screen.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:chatbot_agents/views/ai_bot/widgets/ai_bot_list.dart';
+import 'package:chatbot_agents/constants/spacing.dart';
+import 'package:chatbot_agents/constants/app_colors.dart';
+import 'widgets/ai_bot_detail_dialog.dart';
+import '../../constants/enum_ai_bot_view_mode.dart';
 
-import '../../constants/app_icons.dart';
-import '../../widgets/category_button.dart';
+const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
 
-class AIBotView extends StatelessWidget {
-  const AIBotView({super.key});
+class AiBotView extends StatefulWidget {
+  const AiBotView({super.key});
+
+  @override
+  State<AiBotView> createState() => _AiBotViewState();
+}
+
+class _AiBotViewState extends State<AiBotView> {
+  String query = '';
+  bool? isFavorite;
+  bool? isPublished;
+  EnumAiBotViewMode selectedViewMode = EnumAiBotViewMode.all;
+
+  void onTextChange(String text) {
+    setState(() {
+      query = text;
+    });
+  }
+
+  void onViewModeChange(EnumAiBotViewMode? mode) {
+    if (mode == EnumAiBotViewMode.all) {
+      setState(() {
+        isFavorite = null;
+        isPublished = null;
+        selectedViewMode = EnumAiBotViewMode.all;
+      });
+    } else if (mode == EnumAiBotViewMode.myFavorite) {
+      setState(() {
+        isFavorite = true;
+        isPublished = null;
+        selectedViewMode = EnumAiBotViewMode.myFavorite;
+      });
+    } else if (mode == EnumAiBotViewMode.published) {
+      setState(() {
+        isFavorite = null;
+        isPublished = true;
+        selectedViewMode = EnumAiBotViewMode.published;
+      });
+    }
+  }
+
+  void onNewAiBotPressed(BuildContext context) {
+    showAiBotDetailDialog(context);
+  }
+
+  Widget renderModeSelector() {
+    List<EnumAiBotViewMode> items = EnumAiBotViewMode.values;
+
+    return (DropdownButton<EnumAiBotViewMode>(
+      value: selectedViewMode,
+      dropdownColor: Colors.black,
+      onChanged: (value) => onViewModeChange(value),
+      items: items
+          .map((EnumAiBotViewMode mode) => DropdownMenuItem(
+              value: mode,
+              child: Text(
+                getModeTitle(mode),
+                style: _textStyle,
+              )))
+          .toList(),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> chatbotNames = ["Gemini", "ChatGPT", "Bard", "Claude", "Claude-2", "My Agent"];
-    List<String> chatbotIcons = [AppIcons.GeminiImageBotUrl, AppIcons.ChatGPTImageUrl, AppIcons.BardImageUrl, AppIcons.ClaudeImageUrl, AppIcons.Claude2ImageUrl];
-
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Screen(
+        title: 'AI Bot',
+        titleButton: FloatingActionButton(
+          onPressed: () => onNewAiBotPressed(context),
+          backgroundColor: AppColors.secondaryBackground,
+          child: const Icon(Icons.add, color: AppColors.quaternaryText),
+        ),
+        children: [
+          Row(
             children: [
-              // Title
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  'All Bots',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              // Search Bar
-              SearchInput(onChanged: (value) {}, hintText: "Search",),
-              SizedBox(height: 16),
-              // Categories
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    CategoryButton(label: 'All', onPressed: (){}, isActive: true,),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Design', onPressed: (){}),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Social', onPressed: (){}),
-                    SizedBox(width: 10),
-                    CategoryButton(label: 'Work', onPressed: (){}),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-
-              // Radius Cards for Bots
+              Expanded(flex: 1, child: renderModeSelector()),
+              Gap(spacing[2]),
               Expanded(
-                child: ListView(
-                  children: List<Widget>.generate(5, (index) {
-                    return ChatbotRadiusCard(botName: chatbotNames[index], onPressed: (){ Navigator.pushNamed(context, "/ai_bot/chats");}, imageUrl: chatbotIcons[index],);
-                  }),
+                flex: 2,
+                child: SearchInput(
+                  hintText: 'AI Bot Name',
+                  onChanged: onTextChange,
                 ),
-              ),
+              )
             ],
           ),
-        ),
-      ),
-      backgroundColor: AppColors.primaryBackground,
-    );
-    //tst
+          Gap(spacing[3]),
+          AiBotList(
+            searchingText: query,
+            isFavorite: isFavorite,
+            isPublished: isPublished,
+          ),
+        ]);
   }
 }
-
-

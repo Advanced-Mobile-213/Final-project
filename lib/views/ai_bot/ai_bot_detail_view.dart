@@ -1,126 +1,111 @@
+import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:chatbot_agents/widgets/widget.dart';
-import 'package:chatbot_agents/constants/constants.dart';
+import '../../models/ai_bot/ai_bot.dart';
 import 'package:gap/gap.dart';
 import 'ai_bot_publish_view.dart';
+import '../../widgets/screen.dart';
+import '../../widgets/wide_button.dart';
+import '../../constants/app_colors.dart';
+import './sub_views/knowledge_tab.dart';
+import './sub_views/preview_tab.dart';
+import './sub_views/prompt_tab.dart';
+import './sub_views/thread_tab.dart';
+import '../../constants/spacing.dart';
+import 'package:provider/provider.dart';
 
 class AiBotDetailView extends StatefulWidget {
-  const AiBotDetailView({super.key});
+  final String assistantId;
+  const AiBotDetailView({super.key, required this.assistantId});
 
   @override
   State<AiBotDetailView> createState() => _AiBotDetailViewState();
 }
 
 class _AiBotDetailViewState extends State<AiBotDetailView> {
-  String? selectedBot;
-  String? selectedPrompt;
-  String? selectedKnowledge;
+  AiBot? aiBot;
+
+  void getAssistant() async {
+    var aiBotViewModel = context.read<AiBotViewModel>();
+    var getAiBot = await aiBotViewModel.getAssistant(
+      assistantId: widget.assistantId,
+    );
+
+    if (getAiBot != null) {
+      setState(() {
+        aiBot = getAiBot;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAssistant();
+  }
+
+  void onPublishBotPressed(AiBot aiBot) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => AiBotPublishView(aiBot)),
+    );
+  }
+
+  PreferredSizeWidget _tabBarHeader(AiBot aiBot) => AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          aiBot.assistantName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.primaryBackground,
+        surfaceTintColor: Colors.white,
+        bottom: const TabBar(
+          labelStyle: TextStyle(color: Colors.white, fontSize: 12),
+          indicatorColor: Colors.white,
+          tabs: [
+            Tab(text: 'Thread'),
+            Tab(text: 'Preview'),
+            Tab(text: 'Knowledge'),
+            Tab(text: 'Prompt'),
+          ],
+        ),
+        actions: [
+          WideButton(
+            text: 'Publish',
+            width: 100,
+            onPressed: () => onPublishBotPressed(aiBot),
+          ),
+          Gap(spacing[2]),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'AI Bot Detail',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppColors.primaryBackground,
-        actions: [
-          WideButton(
-            width: 150,
-            text: 'Publish',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AiBotPublishView(),
-                ),
-              );
-            },
-          )
+    Widget content;
+    if (aiBot != null) {
+      content = TabBarView(
+        children: [
+          ThreadTab(aiBot!),
+          PreviewTab(aiBot!),
+          KnowledgeTab(aiBot!),
+          PromptTab(aiBot!),
         ],
-      ),
-      backgroundColor: AppColors.primaryBackground,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final availableWidth = constraints.maxWidth;
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/empty_image.png',
-                      width: 200,
-                    ),
-                    const Gap(32),
-                    TextInput(
-                      label: 'Name',
-                      hintText: 'Enter name',
-                      onChanged: (value) {},
-                    ),
-                    const Gap(32),
-                    TextInput(
-                      label: 'Description',
-                      hintText: 'Enter description',
-                      onChanged: (value) {},
-                    ),
-                    const Gap(32),
-                    CustomDropdownButton(
-                      dropdownWidth: availableWidth,
-                      hint: 'Choose your model',
-                      value: selectedBot,
-                      dropdownItems: FakeData.aiBots,
-                      onChanged: (value) => setState(() {
-                        selectedBot = value;
-                      }),
-                    ),
-                    const Gap(32),
-                    CustomDropdownButton(
-                      dropdownWidth: availableWidth,
-                      hint: 'Choose your prompt',
-                      value: selectedPrompt,
-                      dropdownItems: FakeData.prompts,
-                      onChanged: (value) => setState(() {
-                        selectedPrompt = value;
-                      }),
-                    ),
-                    const Gap(32),
-                    CustomDropdownButton(
-                      dropdownWidth: availableWidth,
-                      hint: 'Choose your knowledge',
-                      value: selectedKnowledge,
-                      dropdownItems: FakeData.knowledges,
-                      onChanged: (value) => setState(() {
-                        selectedKnowledge = value;
-                      }),
-                    ),
-                    const Gap(32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        WideButton(
-                          width: 150,
-                          text: 'DELETE',
-                          onPressed: () {},
-                        ),
-                        const Gap(56),
-                        WideButton(
-                          width: 150,
-                          text: 'UPDATE',
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
+      );
+    } else {
+      content = const Center(child: CircularProgressIndicator());
+    }
+
+    return DefaultTabController(
+      length: 4,
+      initialIndex: 1, // Preview tab
+      child: Screen(
+        appBar: aiBot != null ? _tabBarHeader(aiBot!) : null,
+        children: [Expanded(child: content)],
       ),
     );
   }

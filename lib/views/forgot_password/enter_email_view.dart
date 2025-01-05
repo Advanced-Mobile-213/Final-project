@@ -16,7 +16,7 @@ class EnterEmailView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBackground,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pushNamed(context, '/login'); // Navigate back to the previous screen
           },
@@ -33,20 +33,20 @@ class EnterEmailView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
               children: [
                 // Forgot Password Title
-                Text(
+                const Text(
                   'Forgot Password',
                   style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
                 // Instruction Text
-                Text(
+                const Text(
                   'Please enter your email to reset the password',
                   style: TextStyle(color: AppColors.greyText, fontSize: 15),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // Email Input
                 TextInput(label: "Email", hintText: 'Enter your email', onChanged: (value){}),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Reset Password Button
                 WideButton(text: "Reset Password", onPressed: () { Navigator.pushReplacementNamed(context, "/forgot_password/verify_code");})

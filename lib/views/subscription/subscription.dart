@@ -1,5 +1,7 @@
+import 'package:chatbot_agents/constants/api_url.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../constants/app_colors.dart';
 
@@ -202,7 +204,13 @@ class _SubscriptionViewState extends State<SubscriptionView>{
                       ),
                     ),
                     TextButton(
-                      onPressed: (){},
+                      onPressed: () async {
+                        if (await canLaunchUrl(Uri.parse(ApiUrl.SUBSCRIPTION))) {
+                          await launchUrl(Uri.parse(ApiUrl.SUBSCRIPTION));
+                        } else {
+                          print('Could not launch ${ApiUrl.SUBSCRIPTION}');
+                        }
+                      },
                       child: Text('SUBCRIBE NOW',
                           style: const TextStyle(
                             color:  AppColors.primaryText,

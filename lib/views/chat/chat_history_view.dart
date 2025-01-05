@@ -1,0 +1,282 @@
+import 'package:chatbot_agents/constants/app_colors.dart';
+import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
+import 'package:chatbot_agents/constants/enum_assistant_model.dart';
+import 'package:chatbot_agents/view_models/list_conversations_view_model.dart';
+import 'package:chatbot_agents/views/chat/new_chat_thread_view.dart';
+import 'package:chatbot_agents/views/chat/widgets/thread_chat.dart';
+import 'package:chatbot_agents/widgets/search_input.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class ChatHistoryView extends StatefulWidget {
+  const ChatHistoryView({super.key});
+
+  @override
+  State<ChatHistoryView> createState() => _ChatHistoryViewState();
+}
+
+class _ChatHistoryViewState extends State<ChatHistoryView> {
+  late final ListConversationsViewModel listConversationsViewModel;
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+
+  bool _isCreatingThread = false;
+  
+  
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    listConversationsViewModel = context.read<ListConversationsViewModel>();
+    _fetchListConversations();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get the screen height
+    final screenHeight = MediaQuery.of(context).size.height;
+    final iconSize = screenHeight * 0.05; // Adjust icon size based on screen height
+/*SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: */
+    return Scaffold(
+      body: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          
+          children: [
+            Expanded(
+              child: Center(
+                child: Container(
+                  height: screenHeight,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          textBaseline: TextBaseline.alphabetic, // Ensures proper alignment
+                          children: [
+                            const Text(
+                              'Chat History',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            const SizedBox(width: 5), // Space between title and number of threads
+                            Consumer<ListConversationsViewModel>(
+                              builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
+                              return Text(
+                                '(${listConversationsViewModel.conversations?.items.length ?? 0})', // Number of chat threads
+                                style: TextStyle(
+                                  color: Colors.grey[400], // Lighter text for the count
+                                  fontSize: 16,
+                                ),
+                              );
+                            }),
+                            
+                          ],
+                        ),
+                      ),
+
+                      // Search Bar
+                      SearchInput(onChanged: (value) {}),
+                      const SizedBox(height: 16),
+
+                       // Chat Threads
+                      Expanded(
+                        child: Consumer<ListConversationsViewModel>(
+                          builder: (context, ListConversationsViewModel listConversationsViewModel, child) {
+                            if (listConversationsViewModel.isLoading==true) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (listConversationsViewModel.isLoading==false 
+                            && (listConversationsViewModel.conversations == null 
+                            || (listConversationsViewModel.conversations?.items.isEmpty ?? true))) {
+                              return const Center(
+                                child: Text(
+                                  'No chat threads found',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                            return ListView.builder(
+                              controller: _scrollController,
+                              itemCount: listConversationsViewModel.conversations?.items.length ?? 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                final conversation = listConversationsViewModel.conversations?.items[index];
+                                //return Container();
+                                return ThreadChat(
+                                  conversationTitle: conversation?.title ?? '',
+                                  createdAt: conversation?.createdAt ?? 0,
+                                  conversationId: conversation?.id ?? '',
+                                );
+                              }
+                            );
+                          }
+                        ),
+                      ),
+                      
+                      if (_isLoadingMore)
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                    ],
+                  ),
+                ),
+              ),                 
+            ),
+          ],
+      ),
+
+      backgroundColor: AppColors.primaryBackground,
+      // Floating Action Button to create new chat thread
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder:  (context) => const NewChatThreadView(),
+            ),
+          ),
+        },
+          //_createNewThreadDialog(context),
+        backgroundColor: AppColors.secondaryBackground,
+        child: const Icon(
+          Icons.add,
+          color: AppColors.quaternaryText,
+        ),
+      ),
+      
+    );
+  }
+
+  @override
+  void dispose() {
+
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _fetchListConversations() async {
+    await listConversationsViewModel.getConversations(
+      assistantModel: EnumAssistantModel.DIFY, 
+      assistantId: EnumAssisstantId.GPT_4O_MINI,
+      cursor: null,
+      limit: 7,
+    );
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+      print('Reached the end of the list'); 
+      _fetchMoreConversations();
+    }
+  }
+
+  void _fetchMoreConversations() async {
+     setState(() {
+      _isLoadingMore = true;
+    });
+
+    await listConversationsViewModel.getMoreConversations(
+      assistantModel: EnumAssistantModel.DIFY, 
+      assistantId: EnumAssisstantId.GPT_4O_MINI,
+      cursor: listConversationsViewModel.listConversationCursor ?? '',
+      limit: 7,
+    );
+
+    setState(() {
+      _isLoadingMore = false;
+    });
+  }
+  
+  void _createNewThreadDialog(BuildContext context) {
+    final TextEditingController titleController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.dialogBackground,
+          title: const Text(
+            'Start a new conversation',
+            style: TextStyle(color: Colors.white, fontSize: 24),
+          ),
+          content: TextField(
+              style: const TextStyle(color: Colors.white),
+              controller: titleController,
+              decoration: InputDecoration(
+                hintStyle: const TextStyle(color: Colors.grey),
+                hintText: 'Enter what you want to ask...',
+                border: OutlineInputBorder(
+                  borderRadius:
+                  BorderRadius.circular(10), // Add border radius here
+                  borderSide: const BorderSide(
+                      color: Colors.grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(
+                      10), // Add border radius for focused state
+                  borderSide: const BorderSide(
+                      color: Colors.white), // Change color when focused
+                ),
+              )),
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog without doing anything
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                
+                // setState(() {
+                //   _isCreatingThread = true;
+                // });
+
+                // await listConversationsViewModel.createConversation(
+                //   assistantModel: EnumAssistantModel.DIFY,
+                //   assistantId: EnumAssisstantId.GPT_4O_MINI,
+                //   //assistantName: titleController.text, 
+                //   content: titleController.text,
+                // );
+
+                Navigator.of(context).pop(); // Close the dialog
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:  (context) => const NewChatThreadView(),
+                  ),
+                );
+
+              },
+              child: const Text(
+                'Create',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+}
+                    
