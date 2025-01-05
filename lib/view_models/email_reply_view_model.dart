@@ -6,6 +6,7 @@ import 'package:chatbot_agents/dto/email_reply/meta_data/ai_email_meta_data_requ
 import 'package:chatbot_agents/dto/email_reply/meta_data/ai_email_style_request.dart';
 import 'package:chatbot_agents/dto/email_reply/suggest_reply_idea_request.dart';
 import 'package:chatbot_agents/dto/send_message/meta_data/assistant_request.dart';
+import 'package:chatbot_agents/dto/token_usage/token_usage_response.dart';
 import 'package:chatbot_agents/service/email_service.dart';
 import 'package:chatbot_agents/service/token_service.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class EmailReplyViewModel extends ChangeNotifier {
   int remainingToken = 0;
   bool isLoading = false;
   bool isReplying = false;
-
+  TokenUsageResponse? tokenUsageResponse=null;
+  
   Future<void> replyEmail({
     required String emailSubject,
     required String emailContent,
@@ -34,7 +36,7 @@ class EmailReplyViewModel extends ChangeNotifier {
     required String assistantId,
   }) async {
     try {
-      
+      isReplying = true;
       replyEmailResponse = null;
       AssistantRequest assistant = AssistantRequest(
         id: assistantId, 
@@ -67,7 +69,7 @@ class EmailReplyViewModel extends ChangeNotifier {
        
       );
 
-      isReplying = true;
+      
       replyEmailResponse = await _emailService.replyEmail(
         request,
       );
@@ -92,7 +94,7 @@ class EmailReplyViewModel extends ChangeNotifier {
     required String assistantId,
   }) async {
     try {
-      
+      isLoading = true;
       ideasResponse = null;
       AssistantRequest assistantRequest = AssistantRequest(
         id: assistantId, 
@@ -117,7 +119,7 @@ class EmailReplyViewModel extends ChangeNotifier {
 
       print('request in vm: ${request.toJson()}');
 
-      isLoading = true;
+      
       ideasResponse = await _emailService.suggestEmailReplyIdeas(
         request,
       );
@@ -149,6 +151,16 @@ class EmailReplyViewModel extends ChangeNotifier {
       print("An error occurs: ${e}");
       // Handle error
     }
+  }
+
+  Future<void> getTokenUsage() async {
+    try {
+      
+      tokenUsageResponse = await _tokenService.getTokenUsage();
+    } catch (e) {
+      print('--> Error fetching token usage: $e');
+    }
+    notifyListeners();
   }
 
   void clearData() {
