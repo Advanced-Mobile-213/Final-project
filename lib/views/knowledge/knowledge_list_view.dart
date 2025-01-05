@@ -46,9 +46,8 @@ class _KnowledgeListViewState extends State<KnowledgeListView> {
   Widget build(BuildContext context) {
     final watchKnowledgeViewModel = context.watch<KnowledgeViewModel>();
     _filteredKnowledges = watchKnowledgeViewModel.knowledges
-        .where((knowledge) => knowledge.knowledgeName
-        .toLowerCase()
-        .contains(_searchQuery.toLowerCase()))
+        .where((knowledge) => knowledge.knowledgeName.toLowerCase().contains(_searchQuery.toLowerCase())
+     || knowledge.description.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
     Widget content;
     if (_isLoading) {

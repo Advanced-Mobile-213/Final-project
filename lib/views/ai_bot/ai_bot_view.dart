@@ -8,6 +8,8 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'widgets/ai_bot_detail_dialog.dart';
 import '../../constants/enum_ai_bot_view_mode.dart';
 
+const TextStyle _textStyle = TextStyle(color: Colors.white, fontSize: 16);
+
 class AiBotView extends StatefulWidget {
   const AiBotView({super.key});
 
@@ -17,6 +19,8 @@ class AiBotView extends StatefulWidget {
 
 class _AiBotViewState extends State<AiBotView> {
   String query = '';
+  bool? isFavorite;
+  bool? isPublished;
   EnumAiBotViewMode selectedViewMode = EnumAiBotViewMode.all;
 
   void onTextChange(String text) {
@@ -25,14 +29,48 @@ class _AiBotViewState extends State<AiBotView> {
     });
   }
 
-  void onViewModeChange(EnumAiBotViewMode mode) {
-    setState(() {
-      selectedViewMode = mode;
-    });
+  void onViewModeChange(EnumAiBotViewMode? mode) {
+    if (mode == EnumAiBotViewMode.all) {
+      setState(() {
+        isFavorite = null;
+        isPublished = null;
+        selectedViewMode = EnumAiBotViewMode.all;
+      });
+    } else if (mode == EnumAiBotViewMode.myFavorite) {
+      setState(() {
+        isFavorite = true;
+        isPublished = null;
+        selectedViewMode = EnumAiBotViewMode.myFavorite;
+      });
+    } else if (mode == EnumAiBotViewMode.published) {
+      setState(() {
+        isFavorite = null;
+        isPublished = true;
+        selectedViewMode = EnumAiBotViewMode.published;
+      });
+    }
   }
 
   void onNewAiBotPressed(BuildContext context) {
     showAiBotDetailDialog(context);
+  }
+
+  Widget renderModeSelector() {
+    List<EnumAiBotViewMode> items = EnumAiBotViewMode.values;
+
+    return (DropdownButton<EnumAiBotViewMode>(
+      value: selectedViewMode,
+      dropdownColor: Colors.black,
+      onChanged: (value) => onViewModeChange(value),
+      items: items
+          .map((EnumAiBotViewMode mode) => DropdownMenuItem(
+              value: mode,
+              child: Text(
+                getModeTitle(mode),
+                style: _textStyle,
+              )))
+          .toList(),
+    ));
   }
 
   @override
@@ -45,9 +83,25 @@ class _AiBotViewState extends State<AiBotView> {
           child: const Icon(Icons.add, color: AppColors.quaternaryText),
         ),
         children: [
-          SearchInput(hintText: 'AI Bot Name', onChanged: onTextChange),
+          Row(
+            children: [
+              Expanded(flex: 1, child: renderModeSelector()),
+              Gap(spacing[2]),
+              Expanded(
+                flex: 2,
+                child: SearchInput(
+                  hintText: 'AI Bot Name',
+                  onChanged: onTextChange,
+                ),
+              )
+            ],
+          ),
           Gap(spacing[3]),
-          AiBotList(query),
+          AiBotList(
+            searchingText: query,
+            isFavorite: isFavorite,
+            isPublished: isPublished,
+          ),
         ]);
   }
 }
