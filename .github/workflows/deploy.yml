@@ -103,21 +103,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
        
-      - name: Cache Node.js Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      # - name: Cache Node.js Modules
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.npm
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+      # - name: Install Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '20'
       
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
+      # - name: Install Firebase CLI
+      #   run: npm install -g firebase-tools
 
       # 4. config Flutter and check environment
       - run: flutter config --no-analytics
@@ -126,8 +126,8 @@ jobs:
       # 5. install dependencies
       - run: flutter pub get
 
-      # # 6. run automation testing
-      # - run: flutter test
+      # 6. run automation testing
+      - run: flutter test
 
       # 7. Build APK debug and AAB
       - run: flutter build apk --debug --split-per-abi
@@ -142,19 +142,19 @@ jobs:
           token: ${{ secrets.TOKEN_CICD }}
       
       # 9. Push APK Release and AAB into GitHub Releases
-      # - name: Push to Release
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     artifacts: |
-      #       build/app/outputs/apk/release/*.apk
-      #       build/app/outputs/bundle/release/*.aab
-      #     tag: v1.0.${{ github.run_number }}-aab-apk-release-${{ github.sha }}
-      #     token: ${{ secrets.TOKEN_CICD }}
+      - name: Push to Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: |
+            build/app/outputs/apk/release/*.apk
+            build/app/outputs/bundle/release/*.aab
+          tag: v1.0.${{ github.run_number }}-aab-apk-release-${{ github.sha }}
+          token: ${{ secrets.TOKEN_CICD }}
         
-       # 10. Deploy APK into Firebase App Distribution
-      - name: Deploy APK to Firebase
-        run: firebase appdistribution:distribute  ./build/app/outputs/apk/debug/app-x86_64-debug.apk --app ${{ secrets.FIREBASE_ANDROID_APP_ID }}  #--release-notes "Release notes for this build AMD2024"
-      #  --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} ./build/app/outputs/bundle/release/app-release.aab        
+      #  # 10. Deploy APK into Firebase App Distribution
+      # - name: Deploy APK to Firebase
+      #   run: firebase appdistribution:distribute  ./build/app/outputs/apk/debug/app-x86_64-debug.apk --app ${{ secrets.FIREBASE_ANDROID_APP_ID }}  #--release-notes "Release notes for this build AMD2024"
+      # #  --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} ./build/app/outputs/bundle/release/app-release.aab        
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
