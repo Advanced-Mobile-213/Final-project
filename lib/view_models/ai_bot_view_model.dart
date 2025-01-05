@@ -479,4 +479,29 @@ class AiBotViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> favoriteAssistant({
+    required String assistantId,
+  }) async {
+    try {
+      //isLoading = true;
+      success = false;
+      notifyListeners();
+      final response = await _aiBotService.favoriteAssistant(
+        assistantId: assistantId,
+      );
+      //isLoading = false;
+      if (response != null) {
+        success = true;
+      } else {
+        success = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      //isLoading = false;
+      success = false;
+      log('--> Error in favoriteAssistant of AiBotViewModel: $e');
+      notifyListeners();
+    }
+  }
 }
