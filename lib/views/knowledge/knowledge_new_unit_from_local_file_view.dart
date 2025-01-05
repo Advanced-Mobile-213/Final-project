@@ -167,10 +167,9 @@ class _KnowledgeNewUnitFromLocalFileViewState
         if (errorMessage != null) {
           snackBarUtil.showDefault('Error: $errorMessage');
           return false;
-        } else {
-          snackBarUtil.showDefault('File uploaded successfully!');
-          return true;
         }
+        snackBarUtil.showDefault('File uploaded successfully!');
+        return true;
       } else {
         snackBarUtil.showDefault('File does not exist');
         return false;

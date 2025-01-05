@@ -1,6 +1,8 @@
 import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:chatbot_agents/models/knowledge/knowledge.dart';
+import 'package:chatbot_agents/utils/string_utils.dart';
 import 'package:chatbot_agents/view_models/knowledge_unit_view_model.dart';
+import 'package:chatbot_agents/view_models/knowledge_view_model.dart';
 import 'package:chatbot_agents/views/knowledge/widgets/create_new_unit_dialog.dart';
 import 'package:chatbot_agents/views/knowledge/widgets/unit_list_tile.dart';
 import 'package:chatbot_agents/views/knowledge/widgets/update_knowledge_base_dialog.dart';
@@ -12,8 +14,9 @@ const TextStyle _emptyTextStyle = TextStyle(color: Colors.white, fontSize: 20);
 
 
 class KnowledgeDetailView extends StatefulWidget{
-  final Knowledge knowledge;
-  const KnowledgeDetailView({super.key, required this.knowledge});
+  final String knowledgeId;
+  late Knowledge knowledge;
+  KnowledgeDetailView({super.key, required this.knowledgeId});
 
   @override
   State<KnowledgeDetailView> createState() => _KnowledgeDetailViewState();
@@ -27,13 +30,14 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
     // TODO: implement initState
     super.initState();
     readKnowledgeUnitViewModel = context.read<KnowledgeUnitViewModel>();
-    _fetchKnowledgeUnits(widget.knowledge.id);
+    _fetchKnowledgeUnits(widget.knowledgeId);
     _isLoading = true;
   }
   @override
   Widget build(BuildContext context) {
     final watchKnowledgeUnitViewModel = context.watch<KnowledgeUnitViewModel>();
-    Knowledge knowledge = widget.knowledge;
+    // Knowledge knowledge = widget.knowledge;
+    widget.knowledge = context.watch<KnowledgeViewModel>().knowledges.firstWhere((knowledge) => knowledge.id == widget.knowledgeId);
     Widget content;
     if (_isLoading) {
       content = const Center(
@@ -85,7 +89,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                         Text(knowledge.knowledgeName,
+                         Text(widget.knowledge.knowledgeName,
                           style: const TextStyle(
                             color: AppColors.quaternaryText,
                             fontSize: 30,
@@ -97,7 +101,7 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                             color: AppColors.quaternaryText,
                           ),
                           onPressed: (){
-                            _showUpdateKnowledgeBaseDialog(knowledge);
+                            _showUpdateKnowledgeBaseDialog(widget.knowledge);
                           },
                         ),
                       ],
@@ -106,7 +110,19 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Text(
-                      knowledge.description.isEmpty ? "No description"  : knowledge.description,
+                      widget.knowledge.description.isEmpty ? "No description"  : widget.knowledge.description,
+                      style: const TextStyle(
+                        color: AppColors.quaternaryText,
+                        fontSize: 16,
+                      ),
+                      maxLines: 3, // Limit number of visible lines for better UI
+                      overflow: TextOverflow.ellipsis, // Handle overflow gracefully
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Text(
+                      StringUtils.formatDate(widget.knowledge.updatedAt!),
                       style: const TextStyle(
                         color: AppColors.quaternaryText,
                         fontSize: 16,
@@ -118,50 +134,64 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                   Container(
                     padding: const EdgeInsets.all(5),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align children to opposite sides
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryBackground,
-                            borderRadius: BorderRadius.circular(7),
-                            border: Border.all(
-                              color: AppColors.quaternaryBackground,
-                              width: 1,
+                        // Left side content
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBackground,
+                                borderRadius: BorderRadius.circular(7),
+                                border: Border.all(
+                                  color: AppColors.quaternaryBackground,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text('${widget.knowledge.numUnits ?? 0} Units',
+                                style: const TextStyle(
+                                  color: AppColors.quaternaryText,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Text('${knowledge.numUnits ?? 0} Units',
-                            style: const TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 15,
-                              
+                            Container(
+                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBackground,
+                                borderRadius: BorderRadius.circular(7),
+                                border: Border.all(
+                                  color: AppColors.quaternaryBackground,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text('${widget.knowledge.totalSize ?? 0} Bytes',
+                                style: const TextStyle(
+                                  color: AppColors.quaternaryText,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          margin: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryBackground,
-                            borderRadius: BorderRadius.circular(7),
-                            border: Border.all(
-                              color: AppColors.quaternaryBackground,
-                              width: 1,
-                            ),
+                        // Right side content (FloatingActionButton)
+                        Padding(padding: const EdgeInsets.only(right: 4.0), child: FloatingActionButton(
+                          onPressed: () {
+                            _showCreateNewUnitDialog(widget.knowledge);
+                          },
+                          backgroundColor: AppColors.secondaryBackground,
+                          child: const Icon(
+                            Icons.add,
+                            color: AppColors.quaternaryText,
                           ),
-                          child: Text('${knowledge.totalSize ?? 0} Bytes',
-                            style: const TextStyle(
-                              color: AppColors.quaternaryText,
-                              fontSize: 15,
-                              
-                            ),
-                          ),
-                        ),
-                       
+                        ),)
                       ],
-                    )
+                    ),
                   ),
+
                   // Show the knowledge description
 
                   Expanded(
@@ -173,15 +203,6 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
             ),
           ],
         )
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          _showCreateNewUnitDialog(widget.knowledge);
-        },
-        backgroundColor: AppColors.secondaryBackground,
-        child: const Icon(Icons.add,
-          color: AppColors.quaternaryText,
-        ),
       ),
     );
   }

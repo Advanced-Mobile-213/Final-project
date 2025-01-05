@@ -61,6 +61,7 @@ class KnowledgeUnitViewModel extends ChangeNotifier {
       }
     } catch (e) {
       log('--> Error in uploadFileFromLocal of KnowledgeUnitViewModel: $e');
+      return "Please choose another file";
     }
     return null;
   }
