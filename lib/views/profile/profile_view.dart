@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class ProfileView extends StatefulWidget {
   
@@ -31,7 +33,12 @@ class _ProfileViewState extends State<ProfileView> {
     isLoggingOut = false;
     _profileViewModel = context.read<ProfileViewModel>();
     _fetchTokenUsage();
-    _loadAd();
+
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android
+      || defaultTargetPlatform == TargetPlatform.iOS)) {
+      _loadAd();
+    }
+    
   }
 
   @override

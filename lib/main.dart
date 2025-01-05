@@ -37,12 +37,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'view_models/prompt_view_model.dart';
 import 'package:chatbot_agents/service/prompt_service.dart';
 import 'package:chatbot_agents/view_models/ai_bot_view_model.dart';
 import 'package:chatbot_agents/service/bot_integration_service.dart';
 import 'package:chatbot_agents/view_models/bot_configuration_view_model.dart';
-
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 // For dependency injection
 void setup() {
   GetItInstance.getIt.registerSingleton<JarvisApiClient>(
@@ -70,28 +72,65 @@ void setup() {
   GetItInstance.getIt.registerSingleton<EmailService>(EmailService());
 }
 
-void main() async {
+Future<void> main() async {
   await dotenv.load();
-  setup();
-  WidgetsFlutterBinding.ensureInitialized();
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = dotenv.env['SENTRY_DSN']; 
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+      // The sampling rate for profiling is relative to tracesSampleRate
+      // Setting to 1.0 will profile 100% of sampled transactions:
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () async {
+      
+      setup();
+      WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    GetItInstance.getIt.registerSingleton<AnalyticsService>(AnalyticsService());
+      try {
+        await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+        GetItInstance.getIt.registerSingleton<AnalyticsService>(AnalyticsService());
 
-    unawaited(MobileAds.instance.initialize());
-  } catch (e) {
-    print('-->Error occurs when initialized plugin: $e');
-  }
-  // final accessToken = await SharedPreferencesUtil.getAccessToken();
-  // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+        // if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android 
+        //   || defaultTargetPlatform == TargetPlatform.iOS)) {
+        //   unawaited(MobileAds.instance.initialize());
+        // }
 
-  // if (accessToken != null && refreshToken != null) {
-  //   GetItInstance.getIt<JarvisApiService>().setToken(accessToken, refreshToken);
-  // }
-
-  runApp(const MyApp());
+        unawaited(MobileAds.instance.initialize());
+        
+      } catch (e) {
+        print('-->Error occurs when initialized plugin: $e');
+      }
+  
+      runApp(const MyApp());
+    },
+  );
 }
+  
+// void main() async {
+//   await dotenv.load();
+//   setup();
+//   WidgetsFlutterBinding.ensureInitialized();
+
+//   try {
+//     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//     GetItInstance.getIt.registerSingleton<AnalyticsService>(AnalyticsService());
+
+//     unawaited(MobileAds.instance.initialize());
+//   } catch (e) {
+//     print('-->Error occurs when initialized plugin: $e');
+//   }
+//   // final accessToken = await SharedPreferencesUtil.getAccessToken();
+//   // final refreshToken = await SharedPreferencesUtil.getRefreshToken();
+
+//   // if (accessToken != null && refreshToken != null) {
+//   //   GetItInstance.getIt<JarvisApiService>().setToken(accessToken, refreshToken);
+//   // }
+
+//   runApp(const MyApp());
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
