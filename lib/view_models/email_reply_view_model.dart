@@ -36,7 +36,7 @@ class EmailReplyViewModel extends ChangeNotifier {
     required String assistantId,
   }) async {
     try {
-      
+      isReplying = true;
       replyEmailResponse = null;
       AssistantRequest assistant = AssistantRequest(
         id: assistantId, 
@@ -69,7 +69,7 @@ class EmailReplyViewModel extends ChangeNotifier {
        
       );
 
-      isReplying = true;
+      
       replyEmailResponse = await _emailService.replyEmail(
         request,
       );
@@ -94,7 +94,7 @@ class EmailReplyViewModel extends ChangeNotifier {
     required String assistantId,
   }) async {
     try {
-      
+      isLoading = true;
       ideasResponse = null;
       AssistantRequest assistantRequest = AssistantRequest(
         id: assistantId, 
@@ -119,7 +119,7 @@ class EmailReplyViewModel extends ChangeNotifier {
 
       print('request in vm: ${request.toJson()}');
 
-      isLoading = true;
+      
       ideasResponse = await _emailService.suggestEmailReplyIdeas(
         request,
       );

@@ -651,7 +651,8 @@ class _EmailReplyViewState extends State<EmailReplyView> {
 
   void _replyEmail() async {
     if (_emailContentController.text.isEmpty || _emailSubjectController.text.isEmpty
-    || _emailSenderController.text.isEmpty || _emailReceiverController.text.isEmpty) {
+    || _emailSenderController.text.isEmpty || _emailReceiverController.text.isEmpty 
+    || _selectedIdea == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter full email information')),
       );
