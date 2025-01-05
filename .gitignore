@@ -344,3 +344,5 @@ hs_err_pid*
 
 /android/app/google-services.json
 /ios/Runner/Info.plist
+.env
+data-demo.txt
