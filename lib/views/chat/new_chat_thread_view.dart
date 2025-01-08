@@ -61,16 +61,6 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
   late String _conversationId = '';
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (widget.passingPrompt != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        PromptUtil.showDynamicInput(context, widget.passingPrompt!, _controller);
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     // Use MediaQuery to make the layout responsive
     var screenWidth = MediaQuery.of(context).size.width;
@@ -413,6 +403,12 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
     _conversationViewModel = context.read<ConversationViewModel>();
     _listConversationsViewModel = context.read<ListConversationsViewModel>();
     _fetchRemainingToken();
+    if (widget.passingPrompt != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        PromptUtil.showDynamicInput(context, widget.passingPrompt!, _controller);
+      });
+    }
+    
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
     // });
