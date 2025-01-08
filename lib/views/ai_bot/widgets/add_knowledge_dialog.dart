@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/views/ai_bot/widgets/custom_dialog_knowledge.dart';
 import 'package:flutter/material.dart';
 import '../../../widgets/custom_dialog.dart';
 import './knowledge_list.dart';
@@ -15,7 +16,7 @@ class _AddKnowledgeDialogState extends State<AddKnowledgeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
+    return CustomDialogKnowledge(
       title: 'Import Knowledge',
       onConfirm: (){
         _onAddKnowledgePress();

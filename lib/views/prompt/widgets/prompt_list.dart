@@ -163,7 +163,13 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     final promptViewModel = context.watch<PromptViewModel>();
 
     void onPromptTap(Prompt prompt) {
-      showDynamicInput(prompt);
+      //showDynamicInput(prompt);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailPromptPopUpDialog(prompt: prompt);
+        },
+      );
     }
 
     void onPromptDetail(Prompt prompt) {
@@ -200,6 +206,9 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
 
     void onPromptFavorite(Prompt prompt) {
       if (prompt.isFavorite) {
+        if (widget.isFavorite == true) {
+          promptViewModel.removePromptFromFavorite(prompt.id!, needToRemove: true);
+        }
         promptViewModel.removePromptFromFavorite(prompt.id!);
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -223,36 +232,73 @@ class _PromptListState extends State<PromptList> with WidgetsBindingObserver {
     }
 
     final Widget content;
-    if (promptViewModel.isLoading) {
-      content = const Expanded(
-        child: Center(child: CircularProgressIndicator()),
-      );
-    } else {
-      if (promptViewModel.prompts.isEmpty) {
-        content = const Expanded(
-          child:
-              Center(child: Text('No prompts found', style: _emptyTextStyle)),
-        );
-      } else {
-        final filteredPromptList = promptViewModel.prompts;
-        content = Expanded(
-          child: ListView.separated(
-            separatorBuilder: (context, index) => Gap(spacing[2]),
-            itemCount: filteredPromptList.length,
-            itemBuilder: (context, index) {
-              return PromptListItem(
-                filteredPromptList[index],
-                onPromptTap,
-                onPromptDeletePressed,
-                onPromptFavorite,
-                _showUpdatePromptDialog,
-                onPromptDetail,
-              );
-            },
-          ),
-        );
+
+    // if (promptViewModel.isLoading) {
+    //   content = const Expanded(
+    //     child: Center(child: CircularProgressIndicator()),
+    //   );
+    // } else {
+    //   if (promptViewModel.prompts.isEmpty) {
+    //     content = const Expanded(
+    //       child:
+    //           Center(child: Text('No prompts found', style: _emptyTextStyle)),
+    //     );
+    //   } else {
+    //     final filteredPromptList = promptViewModel.prompts;
+    //     content = Expanded(
+    //       child: ListView.separated(
+    //         separatorBuilder: (context, index) => Gap(spacing[2]),
+    //         itemCount: filteredPromptList.length,
+    //         itemBuilder: (context, index) {
+    //           return PromptListItem(
+    //             filteredPromptList[index],
+    //             onPromptTap,
+    //             onPromptDeletePressed,
+    //             onPromptFavorite,
+    //             _showUpdatePromptDialog,
+    //             onPromptDetail,
+    //           );
+    //         },
+    //       ),
+    //     );
+    //   }
+    // }
+    return Consumer<PromptViewModel>
+      (builder: (context, PromptViewModel promptViewModel, child) {
+        Widget content;
+        if (promptViewModel.isLoading) {
+          content = const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          if (promptViewModel.prompts.isEmpty) {
+            content = const Expanded(
+              child:
+                  Center(child: Text('No prompts found', style: _emptyTextStyle)),
+            );
+          } else {
+            final filteredPromptList = promptViewModel.prompts;
+            content = Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) => Gap(spacing[2]),
+                itemCount: filteredPromptList.length,
+                itemBuilder: (context, index) {
+                  return PromptListItem(
+                    filteredPromptList[index],
+                    onPromptTap,
+                    onPromptDeletePressed,
+                    onPromptFavorite,
+                    _showUpdatePromptDialog,
+                    onPromptDetail,
+                  );
+                },
+              ),
+            );
+          }
+        }
+        
+        return content;
       }
-    }
-    return content;
+    );
   }
 }

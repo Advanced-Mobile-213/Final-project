@@ -150,12 +150,17 @@ class _KnowledgeDetailViewState extends State<KnowledgeDetailView>{
                                   width: 1,
                                 ),
                               ),
-                              child: Text('${widget.knowledge.numUnits ?? 0} Units',
-                                style: const TextStyle(
-                                  color: AppColors.quaternaryText,
-                                  fontSize: 15,
-                                ),
+                              child: Consumer<KnowledgeUnitViewModel>
+                                (builder: (context, KnowledgeUnitViewModel knowledgeUnitViewModel, child) {
+                                    return Text('${knowledgeUnitViewModel.knowledgeUnits.length ?? 0} Units',
+                                      style: const TextStyle(
+                                        color: AppColors.quaternaryText,
+                                        fontSize: 15,
+                                      ),
+                                    );
+                                  }
                               ),
+                              
                             ),
                             Container(
                               padding: const EdgeInsets.all(5),

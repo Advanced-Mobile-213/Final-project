@@ -179,7 +179,7 @@ class PromptViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removePromptFromFavorite(String id) async {
+  Future<void> removePromptFromFavorite(String id, {bool? needToRemove}) async {
     try {
       isLoading = true;
 
@@ -187,8 +187,17 @@ class PromptViewModel extends ChangeNotifier {
 
       isLoading = false;
 
-      // remove the prompt from the list
-      prompts.removeWhere((element) => element.id == id);
+      if (needToRemove == true) {
+        // remove the prompt from the list
+        prompts.removeWhere((element) => element.id == id);
+      } else {
+        // update the prompt in the list
+        final index = prompts.indexWhere((element) => element.id == id);
+        if (index != -1) {
+          prompts[index].isFavorite = false;
+        }
+      }
+      
     } catch (e) {
       print('--> Error removing prompt from favorite: $e');
       isLoading = false;

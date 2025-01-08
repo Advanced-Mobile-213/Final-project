@@ -351,3 +351,4 @@ ios/Runner/Info.plist
 firebase.json
 *.env
 data-demo.txt
+/.sentry-native

@@ -77,15 +77,15 @@ class _DetailPromptPopUpState extends State<DetailPromptPopUpDialog> {
           Container(
             child: Row(
               children: <Widget>[
-                IconButton(
-                  onPressed: () {
-                    //Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.star,
-                      color: _isFavorite
-                          ? Colors.yellow
-                          : AppColors.quaternaryText),
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     //Navigator.of(context).pop();
+                //   },
+                //   icon: Icon(Icons.star,
+                //       color: _isFavorite
+                //           ? Colors.yellow
+                //           : AppColors.quaternaryText),
+                // ),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
