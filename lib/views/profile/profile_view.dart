@@ -22,11 +22,12 @@ class _ProfileViewState extends State<ProfileView> {
   late final ProfileViewModel _profileViewModel;
 
   // ads
-  final String adUnitId = AdUnitId.bannerAdUnitId;
+  final String adUnitId = AdUnitId.interstitialAdUnitId;
   AdSize adSize = AdSize.banner;
   
   /// The banner ad to show. This is `null` until the ad is actually loaded.
   BannerAd? _bannerAd;
+  InterstitialAd? _interstitialAd;
 
   @override void initState() {
     super.initState();
@@ -66,15 +67,15 @@ class _ProfileViewState extends State<ProfileView> {
                   children: <Widget>[
 
                     // Ads Section
-                    SizedBox(
-                      width: adSize.width.toDouble(),
-                      height: adSize.height.toDouble(),
-                      child: _bannerAd == null
-                          // Nothing to render yet.
-                          ? const SizedBox()
-                          // The actual ad.
-                          : AdWidget(ad: _bannerAd!),
-                    ),
+                    // SizedBox(
+                    //   width: adSize.width.toDouble(),
+                    //   height: adSize.height.toDouble(),
+                    //   child: _bannerAd == null
+                    //       // Nothing to render yet.
+                    //       ? const SizedBox()
+                    //       // The actual ad.
+                    //       : AdWidget(ad: _bannerAd!),
+                    // ),
 
                     // Profile Section
                     Container(
@@ -404,6 +405,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     _bannerAd?.dispose();
     super.dispose();
   }
@@ -414,31 +416,59 @@ class _ProfileViewState extends State<ProfileView> {
 
   /// Loads a banner ad.
   void _loadAd() {
-    final bannerAd = BannerAd(
-      size: adSize,
+    // final bannerAd = BannerAd(
+    //   size: adSize,
+    //   adUnitId: adUnitId,
+    //   request: const AdRequest(),
+    //   listener: BannerAdListener(
+    //     // Called when an ad is successfully received.
+    //     onAdLoaded: (ad) {
+    //       if (!mounted) {
+    //         ad.dispose();
+    //         return;
+    //       }
+    //       setState(() {
+    //         _bannerAd = ad as BannerAd;
+    //       });
+    //     },
+    //     // Called when an ad request failed.
+    //     onAdFailedToLoad: (ad, error) {
+    //       debugPrint('BannerAd failed to load: $error');
+    //       ad.dispose();
+    //     },
+    //   ),
+    // );
+
+    // // Start loading.
+    // bannerAd.load();
+
+    InterstitialAd.load(
       adUnitId: adUnitId,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        // Called when an ad is successfully received.
-        onAdLoaded: (ad) {
-          if (!mounted) {
-            ad.dispose();
-            return;
-          }
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
           setState(() {
-            _bannerAd = ad as BannerAd;
+            _interstitialAd = ad;
           });
+          _interstitialAd?.show();
+          _interstitialAd?.fullScreenContentCallback =
+              FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (InterstitialAd ad) {
+              ad.dispose();
+              print("-->Interstitial Ad dismissed.");
+            },
+            onAdFailedToShowFullScreenContent:
+                (InterstitialAd ad, AdError error) {
+              ad.dispose();
+              print("-->Failed to show Interstitial Ad: ${error.message}");
+            },
+          );
         },
-        // Called when an ad request failed.
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('BannerAd failed to load: $error');
-          ad.dispose();
+        onAdFailedToLoad: (error) {
+          print('-->Interstitial ad failed to load: $error');
         },
       ),
     );
-
-    // Start loading.
-    bannerAd.load();
   }
   
 }

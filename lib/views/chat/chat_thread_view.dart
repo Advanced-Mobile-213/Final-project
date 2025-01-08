@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chatbot_agents/constants/ad_unit_id.dart';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/mapper/message_mapper.dart';
@@ -13,6 +14,7 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +22,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class ChatThreadView extends StatefulWidget {
   final String conversationId;
@@ -61,7 +65,13 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   final List<int> costToken = [1, 3, 1, 5, 5, 1];
 
   //lazy load
-  int commonLimit = 2;
+  int commonLimit = 4;
+
+  // ads
+  final String adUnitId = AdUnitId.interstitialAdUnitId;
+  AdSize adSize = AdSize.banner;
+
+  InterstitialAd? _interstitialAd;
 
   @override
   Widget build(BuildContext context) {
@@ -422,6 +432,11 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     _conversationViewModel = context.read<ConversationViewModel>();
     _fetchRemainingToken();
     _fetchConversationHistory();
+
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android
+      || defaultTargetPlatform == TargetPlatform.iOS)) {
+      _loadAd();
+    }
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
     // });
@@ -457,8 +472,41 @@ class _ChatThreadViewState extends State<ChatThreadView> {
     _scrollController.removeListener(_onScroll);
     _controller.dispose();
     _scrollController.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
+
+    /// Loads a ad.
+  void _loadAd() {
+    InterstitialAd.load(
+      adUnitId: adUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          setState(() {
+            _interstitialAd = ad;
+          });
+          _interstitialAd?.show();
+          _interstitialAd?.fullScreenContentCallback =
+              FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (InterstitialAd ad) {
+              ad.dispose();
+              print("-->Interstitial Ad dismissed.");
+            },
+            onAdFailedToShowFullScreenContent:
+                (InterstitialAd ad, AdError error) {
+              ad.dispose();
+              print("-->Failed to show Interstitial Ad: ${error.message}");
+            },
+          );
+        },
+        onAdFailedToLoad: (error) {
+          print('-->Interstitial ad failed to load: $error');
+        },
+      ),
+    );
+  }
+  
 
   void _onTextChanged() {
     if (_controller.text.endsWith('/')) {

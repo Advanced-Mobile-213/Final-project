@@ -1,3 +1,4 @@
+import 'package:chatbot_agents/constants/ad_unit_id.dart';
 import 'package:chatbot_agents/constants/enum_assisstant_id.dart';
 import 'package:chatbot_agents/constants/enum_assistant_model.dart';
 import 'package:chatbot_agents/mapper/message_mapper.dart';
@@ -14,6 +15,7 @@ import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:flutter/foundation.dart';
@@ -60,6 +62,12 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
 
   late String _conversationId = '';
 
+  // ads
+  final String adUnitId = AdUnitId.interstitialAdUnitId;
+  AdSize adSize = AdSize.banner;
+  
+  InterstitialAd? _interstitialAd;
+  
   @override
   Widget build(BuildContext context) {
     // Use MediaQuery to make the layout responsive
@@ -408,6 +416,11 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
         PromptUtil.showDynamicInput(context, widget.passingPrompt!, _controller);
       });
     }
+
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android
+      || defaultTargetPlatform == TargetPlatform.iOS)) {
+      _loadAd();
+    }
     
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _scrollToBottom();
@@ -432,10 +445,41 @@ class _NewChatThreadViewState extends State<NewChatThreadView> {
 
   @override
   void dispose() {
+    _interstitialAd?.dispose();
     _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _loadAd() {
+    InterstitialAd.load(
+      adUnitId: adUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          setState(() {
+            _interstitialAd = ad;
+          });
+          _interstitialAd?.show();
+          _interstitialAd?.fullScreenContentCallback =
+              FullScreenContentCallback(
+            onAdDismissedFullScreenContent: (InterstitialAd ad) {
+              ad.dispose();
+              print("-->Interstitial Ad dismissed.");
+            },
+            onAdFailedToShowFullScreenContent:
+                (InterstitialAd ad, AdError error) {
+              ad.dispose();
+              print("-->Failed to show Interstitial Ad: ${error.message}");
+            },
+          );
+        },
+        onAdFailedToLoad: (error) {
+          print('-->Interstitial ad failed to load: $error');
+        },
+      ),
+    );
   }
 
   void _onTextChanged() {
