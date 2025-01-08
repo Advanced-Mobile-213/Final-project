@@ -129,6 +129,10 @@ class _ChatThreadViewState extends State<ChatThreadView> {
                 // ),
                 Consumer<ConversationViewModel>(
                   builder: (context, ConversationViewModel conversationViewModel, child) {
+                    if (conversationViewModel.tokenUsageResponse != null
+                      && conversationViewModel.tokenUsageResponse!.unlimited) {
+                      return const Icon(FontAwesomeIcons.infinity);
+                    }
                     return Text(
                       _conversationViewModel.messageResponseDto?.remainingUsage != null 
                         ? _conversationViewModel.messageResponseDto!.remainingUsage.toString() 
@@ -402,6 +406,7 @@ class _ChatThreadViewState extends State<ChatThreadView> {
   }
 
   void _fetchRemainingToken() async {
+    await _conversationViewModel.getTokenUsage();
     await _conversationViewModel.getRemainingToken();
   }
 
@@ -743,6 +748,8 @@ class _ChatThreadViewState extends State<ChatThreadView> {
             );
           });
         }
+
+        await _conversationViewModel.getTokenUsage();
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottomAnimated();

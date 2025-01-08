@@ -346,6 +346,11 @@ hs_err_pid*
 android/app/google-services.json
 ios/Runner/Info.plist
 
+/android/app/google-services.json
+/ios/Runner/Info.plist
+.env
+data-demo.txt
+
 .env
 /android/app/upload-keystore.jks
 firebase.json
