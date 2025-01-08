@@ -57,16 +57,19 @@ class _DataSourceListTileState extends State<DataSourceListTile> {
           children: [
             Icon(widget.icon, color: AppColors.quaternaryText),
             const SizedBox(width: 5.0),
-            Text(
-              widget.title,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: const TextStyle(
-                color: AppColors.quaternaryText,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child:Text(
+                widget.title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: const TextStyle(
+                  color: AppColors.quaternaryText,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            
           ],
         ),
         subtitle: Text(
