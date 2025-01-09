@@ -1,5 +1,6 @@
 
 
+import 'package:chatbot_agents/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/prompt/prompt.dart';
@@ -24,6 +25,7 @@ class PromptUtil {
             return SingleChildScrollView(
                 controller: scrollController,
                 child: Container(
+                  //color: AppColors.primaryBackground, 
                   padding: EdgeInsets.all(16.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -34,6 +36,7 @@ class PromptUtil {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          //color: AppColors.quaternaryText,
                         ),
                       ),
                       SizedBox(height: 16),

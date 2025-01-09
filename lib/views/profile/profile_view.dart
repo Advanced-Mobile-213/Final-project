@@ -208,15 +208,20 @@ class _ProfileViewState extends State<ProfileView> {
                                   ),
                                   trailing: TextButton(
                                     onPressed: () async {
-                                      // log event and send to google analytics
-                                      await profileViewModel.logEvent(
-                                        eventName: 'user_click_upgrade_subscription',
-                                        parameters: {
-                                          'username': context.read<AuthProvider>().user!.username,
-                                          'email': context.read<AuthProvider>().user!.email,
-                                          'available_tokens': profileViewModel.tokenUsageResponse!.availableTokens,
-                                        },
-                                      );
+                                      try {
+                                        // log event and send to google analytics
+                                        await profileViewModel.logEvent(
+                                          eventName: 'user_click_upgrade_subscription',
+                                          parameters: {
+                                            'username': context.read<AuthProvider>().user!.username,
+                                            'email': context.read<AuthProvider>().user!.email,
+                                            'available_tokens': profileViewModel.tokenUsageResponse!.availableTokens,
+                                          },
+                                        );
+                                      } catch (e) {
+                                        print('Error: $e');
+                                      }
+                                      
                                       Navigator.pushNamed(context, '/subscription');
                                     },
                                     style: ButtonStyle(
